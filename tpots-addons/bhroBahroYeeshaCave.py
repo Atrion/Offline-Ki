@@ -515,8 +515,7 @@ class bhroBahroYeeshaCave(ptModifier):
             return
         sdlVal = psnlSDL[sdlName][0]
         if (not sdlVal):
-            print ('bhroBahroYeeshaCave.DoWedge():  previous age was %s, turning wedge SDL of %s to On' % (self.ageFrom,
-             sdlName))
+            print ('bhroBahroYeeshaCave.DoWedge():  previous age was %s, turning wedge SDL of %s to On' % (self.ageFrom, sdlName))
             psnlSDL[sdlName] = (1,)
 
 

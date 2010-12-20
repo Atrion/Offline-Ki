@@ -8,7 +8,7 @@ fixes = {}
 msgs = []
 
 linkingFiles = ['offlineki.pak', 'offlineki2.pak', 'tpots-addons.pak', 'tpots-fixes.pak', 'python.pak'] # pak files allowed to use linking commands
-overwritingFiles = ['offlineki.pak', 'tpots-addons.pak', 'tpots-fixes.pak', 'moul.pak'] # pak files allowed to overwrite files
+overwritingFiles = ['offlineki.pak', 'tpots-addons.pak', 'tpots-fixes.pak'] # pak files allowed to overwrite files
 overwrittenFiles = ['python.pak', 'journal.pak'] # pak files allowed to be (partially) overwritten
 
 ### useful functions
@@ -84,7 +84,7 @@ def checkPak(pakfile, fixIt = False, silent = True):
         if repack:
             if not fixIt: raise Exception("Something went seriously wrong, how can repack be requested if fixes are disabled?")
             create_pak(wdir, pakfile)
-            msgs.append("Fixed linking in "+pakfile)
+            msgs.append("Re-packed "+pakfile+" after linking was fixed")
     finally:
         # cleanup
         remove(wdir)
@@ -122,15 +122,17 @@ if __name__ == '__main__':
                     raise Exception(file+" can be found in both "+filenames[file]+" and "+pakfile)
                 filenames[file] = pakfile
             print
-        # print messages
-        if len(msgs):
-            print "There were %d messages:" % len(msgs)
-            for text in msgs:
-                print text
-        else:
-            print "Everything is all right!"
     except Exception, err:
+        print
         # error handling
-        print "ERROR:",err
+        msgs.append("ERROR: "+str(err))
         # cleanup after exception
         remove(wdir)
+
+    # print messages
+    if len(msgs):
+        print "There were %d messages:" % len(msgs)
+        for text in msgs:
+            print text
+    else:
+        print "Everything is all right!"
