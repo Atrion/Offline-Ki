@@ -1,0 +1,9 @@
+    def ICheckSpawnPointName(self):
+        linkmgr = ptNetLinkingMgr()
+        link = linkmgr.getCurrAgeLink()
+        spawnPoint = link.getSpawnPoint()
+        spName = spawnPoint.getName()
+        return spName
+
+
+glue_cl = None

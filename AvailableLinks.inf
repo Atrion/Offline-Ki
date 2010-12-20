@@ -1,0 +1,189 @@
+Everything in here is adapted to be consistent with Cyan's linking rules, so you'll better
+NOT TOUCH it or you will end up with inconsistent behaviour. It was hard work to figure it out the right way!
+I repeat - DO NOT TOUCH THIS FILE! Fan-age linking rules are managed in AvailableFanLinks.inf
+======================================================================================================
+======================================================================================================
+Fan-Ages
+include:AvailableFanLinks.inf
+include:AvailableExtraLinks.inf
+======================================================================================================
+Hex Isle
+restorationlink:CatfishCanyon,Catfish Canyon,file
+restorationlink:DessertDesert,Dessert Desert,file
+restorationlink:LouderSpace,Louder Space,file
+restorationlink:MoldyDungeon,Moldy Dungeon,file
+restorationlink:PlasmaMiasma,Plasma Miasma,file
+restorationlink:PumpkinJungle,Pumpkin Jungle,file
+======================================================================================================
+MQO
+restorationlink:PortalWell,Portal Well,file
+link:ForestMQ,Twisted Woods,file
+link:Courtyard,Clan Courtyard,file
+======================================================================================================
+Crowthistle ages
+link:MarshScene,The Great Marsh,file
+description:MarshScene,A beautiful lake scenery with docks and huts.
+link:MountainScene,Rowan Green,file
+description:MountainScene,A nice little village in the sunset.
+======================================================================================================
+MystV ages
+link:Siralehn,Noloben,file,basic
+
+link:Todelmer,Todelmer,file,original
+spawnpoint:Todelmer,EsherWarpRing,tdlmPod
+spawnpoint:Todelmer,LinkInTake,tdlmTake
+spawnpoint:Todelmer,LinkInTdlmKeep,tdlmKeep
+spawnpoint:Todelmer,LinkInPed1,tdlmPed1
+spawnpoint:Todelmer,LinkInPed2,tdlmPed2
+
+link:Tahgira,Tahgira,file,basic
+
+link:Laki,Laki'ahn,file,basic
+
+link:Direbo,Direbo,file,original
+spawnpoint:Direbo,LinkInPoint1,drboPoint1
+spawnpoint:Direbo,LinkInPoint2,drboPoint2
+spawnpoint:Direbo,LinkInPoint3,drboPoint3
+spawnpoint:Direbo,LinkInPoint4,drboPoint4
+
+link:DescentMystV,D'ni-Tiwah,file,original
+spawnpoint:DescentMystV,LinkInPointDefault,dsntMystV
+spawnpoint:DescentMystV,LinkInFromSrlnDirebo,dsntRestSrln
+spawnpoint:DescentMystV,LinkInFromLakiDirebo,dsntRestLaki
+spawnpoint:DescentMystV,LinkInFromTdlmDirebo,dsntRestTdlm
+spawnpoint:DescentMystV,LinkInFromThgrDirebo,dsntRestThgr
+
+link:MystMystV,Myst,file,basic
+
+link:KveerMystV,Releeshan,file,basic
+======================================================================================================
+MOUL ages
+publiclink:GreatTreePub,Great Tree Pub
+publiclink:GuildPub-Cartographers,Cartographers' Pub
+publiclink:GuildPub-Greeters,Greeters' Pub
+publiclink:GuildPub-Maintainers,Maintainers' Pub
+publiclink:GuildPub-Messengers,Messengers' Pub
+publiclink:GuildPub-Writers,Writers' Pub
+
+link:EderDelin,Eder Delin,dataserver,subageof(Neighborhood)
+spawnpoint:EderDelin,LinkInPointDefault,Default
+
+link:EderTsogal,Eder Tsogal,dataserver,subageof(Neighborhood)
+spawnpoint:EderTsogal,LinkInPointDefault,Default
+
+link:KveerMOUL,D'ni-K'veer,dataserver,original
+spawnpoint:KveerMOUL,LinkInPointDefault,KveerMOUL
+
+link:Negilahn,Negilahn,dataserver,original
+spawnpoint:Negilahn,LinkInPointDefault,Default
+
+link:Dereno,Dereno,dataserver,original
+spawnpoint:Dereno,LinkInPointDefault,Default
+
+link:Payiferen,Payiferen,dataserver,original
+spawnpoint:Payiferen,LinkInPointDefault,Default
+
+link:Tetsonot,Tetsonot,dataserver,original
+spawnpoint:Tetsonot,LinkInPointDefault,Default
+
+link:Minkata,Minkata,dataserver,original
+spawnpoint:Minkata,LinkInPointDefault,Default
+
+link:Jalak,Jalak,dataserver,original
+spawnpoint:Jalak,LinkInPointDefault,Default
+
+link:KirelMOUL,Guild Neighborhood,dataserver,original,kirelPerf-SpawnPointBevin02
+spawnpoint:KirelMOUL,kirelPerf-SpawnPointBevin02,Default
+
+link:AhnonayMOUL,Ahnonay,dataserver,basic
+
+link:LiveBahroCaves,D'ni-Rudenna,dataserver,basic
+
+link:NeighborhoodMOUL,Seret,dataserver,original
+spawnpoint:NeighborhoodMOUL,LinkInPointDefault,Default
+======================================================================================================
+TPOTS ages
+link:Personal,Relto,file,original
+spawnpoint:Personal,LinkInPointDefault,Default
+
+link:Neighborhood,Neighborhood,file,original
+spawnpoint:Neighborhood,LinkInPointDefault,Default
+spawnpoint:Neighborhood,LinkInPointBevinBalcony01,nb01BevinBalcony01
+
+link:Cleft,D'ni-Riltagamin,file,original
+spawnpoint:Cleft,LinkInPointDefault,Default
+
+link:Personal02,Phil's Relto,file,basic
+
+link:city,D'ni-Ae'gura,file,original,LinkInPointGreatTree
+spawnpoint:city,LinkInPointGreatTree,Great Tree
+spawnpoint:city,LinkInPointLibrary,islmLibraryCourtyard
+
+link:GreatZero,Great Zero,file,original
+spawnpoint:GreatZero,LinkInPointDefault,grtzGrtZeroLinkRm
+
+link:Nexus,Nexus,file,original
+spawnpoint:Nexus,LinkInPointDefault,Default
+
+link:Garrison,Gahreesen,file,original
+spawnpoint:Garrison,LinkInPointDefault,Default
+spawnpoint:Garrison,LinkInPointPrison,grsnPrison
+
+link:Kadish,Kadish,file,original
+spawnpoint:Kadish,LinkInPointDefault,Default
+spawnpoint:Kadish,LinkInPointGlowRmBalcony,kdshGlowRmBalcony
+
+link:Teledahn,Teledahn,file,original
+spawnpoint:Teledahn,LinkInPointDefault,Default
+spawnpoint:Teledahn,StumpStartPoint,tldnChoppedShroom
+
+link:Gira,Eder Gira,file,original
+
+link:Garden,Eder Kemo,file,original
+
+link:BahroCave,D'ni-Rudenna,file,basic
+
+link:Descent,D'ni-Tiwah,file,original
+spawnpoint:Descent,LinkInPointShaftFall,dsntShaftFall
+
+link:Neighborhood02,DRC Neighborhood,file,original
+spawnpoint:Neighborhood02,LinkInPointDefault,Default
+
+link:BaronCityOffice,D'ni-Ae'gura,file,original
+
+link:spyroom,D'ni-Ae'gura,file,original
+spawnpoint:spyroom,LinkInPointDefault,Spyroom
+
+link:RestorationGuild,Watcher's Sanctuary,file,original
+
+link:Ahnonay,Ahnonay,file,original
+spawnpoint:Ahnonay,LinkInPointDefault,Default
+
+link:AhnySphere01,Ahnonay,file,original
+link:AhnySphere02,Ahnonay,file,original
+link:AhnySphere03,Ahnonay,file,original
+link:AhnySphere04,Ahnonay,file,original
+
+link:Ercana,Er'cana,file,original
+link:ErcanaCitySilo,D'ni-Ashem'en,file,original,LinkInPointErcanaSilo
+spawnpoint:ErcanaCitySilo,LinkInPointErcanaSilo,Default
+
+link:BahroCave02,D'ni-Rudenna,file,original
+
+link:Myst,Myst,file,original
+spawnpoint:Myst,LinkInPointDefault,Default
+
+link:Kveer,D'ni-Kveer,file,original
+spawnpoint:Kveer,LinkInPointDefault,kverKveer
+
+link:DniCityX2Finale,D'ni-Ae'gura,file,original
+======================================================================================================
+Non-linkable ages (the invalid linking rule makes them unlinkable even for admins)
+link:AvatarCustomization,Closet,disabled,none
+link:CustomAvatars,CustomAvatars,disabled,none
+link:GlobalAnimations,GlobalAnimations,disabled,none
+link:GlobalAvatars,GlobalAvatars,disabled,none
+link:GlobalClothing,GlobalClothing,disabled,none
+link:GlobalMarkers,GlobalMarkers,disabled,none
+link:GUI,GUI,disabled,none
+link:gui,gui,disabled,none

@@ -1,0 +1,28 @@
+    def OnServerInitComplete(self):
+        print 'Pahts.OnServerInitComplete()'
+        linkmgr = ptNetLinkingMgr()
+        link = linkmgr.getCurrAgeLink()
+        spawnPoint = link.getSpawnPoint()
+        spTitle = spawnPoint.getTitle()
+        spName = spawnPoint.getName()
+        sdl = PtGetAgeSDL()
+        sdl.setFlags('usePaging', 1, 1)
+        sdl.sendToClients('usePaging')
+        sdl.setNotify(self.key, 'usePaging', 0.0)
+        self.usePaging = sdl['usePaging'][0]
+        if (spName == 'LinkInPointDefault'):
+            self.spawnNumber = 412
+        else:
+            self.spawnNumber = int(spName[3:])
+        print ('Linked in at %s; choosing number %d' % (spName, self.spawnNumber))
+        if self.usePaging:
+            self.FindWhatToPageIn(True)
+        else:
+            for district in range(1, 5):
+                for subdistrict in range(1, 5):
+                    self.PageInQueue.append((district, subdistrict))
+            PtAtTimeCallback(self.key, self.PageQueueWaitTime, self.PageQueueTimerId)
+            PtPageInNode('Prin')
+
+
+    def PageInNodes(self, district, subdistrict):

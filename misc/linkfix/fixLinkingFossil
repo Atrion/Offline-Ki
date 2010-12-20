@@ -1,0 +1,16 @@
+            vault = ptVault()
+            info = ptAgeInfoStruct()
+            info.setAgeFilename(age)
+            vLink = vault.getOwnedAgeLink(info)
+            if (not (vLink)):
+                print 'First time link'
+                link = ptAgeLinkStruct()
+                link.setAgeInfo(info)
+                link.setSpawnPoint(ptSpawnPointInfo('Default', 'LinkInPointDefault'))
+                link.setLinkingRules(PtLinkingRules.kOriginalBook)
+            else:
+                print 'Existing age link'
+                link = vLink.asAgeLinkStruct()
+            mgr = ptNetLinkingMgr()
+            mgr.setEnabled(1)
+            mgr.linkToAge(link)

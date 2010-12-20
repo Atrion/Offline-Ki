@@ -1,0 +1,2 @@
+                linkMgr = ptNetLinkingMgr()
+                linkMgr.linkToAge(ageLinkStruct)

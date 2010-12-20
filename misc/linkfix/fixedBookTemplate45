@@ -1,0 +1,2 @@
+                import xLinkMgr
+                xLinkMgr.LinkToAge(ageLinkStruct.getAgeInfo().getAgeFilename(), ageLinkStruct.getSpawnPoint().getName())

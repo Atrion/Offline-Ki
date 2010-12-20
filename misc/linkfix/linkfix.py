@@ -1,0 +1,136 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import sys, os, subprocess
+from linkfix_config import java, drizzle, lists, wdir
+from createpak import getfile, create_pak
+allowed = []
+fixes = {}
+msgs = []
+
+linkingFiles = ['offlineki.pak', 'offlineki2.pak', 'tpots-addons.pak', 'tpots-fixes.pak', 'python.pak'] # pak files allowed to use linking commands
+overwritingFiles = ['offlineki.pak', 'tpots-addons.pak', 'tpots-fixes.pak', 'moul.pak'] # pak files allowed to overwrite files
+overwrittenFiles = ['python.pak', 'journal.pak'] # pak files allowed to be (partially) overwritten
+
+### useful functions
+def remove(name):
+    if not os.path.exists(name): return
+    if os.path.isfile(name):
+        os.remove(name)
+    else:
+        for file in os.listdir(name):
+            remove(os.path.join(name, file))
+        os.rmdir(name)
+
+def mayOverwrite(pakfile1, pakfile2):
+    global overwritingFiles, overwrittenFiles
+    pakfile1 = os.path.basename(pakfile1)
+    pakfile2 = os.path.basename(pakfile2)
+    if (pakfile1 in overwritingFiles) and (pakfile2 in overwrittenFiles):
+        return True
+    if (pakfile2 in overwritingFiles) and (pakfile1 in overwrittenFiles):
+        return True
+    return False
+
+def decompile(pakfile, wdir):
+    global drizzle
+    subprocess.check_call([java, '-Djava.awt.headless=true', '-splash:', '-jar', drizzle, '-decompilepak', pakfile, wdir, 'pots'], stdout=subprocess.PIPE) # we ignore the pipe and the output alltogether
+
+### file processing function (returns True if the file should be recompiled and repacked, throws an exception if a link was left unfixed)
+def checkForLink(pyfile, fixIt):
+    content = getfile(os.path.join(wdir, pyfile))
+    
+    # before looking for the linking code, blend out allowed code
+    contentFiltered = content
+    for allowedStr in allowed:
+        contentFiltered = contentFiltered.replace(allowedStr, '')
+
+    # check
+    if contentFiltered.find('ptNetLinkingMgr') >= 0:
+        # let's see if we have a fix
+        if fixIt:
+            for fix in fixes:
+                content = content.replace(fix, fixes[fix])
+        # check if we could fix it or not
+        if content.find('ptNetLinkingMgr') >= 0:
+            # no or not enough fixes, warn
+            raise Exception("Unfixable linking code in "+pyfile)
+        else:
+            msgs.append('Successfully removed ptNetLinkingMgr usage in '+pyfile)
+            # we fixed it! Save the file
+            f = open(os.path.join(wdir, pyfile), 'w')
+            f.write(content)
+            f.close()
+            return True
+    return False
+
+
+### pak file processing. Returns a list of contained filenames, throws an exception if a file links
+def checkPak(pakfile, fixIt = False, silent = True):
+    files = []
+    try:
+        # get file content
+        os.mkdir(wdir)
+        decompile(pakfile, wdir)
+        
+        # check sourcecode
+        repack = False
+        for pyfile in os.listdir(wdir):
+            files.append(pyfile)
+            if not silent:
+                print "    Processing",pyfile
+            if not os.path.basename(pakfile) in linkingFiles: # exclude some files from this check
+                repack = checkForLink(pyfile, fixIt) or repack
+
+        if repack:
+            if not fixIt: raise Exception("Something went seriously wrong, how can repack be requested if fixes are disabled?")
+            create_pak(wdir, pakfile)
+            msgs.append("Fixed linking in "+pakfile)
+    finally:
+        # cleanup
+        remove(wdir)
+    return files
+    
+
+### initialization
+# load list of allowed usages and of fixes
+for file in os.listdir(lists):
+    if file.startswith('white'):
+        allowed.append(getfile(os.path.join(lists, file)))
+    elif file.startswith('fix') and not file.startswith('fixed'):
+        fix = getfile(os.path.join(lists, file))
+        fixed = getfile(os.path.join(lists, file.replace('fix', 'fixed')))
+        fixes[fix] = fixed
+
+
+if __name__ == '__main__':
+    ### main program
+    # process arguments
+    if len(sys.argv) == 1:
+        print "Usage: linkfix.py pakfiles"
+        exit(0)
+
+    try:
+        # check files
+        filenames = {}
+        for pakfile in sys.argv[1:]:
+            # process this file
+            print "Processing",pakfile
+            files = checkPak(pakfile, fixIt = True, silent = False)
+            # check for duplicate files
+            for file in files:
+                if file in filenames and not mayOverwrite(filenames[file], pakfile):
+                    raise Exception(file+" can be found in both "+filenames[file]+" and "+pakfile)
+                filenames[file] = pakfile
+            print
+        # print messages
+        if len(msgs):
+            print "There were %d messages:" % len(msgs)
+            for text in msgs:
+                print text
+        else:
+            print "Everything is all right!"
+    except Exception, err:
+        # error handling
+        print "ERROR:",err
+        # cleanup after exception
+        remove(wdir)
