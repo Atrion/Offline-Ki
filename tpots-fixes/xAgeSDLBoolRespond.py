@@ -7,7 +7,7 @@ respBoolTrue = ptAttribResponder(2, 'Run if bool true:')
 respBoolFalse = ptAttribResponder(3, 'Run if bool false:')
 boolVltMgrFastForward = ptAttribBoolean(4, 'F-Forward on VM notify', 1)
 boolFFOnInit = ptAttribBoolean(5, 'F-Forward on Init', 1)
-boolFirstUpdate = ptAttribBoolean(7, 'Init SDL On First Update?', 0)
+#boolFirstUpdate = ptAttribBoolean(7, 'Init SDL On First Update?', 0)
 AgeStartedIn = None
 
 class xAgeSDLBoolRespond(ptResponder):
@@ -26,7 +26,7 @@ class xAgeSDLBoolRespond(ptResponder):
             PtDebugPrint('ERROR: xAgeSDLBoolRespond.OnFirstUpdate():\tERROR: missing SDL var name')
         # fix for pages that are loaded deferred
         import xUserKI
-        if (boolFirstUpdate.value or (xUserKI.AgeInitialized())): # if it is already initialized now, we are loaded dynamically
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
             self.OnServerInitComplete()
 
 

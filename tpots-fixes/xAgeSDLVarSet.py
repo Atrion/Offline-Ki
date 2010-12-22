@@ -5,7 +5,7 @@ stringSDLVarName = ptAttribString(1, 'Age SDL Variable')
 stringSDLVarToSet = ptAttribString(2, 'SDL Variable To Set')
 stringStartStates = ptAttribString(3, 'State value tuples')
 stringTag = ptAttribString(4, 'Extra info to pass along')
-boolFirstUpdate = ptAttribBoolean(6, 'Init SDL On First Update?', 0)
+#boolFirstUpdate = ptAttribBoolean(6, 'Init SDL On First Update?', 0)
 AgeStartedIn = None
 
 class xAgeSDLVarSet(ptResponder):
@@ -40,7 +40,7 @@ class xAgeSDLVarSet(ptResponder):
             PtDebugPrint('ERROR: xAgeSDLVarSet.OnFirstUpdate():\tERROR: missing SDL var name in max file')
         # fix for pages that are loaded deferred
         import xUserKI
-        if (boolFirstUpdate.value or (xUserKI.AgeInitialized())): # if it is already initialized now, we are loaded dynamically
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
             self.OnServerInitComplete()
 
 

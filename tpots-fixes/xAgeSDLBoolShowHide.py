@@ -4,7 +4,7 @@ from PlasmaTypes import *
 import string
 stringVarName = ptAttribString(1, 'Age SDL Var Name')
 boolShowOnTrue = ptAttribBoolean(2, 'Show on true', 1)
-boolFirstUpdate = ptAttribBoolean(4, 'Eval On First Update?', 0)
+#boolFirstUpdate = ptAttribBoolean(4, 'Eval On First Update?', 0)
 AgeStartedIn = None
 
 class xAgeSDLBoolShowHide(ptMultiModifier):
@@ -23,7 +23,7 @@ class xAgeSDLBoolShowHide(ptMultiModifier):
             PtDebugPrint(('ERROR: xAgeSDLBoolShowHide.OnFirstUpdate():\tERROR: missing SDL var name on %s' % self.sceneobject.getName()))
         # fix for pages that are loaded deferred
         import xUserKI
-        if (boolFirstUpdate.value or (xUserKI.AgeInitialized())): # if it is already initialized now, we are loaded dynamically
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
             self.OnServerInitComplete()
 
 

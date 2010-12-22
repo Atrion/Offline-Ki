@@ -5,7 +5,7 @@ import string
 actTrigger = ptAttribActivator(1, 'Activator')
 stringVarName = ptAttribString(2, 'Age SDL Var Name')
 stringInfo = ptAttribString(5, 'Extra info to pass along')
-boolFirstUpdate = ptAttribBoolean(6, 'Init SDL On First Update?', 0)
+#boolFirstUpdate = ptAttribBoolean(6, 'Init SDL On First Update?', 0)
 boolCurrentValue = false
 AgeStartedIn = None
 
@@ -25,7 +25,7 @@ class xAgeSDLBoolToggle(ptResponder):
             PtDebugPrint('ERROR: xAgeSDLBoolToggle.OnFirstUpdate():\tERROR: missing SDL var name')
         # fix for pages that are loaded deferred
         import xUserKI
-        if (boolFirstUpdate.value or (xUserKI.AgeInitialized())): # if it is already initialized now, we are loaded dynamically
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
             self.OnServerInitComplete()
 
 

@@ -6,7 +6,7 @@ actTrigger = ptAttribActivator(1, 'Activator')
 stringVarName = ptAttribString(2, 'Age SDL Var Name')
 intValue = ptAttribInt(7, 'Set Var to:', rang=(0, 1))
 stringInfo = ptAttribString(8, 'Extra info to pass along')
-boolFirstUpdate = ptAttribBoolean(9, 'Init SDL On First Update?', 0)
+#boolFirstUpdate = ptAttribBoolean(9, 'Init SDL On First Update?', 0)
 AgeStartedIn = None
 
 class xAgeSDLBoolSet(ptResponder):
@@ -21,7 +21,7 @@ class xAgeSDLBoolSet(ptResponder):
     def OnFirstUpdate(self):
         # fix for pages that are loaded deferred
         import xUserKI
-        if (boolFirstUpdate.value or (xUserKI.AgeInitialized())): # if it is already initialized now, we are loaded dynamically
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
             self.OnServerInitComplete()
 
 

@@ -43,7 +43,7 @@ strStates = ptAttribString(3, 'Value/State Pairs')
 boolStartFF = ptAttribBoolean(4, 'F-Forward on start', 0)
 boolVaultManagerFF = ptAttribBoolean(5, 'F-Forward on VM notifications', 0)
 intDefault = ptAttribInt(6, 'Default setting', 0)
-boolFirstUpdate = ptAttribBoolean(7, 'Eval On First Update?', 0)
+#boolFirstUpdate = ptAttribBoolean(7, 'Eval On First Update?', 0)
 class xAgeSDLIntStateListResp(ptResponder,):
 
 
@@ -63,14 +63,13 @@ class xAgeSDLIntStateListResp(ptResponder,):
             PtDebugPrint('ERROR: xAgeSDLIntStateListResp.OnFirstUpdate():\tERROR: missing SDL var name in max file')
         # fix for pages that are loaded deferred
         import xUserKI
-        if (boolFirstUpdate.value or (xUserKI.AgeInitialized())): # if it is already initialized now, we are loaded dynamically
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
             self.Initialize()
 
 
 
     def OnServerInitComplete(self):
-        if (not boolFirstUpdate.value):
-            self.Initialize()
+        self.Initialize()
 
 
 
