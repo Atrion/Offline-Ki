@@ -23,6 +23,10 @@ class xAgeSDLBoolAndRespond(ptResponder):
     def OnFirstUpdate(self):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
+        # fix for pages that are loaded deferred
+        import xUserKI
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
+            self.OnServerInitComplete()
 
 
     def OnServerInitComplete(self):

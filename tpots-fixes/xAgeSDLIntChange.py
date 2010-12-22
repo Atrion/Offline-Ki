@@ -28,6 +28,10 @@ class xAgeSDLIntChange(ptResponder):
         AgeStartedIn = PtGetAgeName()
         if (not (((type(stringVarName.value) == type('')) and (stringVarName.value != '')))):
             PtDebugPrint('ERROR: xAgeSDLIntChange.OnFirstUpdate():\tERROR: missing SDL var name in max file')
+        # fix for pages that are loaded deferred
+        import xUserKI
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
+            self.OnServerInitComplete()
 
 
     def OnServerInitComplete(self):

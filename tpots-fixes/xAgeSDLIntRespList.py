@@ -28,6 +28,10 @@ class xAgeSDLIntRespList(ptResponder):
             PtDebugPrint('ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing SDL var name in max file')
         elif ((type(stringFormat.value) != type('')) or (stringFormat.value == '')):
             PtDebugPrint('ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing responder name format string in max file')
+        # fix for pages that are loaded deferred
+        import xUserKI
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
+            self.OnServerInitComplete()
 
 
     def OnServerInitComplete(self):

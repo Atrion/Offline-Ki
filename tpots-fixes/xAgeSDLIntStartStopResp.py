@@ -34,6 +34,10 @@ class xAgeSDLIntStartStopResp(ptResponder):
                 PtDebugPrint('ERROR: xAgeSDLIntStartStopResp.OnFirstUpdate():\tERROR: couldn\'t process start state list')
         else:
             PtDebugPrint('ERROR: xAgeSDLIntStartStopResp.OnFirstUpdate():\tERROR: missing SDL var name in max file')
+        # fix for pages that are loaded deferred
+        import xUserKI
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
+            self.OnServerInitComplete()
 
 
     def OnServerInitComplete(self):

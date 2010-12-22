@@ -28,6 +28,10 @@ class xAgeSDLIntShowHide(ptMultiModifier):
                 PtDebugPrint('ERROR: xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: couldn\'t process start state list')
         else:
             PtDebugPrint('ERROR: xAgeSDLBoolShowHide.OnFirstUpdate():\tERROR: missing SDL var name')
+        # fix for pages that are loaded deferred
+        import xUserKI
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
+            self.OnServerInitComplete()
 
 
     def OnServerInitComplete(self):

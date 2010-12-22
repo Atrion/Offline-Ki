@@ -23,6 +23,10 @@ class xAgeSDLBoolToggleDependent(ptResponder):
         AgeStartedIn = PtGetAgeName()
         if (not (((type(stringVarTarget.value) == type('')) and (stringVarTarget.value != '')))):
             PtDebugPrint('ERROR: xAgeSDLBoolToggleDependent.OnFirstUpdate():\tERROR: missing SDL var name')
+        # fix for pages that are loaded deferred
+        import xUserKI
+        if xUserKI.AgeInitialized(): # if it is already initialized now, we are loaded dynamically
+            self.OnServerInitComplete()
 
 
     def OnServerInitComplete(self):
