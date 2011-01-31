@@ -327,7 +327,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         if not valid or not data[1]: return True
         # find out where to link
         onlyMe = len(data[1]) == 1 and data[1][0].getPlayerID() == PtGetLocalClientID()
-        als = xUserKI.GetAgeLinkStruct(ki, data[0][0], data[0][1], not onlyMe) # if a player was manually specified, we need the full UUID
+        als = xUserKI.GetAgeLinkStruct(ki, data[0][0], data[0][1], needFullInfo = not onlyMe) # if a player was manually specified, we need the full UUID
         if type(als) == type(None): return True
         # link the players
         linkMgr = ptNetLinkingMgr()

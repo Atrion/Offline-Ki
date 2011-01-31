@@ -188,8 +188,8 @@ commands = '''=== Avatar appearance and animation commands ===
 */warp <x coordinate> <y coordinate> <z coordinate> <[list of objects]>|<warp location> <[list of objects]>|<target object> <[list of objects]>
 */scale <scale factor> <[list of objects]>|<scale x> <scale y> <scale z> <[list of objects]>
 */rot <angle> <[axis (x|y|z)]> <[list of objects]>
-*/attach <object> <list of objects> - works only offline
-*/detach <object> <list of objects> - works only offline
+*/attach <parent object> <list of child objects> - works only offline
+*/detach <parent object> <list of child objects> - works only offline
 *Esc key - Toggles flymode for the avatar
 *Up arrow - Move forward
 *Back arrow - Move backward

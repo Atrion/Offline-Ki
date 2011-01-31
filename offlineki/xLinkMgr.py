@@ -164,7 +164,7 @@ def GetAgeLinkStruct(agename, spawnpoint = None, needFullInfo = False):
         return 'Linking to age %s is not possible' % agename
     ageInfo = _AvailableLinks[agename]
     if spawnpoint == None: spawnpoint = ageInfo.defaultSpawnpoint
-    # check age availability
+    # check general age availability
     if (not IsAgeAvailable(agename)):
         return 'The age %s is not available.' % ageInfo.displayName
     # check subage

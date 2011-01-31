@@ -512,7 +512,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             if not silent: ki.IAddRTChat(None, 'Rotated %s by %d degrees around the %s-axis' % (xUserKI.GetObjectName(object), data[0], data[1]), 0)
         return True
     if (xxConfig.isOffline() and cmnd in ['attach', 'detach']): # this does not seem to be broadcasted via network :( so it's offline only
-        (valid, data) = xUserKI.GetArg(ki, cmnd, args, 'object> <list of objects',
+        (valid, data) = xUserKI.GetArg(ki, cmnd, args, 'parent object> <list of child objects',
           lambda args: len(args) >= 2, lambda args: (xUserKI.GetObject(ki, args[0], playerList), xUserKI.GetObjects(ki, args[1:], playerList)))
         if not valid or not data[0] or not data[1]: return True
         # attach or detach objects
