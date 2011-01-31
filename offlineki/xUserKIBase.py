@@ -311,7 +311,7 @@ def OnDefaultKey(ki, isShift, isCtrl, keycode):
 def OnNewAgeLoaded(ki, firstAge):
     # load additional pages
     if PtGetAgeName() in xxConfig.AutoPages:
-        PtPageInNode(xxConfig.AutoPages[PtGetAgeName()])
+        PtPageInNode(xxConfig.AutoPages[PtGetAgeName()]) # we expect these pages to belong to the current age, so we do not care about unloading them
     if xxConfig.isOnline():
         # some online-only things
         global gOnlineState, gCrashTimerRunning
@@ -332,7 +332,7 @@ def OnNewAgeLoaded(ki, firstAge):
         PtSendRTChat(PtGetLocalPlayer(), [], "/!getauthlevel", xKI.ChatFlags(0).flags) # we update after every linking because it coud have changed
         # shard identifier (not expected to change)
         if firstAge:
-            PtSendRTChat(PtGetLocalPlayer(), [], "/!getshardidentifier", xKI.ChatFlags(0).flags) # we update after every linking because it coud have changed
+            PtSendRTChat(PtGetLocalPlayer(), [], "/!getshardidentifier", xKI.ChatFlags(0).flags)
     else:
         # some offline-only things
         xxConfig.accessLevel = 0 # full access - everyone is an admin offline

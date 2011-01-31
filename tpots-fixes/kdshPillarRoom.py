@@ -75,6 +75,18 @@ class kdshPillarRoom(ptResponder):
 
 
     def OnServerInitComplete(self):
+        # delay initialization (so that the MOUL page with the sparkly is loaded)
+        PtAtTimeCallback(self.key, 0.5, 42)
+    
+    def DoDelayedInit(self):
+        # fix (partially by D'Lanor) to attach sparkly to pillar
+        import xUserKI
+        objSparklyDecal = PtFindSceneobject('CalendarStarDecal', PtGetAgeName()) # leave the spark and the regions where they are, they are not supposed to move
+        objPillar = PtFindSceneobject('pillar03', PtGetAgeName())
+        dst = objPillar.position()
+        xUserKI.WarpObjectToPos(objSparklyDecal, dst.getX(), dst.getY(), dst.getZ()) # warp decal to pillar (it will be just at the top)
+        PtAttachObject(objSparklyDecal.getKey(), objPillar.getKey()) # and attach the two to each other
+        # end of fix
         ageSDL = PtGetAgeSDL()
         if (ageSDL == None):
             print 'kdshPillarRoom.OnFirstUpdate():\tERROR---missing SDL (%s)'
@@ -355,6 +367,8 @@ class kdshPillarRoom(ptResponder):
             if Resetting:
                 ageSDL['PillarsResetting'] = (0,)
                 Resetting = 0
+        elif (id == 42): # Initialization
+            self.DoDelayedInit()
 
 
     def DisableAppropriateLadders(self, pillar):
