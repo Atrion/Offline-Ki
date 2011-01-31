@@ -44,87 +44,88 @@ class xStandardDoor(ptResponder):
 
 
     def OnServerInitComplete(self):
+        if (AgeStartedIn != PtGetAgeName()):
+            raise Exception("Very serious problem: AgeStartedIn (%s) != current age (%s)" % (AgeStartedIn, PtGetAgeName()))
         global boolEnableOK
-        if (AgeStartedIn == PtGetAgeName()):
-            ageSDL = PtGetAgeSDL()
-            ageSDL.setFlags(stringSDLVarClosed.value, 1, 1)
-            ageSDL.sendToClients(stringSDLVarClosed.value)
-            ageSDL.setNotify(self.key, stringSDLVarClosed.value, 0.0)
-            ageSDL.setNotify(self.key, stringSDLVarEnabled.value, 0.0)
-            try:
-                doorClosed = ageSDL[stringSDLVarClosed.value][0]
-            except:
-                doorClosed = true
-                PtDebugPrint('xStandardDoor.OnServerInitComplete():\tERROR: age sdl read failed, defaulting door closed value')
-            PtDebugPrint(('xStandardDoor.OnServerInitComplete():\tageSDL[%s] = %d' % (stringSDLVarClosed.value, doorClosed)))
-            try:
-                if (stringSDLVarEnabled.value != ''):
-                    doorEnabled = ageSDL[stringSDLVarEnabled.value][0]
-                else:
-                    doorEnabled = true
-            except:
+        ageSDL = PtGetAgeSDL()
+        ageSDL.setFlags(stringSDLVarClosed.value, 1, 1)
+        ageSDL.sendToClients(stringSDLVarClosed.value)
+        ageSDL.setNotify(self.key, stringSDLVarClosed.value, 0.0)
+        ageSDL.setNotify(self.key, stringSDLVarEnabled.value, 0.0)
+        try:
+            doorClosed = ageSDL[stringSDLVarClosed.value][0]
+        except:
+            doorClosed = true
+            PtDebugPrint('xStandardDoor.OnServerInitComplete():\tERROR: age sdl read failed, defaulting door closed value')
+        PtDebugPrint(('xStandardDoor.OnServerInitComplete():\tageSDL[%s] = %d' % (stringSDLVarClosed.value, doorClosed)))
+        try:
+            if (stringSDLVarEnabled.value != ''):
+                doorEnabled = ageSDL[stringSDLVarEnabled.value][0]
+            else:
                 doorEnabled = true
-                PtDebugPrint('xStandardDoor.OnServerInitComplete():\tERROR: age sdl read failed, defaulting door enabled')
-            if (len(PtGetPlayerList()) == 0):
-                if (boolForceOpen.value and doorClosed):
-                    doorClosed = 0
-                    ageSDL.setTagString(stringSDLVarClosed.value, 'ignore')
-                    ageSDL[stringSDLVarClosed.value] = (0,)
-                    PtDebugPrint("xStandardDoor.OnServerInitComplete():\tdoor closed, but I'm the only one here...opening")
-                elif (boolForceClose.value and (not doorClosed)):
-                    doorClosed = 1
-                    ageSDL.setTagString(stringSDLVarClosed.value, 'ignore')
-                    ageSDL[stringSDLVarClosed.value] = (1,)
-                    PtDebugPrint("xStandardDoor.OnServerInitComplete():\tdoor open, but I'm the only one here...closing")
-            if (not boolOwnedDoor.value):
+        except:
+            doorEnabled = true
+            PtDebugPrint('xStandardDoor.OnServerInitComplete():\tERROR: age sdl read failed, defaulting door enabled')
+        if (len(PtGetPlayerList()) == 0):
+            if (boolForceOpen.value and doorClosed):
+                doorClosed = 0
+                ageSDL.setTagString(stringSDLVarClosed.value, 'ignore')
+                ageSDL[stringSDLVarClosed.value] = (0,)
+                PtDebugPrint("xStandardDoor.OnServerInitComplete():\tdoor closed, but I'm the only one here...opening")
+            elif (boolForceClose.value and (not doorClosed)):
+                doorClosed = 1
+                ageSDL.setTagString(stringSDLVarClosed.value, 'ignore')
+                ageSDL[stringSDLVarClosed.value] = (1,)
+                PtDebugPrint("xStandardDoor.OnServerInitComplete():\tdoor open, but I'm the only one here...closing")
+        if (not boolOwnedDoor.value):
+            boolEnableOK = true
+        else:
+            vault = ptVault()
+            if vault.amOwnerOfCurrentAge():
+                PtDebugPrint('xStandardDoor.OnServerInitComplete():\tWelcome Home!')
                 boolEnableOK = true
             else:
-                vault = ptVault()
-                if vault.amOwnerOfCurrentAge():
-                    PtDebugPrint('xStandardDoor.OnServerInitComplete():\tWelcome Home!')
-                    boolEnableOK = true
-                else:
-                    PtDebugPrint('xStandardDoor.OnServerInitComplete():\tWelcome Visitor.')
-                    boolEnableOK = false
-            if (not doorEnabled):
+                PtDebugPrint('xStandardDoor.OnServerInitComplete():\tWelcome Visitor.')
                 boolEnableOK = false
-            if (not doorClosed):
-                xrgnDoorBlocker.releaseNow(self.key)
-                if len(respOpenExt.value):
-                    respOpenExt.run(self.key, fastforward=1)
-                elif len(respOpenInt.value):
-                    respOpenInt.run(self.key, fastforward=1)
-                else:
-                    PtDebugPrint("xStandardDoor.OnServerInitComplete():\tERROR - no open responder defined, can't init door open")
-                if (boolCanManualClose.value and boolEnableOK):
-                    actExterior.enable()
-                    actInterior.enable()
-                    PtAtTimeCallback(self.key, 0, 1) # the ID (last parameter) indicates "disable" or "enable"
-                else:
-                    actExterior.disable()
-                    actInterior.disable()
-                    PtAtTimeCallback(self.key, 0, 0) # the ID (last parameter) indicates "disable" or "enable"
+        if (not doorEnabled):
+            boolEnableOK = false
+        if (not doorClosed):
+            xrgnDoorBlocker.releaseNow(self.key)
+            if len(respOpenExt.value):
+                respOpenExt.run(self.key, fastforward=1)
+            elif len(respOpenInt.value):
+                respOpenInt.run(self.key, fastforward=1)
             else:
-                xrgnDoorBlocker.clearNow(self.key)
-                if boolCanAutoClose.value:
-                    respAutoClose.run(self.key, fastforward=1)
-                elif boolCanManualClose.value:
-                    if len(respCloseExt.value):
-                        respCloseExt.run(self.key, fastforward=1)
-                    elif len(respCloseInt.value):
-                        respCloseInt.run(self.key, fastforward=1)
-                    else:
-                        PtDebugPrint("xStandardDoor.OnServerInitComplete():\tERROR - no close responder defined, can't init door closed")
+                PtDebugPrint("xStandardDoor.OnServerInitComplete():\tERROR - no open responder defined, can't init door open")
+            if (boolCanManualClose.value and boolEnableOK):
+                actExterior.enable()
+                actInterior.enable()
+                PtAtTimeCallback(self.key, 0, 1) # the ID (last parameter) indicates "disable" or "enable"
+            else:
+                actExterior.disable()
+                actInterior.disable()
+                PtAtTimeCallback(self.key, 0, 0) # the ID (last parameter) indicates "disable" or "enable"
+        else:
+            xrgnDoorBlocker.clearNow(self.key)
+            if boolCanAutoClose.value:
+                respAutoClose.run(self.key, fastforward=1)
+            elif boolCanManualClose.value:
+                if len(respCloseExt.value):
+                    respCloseExt.run(self.key, fastforward=1)
+                elif len(respCloseInt.value):
+                    respCloseInt.run(self.key, fastforward=1)
                 else:
-                    PtDebugPrint("xStandardDoor.OnServerInitComplete():\tWARNING: door set to neither manual close nor auto close, can't init closed")
-                if boolEnableOK:
-                    actExterior.enable()
-                    actInterior.enable()
-                    PtAtTimeCallback(self.key, 0, 1) # the ID (last parameter) indicates "disable" or "enable"
-                else:
-                    actExterior.disable()
-                    actInterior.disable()
-                    PtAtTimeCallback(self.key, 0, 0) # the ID (last parameter) indicates "disable" or "enable"
+                    PtDebugPrint("xStandardDoor.OnServerInitComplete():\tERROR - no close responder defined, can't init door closed")
+            else:
+                PtDebugPrint("xStandardDoor.OnServerInitComplete():\tWARNING: door set to neither manual close nor auto close, can't init closed")
+            if boolEnableOK:
+                actExterior.enable()
+                actInterior.enable()
+                PtAtTimeCallback(self.key, 0, 1) # the ID (last parameter) indicates "disable" or "enable"
+            else:
+                actExterior.disable()
+                actInterior.disable()
+                PtAtTimeCallback(self.key, 0, 0) # the ID (last parameter) indicates "disable" or "enable"
 
 
     def OnTimer(self, id):

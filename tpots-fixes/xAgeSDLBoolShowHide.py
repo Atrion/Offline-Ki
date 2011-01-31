@@ -28,21 +28,22 @@ class xAgeSDLBoolShowHide(ptMultiModifier):
 
 
     def OnServerInitComplete(self):
+        if (AgeStartedIn != PtGetAgeName()):
+            raise Exception("Very serious problem: AgeStartedIn (%s) != current age (%s)" % (AgeStartedIn, PtGetAgeName()))
         stringVarName.value = stringVarName.value.strip() # fix for broken SDL var name in NeighborhoodMOUL
-        if (AgeStartedIn == PtGetAgeName()):
-            ageSDL = PtGetAgeSDL()
-            if ((type(stringVarName.value) == type('')) and (stringVarName.value != '')):
-                try:
-                    ageSDL.setNotify(self.key, stringVarName.value, 0.0)
-                    ageSDL.setFlags(stringVarName.value, 1, 1)
-                    ageSDL.sendToClients(stringVarName.value)
-                    if (not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value)):
-                        self.EnableObject()
-                    else:
-                        self.DisableObject()
-                except:
-                    PtDebugPrint('ERROR: xAgeSDLBoolShowHide.OnServerInitComplete():\tERROR accessing ageSDL on %s (%s)' % (self.sceneobject.getName(), stringVarName.value))
-            else:
+        ageSDL = PtGetAgeSDL()
+        if ((type(stringVarName.value) == type('')) and (stringVarName.value != '')):
+            try:
+                ageSDL.setNotify(self.key, stringVarName.value, 0.0)
+                ageSDL.setFlags(stringVarName.value, 1, 1)
+                ageSDL.sendToClients(stringVarName.value)
+                if (not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value)):
+                    self.EnableObject()
+                else:
+                    self.DisableObject()
+            except:
+                PtDebugPrint('ERROR: xAgeSDLBoolShowHide.OnServerInitComplete():\tERROR accessing ageSDL on %s (%s)' % (self.sceneobject.getName(), stringVarName.value))
+        else:
                 PtDebugPrint(('ERROR: xAgeSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s' % self.sceneobject.getName()))
 
 
