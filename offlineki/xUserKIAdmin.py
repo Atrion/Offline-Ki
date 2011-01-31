@@ -65,9 +65,6 @@ setData = {
     'BaronCityOffice': {
         'tree': ['bcoChristmasVis']
     },
-    'AhnonayMOUL': {
-        'sphere': []
-    }
 }
 
 # loop variables
@@ -417,12 +414,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             for sdl in ageData[option]: xUserKI.SetSDL(sdl, 0, value)
         else:
             # one of the special options
-            if age == 'AhnonayMOUL' and option == 'sphere':
-                if value not in [1, 2, 3, 4]:
-                    ki.IDoErrorChatMessage('Invalid value, allowed values are 1 to 4')
-                    return True
-                xUserKI.SetSDL('ahnyCurrentSphere', 0, value)
-            elif age == 'city' and option == 'stage':
+            if age == 'city' and option == 'stage':
                 if value not in [0, 1, 2]:
                     ki.IDoErrorChatMessage('Invalid value %d - must be 0 to 2' % value)
                     return True

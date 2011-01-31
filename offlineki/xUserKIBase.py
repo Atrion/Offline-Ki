@@ -785,8 +785,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             ki.IDoErrorChatMessage('This command can only be used in Relto')
         return True
     if (cmnd in ['reltostars', 'noreltostars']):
-        age = PtGetAgeName()
-        if age != 'Personal':
+        if PtGetAgeName() != 'Personal':
             ki.IDoErrorChatMessage('This can only be done in your Relto')
             return True
         # Hide/show some objects
@@ -806,6 +805,16 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             PtConsoleNet('Graphics.Renderer.SetClearColor .4 .4 .5', 1)
             xUserKIAdmin.ApplyStruct('noreltostars')
             if not silent: ki.IAddRTChat(None, 'Removed the stars from your Relto', 0)
+        return True
+    if (cmnd == 'rotsphere'):
+        if (PtGetAgeName() != 'AhnonayMOUL'):
+            ki.IDoErrorChatMessage('This command can only be used in the MOUL version of Ahnonay')
+            return True
+        sphere = int(xUserKI.GetSDL('ahnyCurrentSphere', 0))+1
+        if sphere < 1 or sphere > 4:
+            sphere = 1 # handle overflow and invalid values
+        xUserKI.SetSDL('ahnyCurrentSphere', 0, sphere)
+        if not silent: ki.IAddRTChat(None, 'Switched to the next sphere.', 0)
         return True
 # Dusitin special: Quit command
     if (cmnd == 'quit'):
