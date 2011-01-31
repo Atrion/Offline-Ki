@@ -774,8 +774,19 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         import xCheat
         xCheat.GetAllYeeshaPages(0)
         if not silent:
-            if (PtGetAgeName() == 'Personal'): ki.IAddRTChat(None, 'Enabled all the Yeesha pages. Please re-link.', 0)
+            if (PtGetAgeName() == 'Personal'): ki.IAddRTChat(None, 'Enabled all the Yeesha pages. Please re-link to see the changes.', 0)
             else: ki.IAddRTChat(None, 'Enabled all the Yeesha pages.', 0)
+        return True
+    if (cmnd == 'getsparklies'):
+        vault = ptVault()
+        psnlSDL = vault.getPsnlAgeSDL()
+        for n in range(1,13): # numbers 1 to 12
+            name = 'psnlCalendarStone%02d' % n
+            psnlSDL.findVar(name).setBool(True)
+        vault.updatePsnlAgeSDL(psnlSDL)
+        if not silent:
+            if (PtGetAgeName() == 'Personal'): ki.IAddRTChat(None, 'Enabled all the Sparklies. Please re-link to see the changes.', 0)
+            else: ki.IAddRTChat(None, 'Enabled all the Sparklies.', 0)
         return True
     if (cmnd == 'getzandoni'):
         import xSndLogTracks

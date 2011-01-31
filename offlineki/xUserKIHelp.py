@@ -134,6 +134,7 @@ commands = '''=== Avatar appearance and animation commands ===
 */growtree - requires admin access
 */shrinktree - requires admin access
 */getyeeshapages - requires admin access
+*/getsparklies - requires admin access
 */getfirstweek - requires admin access
 
 === Admin, age developer and control commands ===
