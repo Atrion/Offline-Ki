@@ -24,6 +24,8 @@ class dustReltoDynCovers(ptResponder):
         ptResponder.__init__(self)
         self.id = 15092
         self.version = 1
+        import booksDustGlobal
+        booksDustGlobal.DynCoverLoaded = True # store that we exist (so the POTS patches are applied)
 
 
     def OnFirstUpdate(self):

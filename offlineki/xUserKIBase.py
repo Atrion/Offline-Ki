@@ -312,6 +312,12 @@ def OnNewAgeLoaded(ki, firstAge):
     # load additional pages
     if PtGetAgeName() in xxConfig.AutoPages:
         PtPageInNode(xxConfig.AutoPages[PtGetAgeName()]) # we expect these pages to belong to the current age, so we do not care about unloading them
+    # check if the POTS additions are installed (can only be done in Relto)
+    if PtGetAgeName() == 'Personal':
+        import booksDustGlobal
+        if not booksDustGlobal.DynCoverLoaded:
+            ki.IDoErrorChatMessage('You do not have the POTS Patches applied, so you will miss some functionality. To get them, select the "Coversion" tab '+
+                'in Drizzle, select your POTS folder, and hit the "Start" button next to that selection.')
     if xxConfig.isOnline():
         # some online-only things
         global gOnlineState, gCrashTimerRunning
