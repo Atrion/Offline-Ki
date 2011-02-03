@@ -22,7 +22,7 @@ class xDynamicPanel(ptResponder,):
         ptResponder.__init__(self)
         self.id = 1049698
         self.version = 1
-        minor = 0
+        minor = 1
         self.me = self.__class__.__name__
         print ('__init__%s v. %d.%d' % (self.me,
          self.version,
@@ -34,18 +34,22 @@ class xDynamicPanel(ptResponder,):
         global SolutionList
         try:
             actList = []
+            objList = []
             for act in actButtons.value:
-                actList.append(act.getParentKey().getName())
+                actList.append(act)
+                objList.append(act.getParentKey().getName())
             #print actList
+            #print objList
             respList = []
             for resp in respButtons.value:
                 respList.append(resp.getName())
             #print respList
-            if (len(actList) != len(respList)):
+            if (len(objList) != len(respList)):
                 print ('ERROR: %s.OnFirstUpdate: ActivatorList and ResponderList mismatch' % self.me)
                 return 
-            for i in range(len(actList)):
+            for i in range(len(objList)):
                 ButtonDict[(i + 1)] = (actList[i],
+                 objList[i],
                  respList[i])
 
             print ('%s.OnFirstUpdate: Resulting dictionary = %s' % (self.me,
@@ -84,12 +88,12 @@ class xDynamicPanel(ptResponder,):
         if (0 in ButtonsPushed):
             ageSDL[ButtonsSDL.value] = ('0',)
             for i in ButtonDict:
-                (act, resp,) = ButtonDict[i]
+                (act, obj, resp,) = ButtonDict[i]
                 respButtons.run(self.key, state='up', objectName=resp, fastforward=1)
 
         else:
             for i in ButtonDict:
-                (act, resp,) = ButtonDict[i]
+                (act, obj, resp,) = ButtonDict[i]
                 if (i in ButtonsPushed):
                     respButtons.run(self.key, state='down', objectName=resp, fastforward=1)
                 else:
@@ -97,6 +101,9 @@ class xDynamicPanel(ptResponder,):
 
         if ageSDL[StartedSDL.value][0]:
             respStartOn.run(self.key, fastforward=1)
+            for i in ButtonDict:
+                (act, obj, resp,) = ButtonDict[i]
+                act.disable()
             self.CheckSolution(1)
         else:
             respStartOff.run(self.key, fastforward=1)
@@ -113,8 +120,8 @@ class xDynamicPanel(ptResponder,):
                     xEvent = event[3]
                     btnName = xEvent.getName()
                     for d in ButtonDict:
-                        (act, resp,) = ButtonDict[d]
-                        if (act == btnName):
+                        (act, obj, resp,) = ButtonDict[d]
+                        if (obj == btnName):
                             id = d
                             break
 
@@ -135,7 +142,7 @@ class xDynamicPanel(ptResponder,):
                     break
 
             objAvatar = PtFindAvatar(events)
-            (act, resp,) = ButtonDict[id]
+            (act, obj, resp,) = ButtonDict[id]
             if wasDown:
                 respButtons.run(self.key, state='up', avatar=objAvatar, objectName=resp, netForce=1)
             else:
@@ -181,8 +188,14 @@ class xDynamicPanel(ptResponder,):
         if (VARname == StartedSDL.value):
             if (SDLvalue == 0):
                 respStartOff.run(self.key, avatar=objAvatar, netPropagate=0, fastforward=ff)
+                for i in ButtonDict:
+                    (act, obj, resp,) = ButtonDict[i]
+                    act.enable()
             else:
                 respStartOn.run(self.key, avatar=objAvatar, netPropagate=0, fastforward=ff)
+                for i in ButtonDict:
+                    (act, obj, resp,) = ButtonDict[i]
+                    act.disable()
 
 
 
