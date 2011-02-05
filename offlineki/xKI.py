@@ -8752,8 +8752,6 @@ class MarkerGame:
 
 
 class DPLStatusLine:
-
-
     def __init__(self, text, color = None):
         self.text = text
         self.color = color
@@ -8774,8 +8772,6 @@ class DPLStatusLine:
 
 
 class DPLBranchStatusLine(DPLStatusLine,):
-
-
     def __init__(self, text, closePrev = 0):
         DPLStatusLine.__init__(self, text)
         self.closePrev = closePrev
@@ -8805,8 +8801,7 @@ class QuestionNote:
 
 
 
-
-
+class MarkerGameJoinQuestion(QuestionNote):
     def __init__(self, gameMasterID, roundLength, gameType, numberMarkers):
         self.game = MarkerGame(gameMasterID)
         self.game.setGame(roundLength, gameType, numberMarkers)
