@@ -3,7 +3,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaNetConstants import *
 from xPsnlVaultSDL import *
-import ConfigParser
 import time
 import PlasmaControlKeys
 import xLinkMgr
@@ -294,147 +293,34 @@ class TUruAgeManager(ptResponder):
             print message
             return
             #Dustin new end
-            if self.newfile:
-                try:
-                    ini = ConfigParser.ConfigParser()
-                    ini.readfp(open('UruAgeManager.int'))
-                    deb = ini.get('API', 'debug')
-                    if (deb == '0'):
-                        self.debug = false
-                    else:
-                        self.debug = true
-                        self.f = file('UruAgeManager.out', 'w+')
-                        self.f.write((('Uru Age Manager output file.  Date: ' + time.asctime()) + '\n'))
-                        self.f.write((str(message) + '\n'))
-                        self.f.flush()
-                    self.newfile = false
-                except:
-                    self.debug = false
-                    self.newfile = false
-            else:
-                try:
-                    self.f.write((str(message) + '\n'))
-                    self.f.flush()
-                except:
-                    pass
 
 
     def getListOfAges(self):
         result = []
-        try:
-            ini = ConfigParser.ConfigParser()
-            ini.readfp(open('UruAgeManager.int'))
-            numbers = ini.options('filenames')
-            ageCount = len(numbers)
-            i = 2
-            while (i <= ageCount):
-                number = str(i)
-                try:
-                    filename = ini.get('filenames', number)
-                    if (filename != ''):
-                        result.append(filename)
-                except:
-                    print 'Dustin: UAM Error: Could not load information from UruAgeManager.int from record:',
-                    print number
-                i = (i + 1)
-        except:
-            print 'Dustin: UAM Error: Could not load UruAgeManager.int'
         ini = None
         return result
 
 
     def getLinkingImage(self, ageName):
         result = ''
-        try:
-            ini = ConfigParser.ConfigParser()
-            ini.readfp(open('UruAgeManager.int'))
-            numbers = ini.options('filenames')
-            ageCount = len(numbers)
-            i = 1
-            while (i <= ageCount):
-                number = str(i)
-                try:
-                    filename = ini.get('filenames', number)
-                    if (filename == ageName):
-                        result = ini.get('linkingimages', number)
-                except:
-                    print 'Dustin: UAM Error: Could not load information from UruAgeManager.int from record:',
-                    print number
-                i = (i + 1)
-        except:
-            print 'Dustin: UAM Error: Could not load UruAgeManager.int'
         ini = None
         return result
 
 
     def getFlyby(self, ageName):
         result = ''
-        try:
-            ini = ConfigParser.ConfigParser()
-            ini.readfp(open('UruAgeManager.int'))
-            numbers = ini.options('filenames')
-            ageCount = len(numbers)
-            i = 1
-            while (i <= ageCount):
-                number = str(i)
-                try:
-                    filename = ini.get('filenames', number)
-                    if (filename == ageName):
-                        result = ini.get('flybys', number)
-                except:
-                    print 'Dustin: UAM Error: Could not load information from UruAgeManager.int from record:',
-                    print number
-                i = (i + 1)
-        except:
-            print 'Dustin: UAM Error: Could not load UruAgeManager.int'
         ini = None
         return result
 
 
     def getText(self, ageName):
         result = ''
-        try:
-            ini = ConfigParser.ConfigParser()
-            ini.readfp(open('UruAgeManager.int'))
-            numbers = ini.options('filenames')
-            ageCount = len(numbers)
-            i = 1
-            while (i <= ageCount):
-                number = str(i)
-                try:
-                    filename = ini.get('filenames', number)
-                    if (filename == ageName):
-                        result = ini.get('texts', number)
-                except:
-                    print 'Dustin: UAM Error: Could not load information from UruAgeManager.int from record:',
-                    print number
-                i = (i + 1)
-        except:
-            print 'Dustin: UAM Error: Could not load UruAgeManager.int'
         ini = None
         return result
 
 
     def getDescription(self, ageName):
         result = ''
-        try:
-            ini = ConfigParser.ConfigParser()
-            ini.readfp(open('UruAgeManager.int'))
-            numbers = ini.options('filenames')
-            ageCount = len(numbers)
-            i = 1
-            while (i <= ageCount):
-                number = str(i)
-                try:
-                    filename = ini.get('filenames', number)
-                    if (filename == ageName):
-                        result = ini.get('descriptions', number)
-                except:
-                    print 'Dustin: UAM Error: Could not load information from UruAgeManager.int from record:',
-                    print number
-                i = (i + 1)
-        except:
-            print 'Dustin: UAM Error: Could not load UruAgeManager.int'
         ini = None
         return result
 
@@ -446,28 +332,6 @@ class TUruAgeManager(ptResponder):
         else:
             return ""
         #Dustin end new
-
-        result = ''
-        try:
-            ini = ConfigParser.ConfigParser()
-            ini.readfp(open('UruAgeManager.int'))
-            numbers = ini.options('filenames')
-            ageCount = len(numbers)
-            i = 1
-            while (i <= ageCount):
-                number = str(i)
-                try:
-                    filename = ini.get('filenames', number)
-                    if (filename == ageName):
-                        result = ini.get('spawnpoints', number)
-                except:
-                    print 'Dustin: UAM Error: Could not load information from UruAgeManager.int from record:',
-                    print number
-                i = (i + 1)
-        except:
-            print 'Dustin: UAM Error: Could not load UruAgeManager.int'
-        ini = None
-        return result
 
 
     def isAgeInstalled(self, ageName):

@@ -8,7 +8,7 @@ fixes = {}
 msgs = []
 
 linkingFiles = ['offlineki.pak', 'offlineki2.pak', 'tpots-addons.pak', 'tpots-fixes.pak', 'python.pak'] # pak files allowed to use linking commands
-overwritingFiles = ['offlineki.pak', 'tpots-addons.pak', 'tpots-fixes.pak'] # pak files allowed to overwrite files
+overwritingFiles = ['tpots-addons.pak', 'tpots-fixes.pak'] # pak files allowed to overwrite files
 overwrittenFiles = ['python.pak', 'journal.pak'] # pak files allowed to be (partially) overwritten
 
 ### useful functions
