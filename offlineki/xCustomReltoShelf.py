@@ -210,7 +210,7 @@ def BuildBook(bookname):
         print "xCustomReltoShelf: Source of page %s is %s" % (pagename, source)
             
         # "communication" with xLinkMgrGUIPopup
-        print 'xCustomReltoShelf: Setting xLinkingBookDefs enties'
+        print 'xCustomReltoShelf: Setting xLinkingBookDefs entries'
         xLinkingBookDefs.xAgeLinkingBooks[pagename] = (0, 1.0, 1.0, '',
             '%s%s'+(source % xLinkingBookDefs.kFirstLinkPanelID)) # fill in panel ID
         xLinkingBookDefs.xLinkDestinations[pagename] = page # we can access that later, in the click handler

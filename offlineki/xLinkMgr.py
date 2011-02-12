@@ -262,18 +262,13 @@ def GetCorrectFilename(age1):
         if age1.lower() == age2.lower(): return age2
     return age1 # not found
 
-def GetLinkingImage(agename, spawnpoint=None, width=512, height=512):
+def GetLinkingImage(agename, spawnpoint = None, width = 512, height = 512):
     if spawnpoint == None:
         # get default spawn point of that age (fail if the age dos not exist, that's okay)
         _LoadAvailableLinks()
         spawnpoint = _AvailableLinks[agename].defaultSpawnpoint
-#Dustin
-    filename = "img/LinkingImage_"+agename+"_"+spawnpoint+".jpg"
-    if(not os.path.exists(filename)):
-        # if the file doesn't exist with spawnpoint, try the one without
-        filename = "img/LinkingImage_"+agename+".jpg"
-        if(not os.path.exists(filename)):
-            filename = "img/LinkingImage_Void.jpg"
-    print "xLinkMgr: Using linking image: "+filename+" for "+agename+" ("+spawnpoint+")"
-    return PtLoadJPEGFromDisk(filename,width,height)
-#/Dustin
+    files = ['img/LinkingImage_%s_%s.jpg' % (agename, spawnpoint), 'img/LinkingImage_%s.jpg' % agename, 'img/LinkingImage_Void.jpg']
+    for file in files:
+        if os.path.exists(file):
+            return PtLoadJPEGFromDisk(file, width, height)
+    raise Exception("Not even the void image exists, nothing I can do")
