@@ -180,17 +180,14 @@ def LinkToAge(agename, spawnpoint = None):
     print 'xLinkMgr: Linking...'
 
 
+# If the spawnpoint is None, use the default one. If needFullInfo is True, we need the full UUID for the age.
 def GetAgeLinkStruct(agename, spawnpoint = None, needFullInfo = False):
-    # If the spawnpoint is None, use the default one. If needFullInfo is True, we need the full UUID for the age.
-    _LoadAvailableLinks()
-    agename = GetCorrectFilename(agename)
-    if not agename in _AvailableLinks:
-        return 'Linking to age %s is not possible' % agename
-    ageInfo = _AvailableLinks[agename]
-    if spawnpoint == None: spawnpoint = ageInfo.defaultSpawnpoint
     # check general age availability
     if (not IsAgeAvailable(agename)):
-        return 'The age %s is not available.' % ageInfo.displayName
+        return 'The age with filename \"%s\" is not available, or does not exist at all.' % agename
+    # get age info and correct spawn point
+    ageInfo = _AvailableLinks[agename]
+    if spawnpoint == None: spawnpoint = ageInfo.defaultSpawnpoint
     # check subage
     partnerAge = IsSubAge(PtGetAgeName()) # the name of the parent age of the current age
     if partnerAge == agename:
@@ -230,7 +227,7 @@ def GetAgeLinkStruct(agename, spawnpoint = None, needFullInfo = False):
             als.setSpawnPoint(ptSpawnPointInfo(ageInfo.spawnpoints[spawnpoint], spawnpoint))
             return als # done!
         # no spawn point specified in the linking definitions
-        # let's check if that age was already linked to, and the spawn point is registered there
+        # let's check if that age was already linked to, and the spawn point is registered in the vault
         if vinfo != None:
             spoints = vinfo.getSpawnPoints()
             for spoint in spoints:
@@ -280,7 +277,7 @@ def GetPublicLinks():
     return _PublicLinks[:] # return a copy of the list, not a reference
 
 
-def GetCorrectFilename(age1):
+def GetCorrectFilenameCase(age1): # takes a non-case-sensitive filename and returns the correct case, if existing
     _LoadAvailableLinks()
     for age2 in _AvailableLinks:
         if age1.lower() == age2.lower(): return age2

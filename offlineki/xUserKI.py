@@ -232,7 +232,7 @@ def JoinList(list):
 
 
 def GetAgeLinkStruct(ki, age, spawnpoint = None, needFullInfo = False):
-    als = xLinkMgr.GetAgeLinkStruct(age, spawnpoint, needFullInfo)
+    als = xLinkMgr.GetAgeLinkStruct(xLinkMgr.GetCorrectFilenameCase(age), spawnpoint, needFullInfo)
     if isinstance(als, str):
         ki.IDoErrorChatMessage(als)
         return None

@@ -2,8 +2,6 @@
 #==============================================================================#
 #                                                                              #
 #    Offline KI                                                                #
-#                                                                              #
-#    Copyright (C) 2004-2011  The Offline KI contributors                      #
 #    See the file AUTHORS for more info about the contributors                 #
 #                                                                              #
 #    This program is distributed in the hope that it will be useful,           #
