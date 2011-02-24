@@ -312,7 +312,7 @@ class xSimpleImager(ptModifier):
                                     textfrom = 'System'
                                 textsubject = element.noteGetTitle()
                                 message = xCensor.xCensor((xLocalization.xGlobal.xImagerMessage % (textfrom, textsubject, textbody)), theCensorLevel)
-                                message = self.RemoveHiddenText(message)[0]
+                                #message = self.RemoveHiddenText(message)[0]
                                 ImagerMap.textmap.drawText(kTextXStart, kTextYStart, message)
                                 ImagerMap.textmap.flush()
                         else:
@@ -324,22 +324,6 @@ class xSimpleImager(ptModifier):
             ImagerMap.textmap.clearToColor(ptColor(0, 0, 0, 0))
             ImagerMap.textmap.flush()
             PtDebugPrint(('xSimpleImager[%s]: no current element id to display' % ImagerName.value), level=kDebugDumpLevel)
-
-
-    def RemoveHiddenText(self, msg):
-        if (type(msg) == type('')):
-            newmsg = msg
-            hiddenlist = []
-            hidTxtStart = 0
-            while (hidTxtStart >= 0):
-                hidTxtStart = newmsg.find('<hiddentext>')
-                if (hidTxtStart >= 0):
-                    hidTxtEnd = newmsg.find('</hiddentext>')
-                    if (hidTxtEnd >= 0):
-                        hiddenlist.append(newmsg[(hidTxtStart + len('<hiddentext>')):hidTxtEnd])
-                        newmsg = (newmsg[:hidTxtStart] + newmsg[(hidTxtEnd + len('</hiddentext>')):])
-            return (newmsg, hiddenlist)
-        return (msg, [])
 
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):

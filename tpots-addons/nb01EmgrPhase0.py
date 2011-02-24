@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
@@ -86,22 +98,11 @@ StateVARs = {
 }
 
 def UpdateRecentVisitors(timerKey, prevplayers = [], deviceName = 'D\'ni  Imager Right'):
-    def RemoveHiddenText(msg):
-        if (type(msg) == type('')):
-            newmsg = msg
-            hiddenlist = []
-            hidTxtStart = 0
-            while (hidTxtStart >= 0):
-                hidTxtStart = newmsg.find('<hiddentext>')
-                if (hidTxtStart >= 0):
-                    hidTxtEnd = newmsg.find('</hiddentext>')
-                    if (hidTxtEnd >= 0):
-                        hiddenlist.append(newmsg[(hidTxtStart + len('<hiddentext>')):hidTxtEnd])
-                        newmsg = (newmsg[:hidTxtStart] + newmsg[(hidTxtEnd + len('</hiddentext>')):])
-            return (newmsg, hiddenlist)
-        return (msg, [])
-    def FormatPlayerInfo(playerdate, playername):
-        return ((playerdate + (' ' * (30 - len(playerdate)))) + playername)
+    def FormatPlayerInfo(playername, timestr = None):
+        if timestr == None:
+            currenttime = time.gmtime(PtGetDniTime())
+            timestr = time.strftime('%m/%d/%Y %I:%M %p', currenttime)
+        return timestr + (' ' * (30 - len(timestr))) + playername
     
     try:
         AmCCR = ptCCRMgr().getLevel()
@@ -148,49 +149,25 @@ def UpdateRecentVisitors(timerKey, prevplayers = [], deviceName = 'D\'ni  Imager
                 hiddentextstr = 'Exp1'
                 if playerlist:
                     # existing player list found, update it
-                    currenttime = time.gmtime(PtGetDniTime())
-                    currenttimestr = time.strftime('%m/%d/%Y %I:%M %p', currenttime)
-                    playername = PtGetLocalPlayer().getPlayerName()
-                    thetext = playerlist.getText()
-                    hidtxt = RemoveHiddenText(thetext)
-                    hidtxtfound = 0
-                    if (len(hidtxt[1]) > 0):
-                        for ht in hidtxt[1]:
-                            if (ht == hiddentextstr):
-                                hidtxtfound = 1
-                                break
-                    # build new text for us
                     if (PtDetermineKILevel() == kNormalKI):
-                        newtext = (((('<hiddentext>' + hiddentextstr) + '</hiddentext>') + FormatPlayerInfo(currenttimestr, playername)) + '\n')
-                    else:
-                        newtext = (('<hiddentext>' + hiddentextstr) + '</hiddentext>')
-                    # add it the correct way
-                    if hidtxtfound:
-                        # found hidden text ("<hiddentext>Exp1</hiddentext>"), so just add us
-                        if (PtDetermineKILevel() == kNormalKI):
-                            # truncate text if we add anything
-                            while ((thetext.count('\n') + 1) > 15):
-                                thetext = thetext[:thetext.rfind('\n')]
+                        # get text (without those hiddentext leftovers)
+                        thetext = playerlist.getText().replace('<hiddentext>Exp1</hiddentext>', '')
+                        # build new text for us
+                        newtext = FormatPlayerInfo(PtGetLocalPlayer().getPlayerName()) + '\n'
+                        # truncate text if we add anything
+                        while ((thetext.count('\n') + 1) > 15):
+                            thetext = thetext[:thetext.rfind('\n')]
                         thetext = newtext + thetext
-                    else:
-                        thetext = newtext
-                        for p in prevplayers:
-                            thetext += (FormatPlayerInfo(p[0], p[1]) + '\n')
-                    playerlist.setText(thetext)
-                    playerlist.save()
-                else:
-                    # add new player list
-                    # build text for current player
-                    currenttime = time.gmtime(PtGetDniTime())
-                    currenttimestr = time.strftime('%m/%d/%Y %I:%M %p', currenttime)
-                    playername = PtGetLocalPlayer().getPlayerName()
+                        playerlist.setText(thetext)
+                        playerlist.save()
+                else: # also do this for players without the KI, so that they see the logger correctly initialized
+                    thetext = ''
+                    # build text for current player, if he should appear on it
                     if (PtDetermineKILevel() == kNormalKI):
-                        thetext = (((('<hiddentext>' + hiddentextstr) + '</hiddentext>') + FormatPlayerInfo(currenttimestr, playername)) + '\n')
-                    else:
-                        thetext = (('<hiddentext>' + hiddentextstr) + '</hiddentext>')
-                    # add fixed players after current one
+                        thetext += FormatPlayerInfo(PtGetLocalPlayer().getPlayerName()) + '\n'
+                    # add hard-coded "previous" players after current one
                     for p in prevplayers:
-                        thetext += (FormatPlayerInfo(p[0], p[1]) + '\n')
+                        thetext += (FormatPlayerInfo(p[1], p[0]) + '\n')
                     # save to the vault
                     playerlist = ptVaultTextNoteNode()
                     playerlist.setTitle('Visitors, Visiteurs, Besucher')
