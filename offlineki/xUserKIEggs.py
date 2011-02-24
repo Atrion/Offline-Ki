@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 #==============================================================================#
 #                                                                              #
-#    Offline KI                                                                #
-#    See the file AUTHORS for more info about the contributors. The code in    #
-#    this file is mostly written by Cyan Worlds Inc.                           #
+#    The code in this file is mostly written by Cyan Worlds Inc.               #
+#    See the file AUTHORS for more info about the contributors of the changes  #
 #                                                                              #
 #    This program is distributed in the hope that it will be useful,           #
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of            #

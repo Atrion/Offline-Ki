@@ -2,8 +2,7 @@
 #==============================================================================#
 #                                                                              #
 #    Offline KI                                                                #
-#    See the file AUTHORS for more info about the contributors. The data in    #
-#    this file was collected and created by UserKI and AdminKI programmers.    #
+#    See the file AUTHORS for more info about the contributors.                #
 #                                                                              #
 #    This program is distributed in the hope that it will be useful,           #
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of            #

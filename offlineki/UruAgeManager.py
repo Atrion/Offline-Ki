@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    Offline KI                                                                #
+#    See the file AUTHORS for more info about the contributors.                #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaNetConstants import *
