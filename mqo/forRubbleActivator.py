@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #==============================================================================#
 #                                                                              #
-#    Offline KI                                                                #
-#                                                                              #
-#    This is a patched file that was originally written by Cyan                #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
 #    See the file AUTHORS for more info about the contributors of the changes  #
 #                                                                              #
 #    This program is distributed in the hope that it will be useful,           #
