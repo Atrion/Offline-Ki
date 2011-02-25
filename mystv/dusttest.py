@@ -1,12 +1,33 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    Offline KI                                                                #
+#    See the file AUTHORS for more info about the contributors.                #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
-import dustutils
 import os
 import xLinkMgr
 command = ptAttribString(1, 'command')
 ageToLinkToAttr = ptAttribString(2, 'agetolinkto', default='none')
 spawnpointAttr = ptAttribString(3, 'spawnpoint', default='none')
+
+def dustlink(agename, spawnpoint):
+    xLinkMgr.LinkToAge(agename, spawnpoint)
+
+
+def fakelink(agename, spawnpoint):
+    print ('fakelink to %s in %s' % (spawnpoint, agename))
+    avatar = PtGetLocalAvatar()
+    sp = PtFindSceneobject(spawnpoint, agename)
+    PtFakeLinkAvatarToObject(avatar.getKey(), sp.getKey())
 
 class dusttest(ptResponder):
 
@@ -35,11 +56,11 @@ class dusttest(ptResponder):
         if (command.value == 'volcanolink'):
             print 'volcanolink'
             if (not self.DoesPlayerHaveRelto()):
-                dustutils.dustlink('Cleft', 'LinkInPointDefault')
+                dustlink('Cleft', 'LinkInPointDefault')
             elif xLinkMgr.IsAgeAvailable('DescentMystV'):
-                dustutils.dustlink('DescentMystV', 'LinkInPointDefault')
+                dustlink('DescentMystV', 'LinkInPointDefault')
             else:
-                dustutils.dustlink('Personal', 'LinkInPointDefault')
+                dustlink('Personal', 'LinkInPointDefault')
         if (command.value == 'opendsntdoor'):
             responder.run(self.key)
         if (command.value == 'linktoage'):
@@ -48,13 +69,13 @@ class dusttest(ptResponder):
             spawnpoint = spawnpointAttr.value
             print ((('linktoage:' + agename) + ':') + spawnpoint)
             if (curage == agename):
-                dustutils.fakelink(agename, spawnpoint)
+                fakelink(agename, spawnpoint)
             else:
-                dustutils.dustlink(agename, spawnpoint)
+                dustlink(agename, spawnpoint)
         if (command.value == 'fakelink'):
             agename = ageToLinkToAttr.value
             spawnpoint = spawnpointAttr.value
-            dustutils.fakelink(agename, spawnpoint)
+            fakelink(agename, spawnpoint)
         if (command.value == 'storeattrib'):
             print 'dusttest: running responder'
 

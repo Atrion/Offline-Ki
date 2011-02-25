@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 actDict = {}
@@ -92,11 +104,11 @@ class drboPedestal(ptModifier):
             if (id == 5):
                 spawnpoint = 'LinkInPed2'
         print ('spawnpoint:' + `spawnpoint`)
-        import dustutils
+        from dusttest import fakelink, dustlink
         if (curage == agename):
-            dustutils.fakelink(agename, spawnpoint)
+            fakelink(agename, spawnpoint)
         else:
-            dustutils.dustlink(agename, spawnpoint)
+            dustlink(agename, spawnpoint)
         return
 
 
