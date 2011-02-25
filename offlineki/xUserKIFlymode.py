@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 #==============================================================================#
 #                                                                              #
 #    Offline KI                                                                #
@@ -10,7 +9,7 @@
 #    This program is free software; you can redistribute it and/or modify      #
 #    it under the terms of the GNU General Public License as published by      #
 #    the Free Software Foundation; either version 2 of the License, or         #
-#    (at your option) any later version, with the Cyan exception.              #
+#    (at your option) any later version, with the Uru exception (see below).   #
 #                                                                              #
 #    This program is distributed in the hope that it will be useful,           #
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
@@ -22,9 +21,10 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA #
 #                                                                              #
 #    Please see the file COPYING for the full GPLv2 license. In addition,      #
-#    this file may be used in combination with (non-GPL) Python code           #
-#    by Cyan Worlds Inc.                                                       #
+#    this file may be used in combination with (non-GPL) code                  #
+#    within the context of Uru.                                                #
 #                                                                              #
+#==============================================================================#
 #==============================================================================#
 import string
 import os
