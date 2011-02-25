@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
@@ -7,10 +19,7 @@ clkNegilahn = ptAttribActivator(1, 'clk: Negilahn Spiral')
 clkDereno = ptAttribActivator(2, 'clk: Dereno Spiral')
 clkPayiferen = ptAttribActivator(3, 'clk: Payiferen Spiral')
 clkTetsonot = ptAttribActivator(4, 'clk: Tetsonot Spiral')
-respWedges = ptAttribResponder(5, 'resp: Ground Wedges', ['Negilahn',
- 'Dereno',
- 'Payiferen',
- 'Tetsonot'])
+respWedges = ptAttribResponder(5, 'resp: Ground Wedges', ['Negilahn', 'Dereno', 'Payiferen', 'Tetsonot'])
 respNegilahnRing = ptAttribResponder(6, 'resp: Negilahn Floating Ring')
 respDerenoRing = ptAttribResponder(7, 'resp: Dereno Floating Ring')
 respPayiferenRing = ptAttribResponder(8, 'resp: Payiferen Floating Ring')

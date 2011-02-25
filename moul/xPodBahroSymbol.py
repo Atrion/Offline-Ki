@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 import whrandom
-respBahroSymbol = ptAttribResponder(1, 'resp: Bahro Symbol', ['beginning',
- 'middle',
- 'end'], netForce=1)
-SymbolAppears = ptAttribInt(2, 'Frame the Symbol Appears', 226, (0,
- 5000))
-DayFrameSize = ptAttribInt(3, 'Frames in One Day', 2000, (0,
- 5000))
+respBahroSymbol = ptAttribResponder(1, 'resp: Bahro Symbol', ['beginning', 'middle', 'end'], netForce=1)
+SymbolAppears = ptAttribInt(2, 'Frame the Symbol Appears', 226, (0, 5000))
+DayFrameSize = ptAttribInt(3, 'Frames in One Day', 2000, (0, 5000))
 animMasterDayLight = ptAttribAnimation(4, 'Master Animation Object')
-respSFX = ptAttribResponder(5, 'resp: Symbol SFX', ['stop',
- 'play'], netForce=1)
+respSFX = ptAttribResponder(5, 'resp: Symbol SFX', ['stop', 'play'], netForce=1)
 kDayLengthInSeconds = 56585.0
 kDayAnimationSpeed = ((DayFrameSize.value / kDayLengthInSeconds) / 30.0)
 kTimeWhenSymbolAppears = (kDayLengthInSeconds * (float(SymbolAppears.value) / float(DayFrameSize.value)))

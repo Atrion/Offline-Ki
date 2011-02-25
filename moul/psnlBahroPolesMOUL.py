@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaVaultConstants import *
@@ -9,82 +21,14 @@ clickTeledahnPole = ptAttribActivator(1, 'Teledahn clickable')
 clickGarrisonPole = ptAttribActivator(2, 'Garrison clickable')
 clickGardenPole = ptAttribActivator(3, 'Garden clickable')
 clickKadishPole = ptAttribActivator(4, 'Kadish clickable')
-respTeledahnPole = ptAttribResponder(5, 'Teledahn responder', ['0',
- '1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- '8',
- '9'])
-respGarrisonPole = ptAttribResponder(6, 'Garrison responder', ['0',
- '1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- '8',
- '9'])
-respGardenPole = ptAttribResponder(7, 'Garden responder', ['0',
- '1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- '8',
- '9'])
-respKadishPole = ptAttribResponder(8, 'Kadish responder', ['0',
- '1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- '8',
- '9'])
-respTeledahnHandGlow = ptAttribResponder(9, 'Teledahn hand glow', ['1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- 'DropSheath',
- 'ResetSheath'])
-respGarrisonHandGlow = ptAttribResponder(10, 'Garrison hand glow', ['1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- 'DropSheath',
- 'ResetSheath'])
-respGardenHandGlow = ptAttribResponder(11, 'Garden hand glow', ['1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- 'DropSheath',
- 'ResetSheath'])
-respKadishHandGlow = ptAttribResponder(12, 'Kadish hand glow', ['1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- 'DropSheath',
- 'ResetSheath'])
+respTeledahnPole = ptAttribResponder(5, 'Teledahn responder', ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+respGarrisonPole = ptAttribResponder(6, 'Garrison responder', ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+respGardenPole = ptAttribResponder(7, 'Garden responder', ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+respKadishPole = ptAttribResponder(8, 'Kadish responder', ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+respTeledahnHandGlow = ptAttribResponder(9, 'Teledahn hand glow', ['1', '2', '3', '4', '5', '6', '7', 'DropSheath', 'ResetSheath'])
+respGarrisonHandGlow = ptAttribResponder(10, 'Garrison hand glow', ['1', '2', '3', '4', '5', '6', '7', 'DropSheath', 'ResetSheath'])
+respGardenHandGlow = ptAttribResponder(11, 'Garden hand glow', ['1', '2', '3', '4', '5', '6', '7', 'DropSheath', 'ResetSheath'])
+respKadishHandGlow = ptAttribResponder(12, 'Kadish hand glow', ['1', '2', '3', '4', '5', '6', '7', 'DropSheath', 'ResetSheath'])
 strTeledahnEnabled = ptAttribString(17, 'Tldn enabled SDL var')
 strGarrisonEnabled = ptAttribString(18, 'Grsn enabled SDL var')
 strGardenEnabled = ptAttribString(19, 'Grdn enabled SDL var')
@@ -101,8 +45,7 @@ respFissureStage1 = ptAttribResponder(29, 'Fissure stage 1')
 respFissureStage2 = ptAttribResponder(30, 'Fissure stage 2')
 respFissureStage3 = ptAttribResponder(31, 'Fissure stage 3')
 respFissureStage4 = ptAttribResponder(32, 'Fissure stage 4')
-respFissureLinkOut = ptAttribResponder(34, 'Fissure link out resp', ['cleft',
- 'personal'])
+respFissureLinkOut = ptAttribResponder(34, 'Fissure link out resp', ['cleft', 'personal'])
 rgnFissureLink = ptAttribActivator(35, 'Fissure link region')
 respTeledahnLinkOut = ptAttribResponder(36, 'Teledahn link out')
 respGarrisonLinkOut = ptAttribResponder(37, 'Garrison link out')
@@ -114,22 +57,14 @@ soGarrisonSmoker = ptAttribSceneobject(42, 'Garrison smoker')
 soGardenSmoker = ptAttribSceneobject(43, 'Garden smoker')
 soKadishSmoker = ptAttribSceneobject(44, 'Kadish smoker')
 rgnFissureForceCamera = ptAttribActivator(45, 'Fissure force cam rgn')
-respBahroScream = ptAttribResponder(46, 'Bahro Screams', ['start',
- 'stop'])
+respBahroScream = ptAttribResponder(46, 'Bahro Screams', ['start', 'stop'])
 rgnFissureCam = ptAttribActivator(47, 'Fissure cam region')
 #dustin
 actCleftTotem = ptAttribActivator(48, 'clk: Cleft totem')
 respTouchCleftTotem = ptAttribResponder(49, 'resp: touch Cleft totem', netForce=1)
-respChangeCleftTotem = ptAttribResponder(50, 'resp: change Cleft totem', ['open',
- 'close'])
+respChangeCleftTotem = ptAttribResponder(50, 'resp: change Cleft totem', ['open', 'close'])
 sdlCleftTotem = ptAttribString(51, 'sdl: Cleft totem')
-respCleftHandGlow = ptAttribResponder(52, 'resp: Cleft hand glow', ['1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7'], netForce=1)
+respCleftHandGlow = ptAttribResponder(52, 'resp: Cleft hand glow', ['1', '2', '3', '4', '5', '6', '7'], netForce=1)
 clickCleftBook = ptAttribActivator(53, 'Cleft book clickable')
 respCleftLinkOut = ptAttribResponder(54, 'Cleft link out', netForce=1)
 #boolCleftTotem = 0

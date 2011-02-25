@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 import whrandom
@@ -9,14 +21,7 @@ respUrwinIdleToWalk = ptAttribResponder(4, 'resp: Urwin Idle To Walk')
 respUrwinWalkLoop = ptAttribResponder(5, 'resp: Urwin Walk Loop')
 respUrwinWalkToIdle = ptAttribResponder(6, 'resp: Urwin Walk To Idle')
 respUrwinEat = ptAttribResponder(7, 'resp: Urwin Eats')
-respUrwinSfx = ptAttribNamedResponder(8, 'resp: Urwin SFX', ['Eat',
- 'Idle',
- 'IdleToWalk',
- 'WalkLoop',
- 'WalkToIdle',
- 'Vocalize',
- 'Distance',
- 'Appear'], netForce=1)
+respUrwinSfx = ptAttribNamedResponder(8, 'resp: Urwin SFX', ['Eat', 'Idle', 'IdleToWalk', 'WalkLoop', 'WalkToIdle', 'Vocalize', 'Distance', 'Appear'], netForce=1)
 actUrwinPathEnd = ptAttribActivator(9, 'act: Urwin Path End')
 kDayLengthInSeconds = 56585
 kMinimumTimeBetweenSpawns = 3600

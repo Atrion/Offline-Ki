@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 import whrandom
-respSpawnPt = ptAttribResponder(1, 'resp: Spawn Point', ['0',
- '1',
- '2'], netForce=1)
-respMonkeyAct = ptAttribResponder(2, 'resp: Monkey Actions', ['Alarmed',
- 'Up',
- 'Eat',
- 'Idle',
- 'Vocalize'])
-respMonkeySfx = ptAttribNamedResponder(3, 'resp: Monkey SFX', ['Alarmed',
- 'Up',
- 'Eat',
- 'Idle',
- 'Off',
- 'Vocalize'], netForce=1)
+respSpawnPt = ptAttribResponder(1, 'resp: Spawn Point', ['0', '1', '2'], netForce=1)
+respMonkeyAct = ptAttribResponder(2, 'resp: Monkey Actions', ['Alarmed', 'Up', 'Eat', 'Idle', 'Vocalize'])
+respMonkeySfx = ptAttribNamedResponder(3, 'resp: Monkey SFX', ['Alarmed', 'Up', 'Eat', 'Idle', 'Off', 'Vocalize'], netForce=1)
 respMonkeyOff = ptAttribResponder(4, 'resp: Monkey Off')
 kDayLengthInSeconds = 56585
 kMinimumTimeBetweenSpawns = 300

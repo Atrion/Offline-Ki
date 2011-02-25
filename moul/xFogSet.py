@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
-FogMode = ptAttribDropDownList(1, 'Fog Mode', ('Linear',
- 'Exponential',
- 'Exponential2'))
+FogMode = ptAttribDropDownList(1, 'Fog Mode', ('Linear', 'Exponential', 'Exponential2'))
 PointA_RGB = ptAttribString(2, 'Color: Red,Green,Blue')
-PointA_Start = ptAttribInt(3, 'Start Distance', 0, (-10000,
- 1000000))
-PointA_End = ptAttribInt(4, 'End Distance', 0, (-10000,
- 1000000))
-PointA_Density = ptAttribInt(5, 'Density', 0, (0,
- 10))
+PointA_Start = ptAttribInt(3, 'Start Distance', 0, (-10000, 1000000))
+PointA_End = ptAttribInt(4, 'End Distance', 0, (-10000, 1000000))
+PointA_Density = ptAttribInt(5, 'Density', 0, (0, 10))
 Region = ptAttribActivator(6, 'Region Sensor')
 class xFogSet(ptMultiModifier,):
 

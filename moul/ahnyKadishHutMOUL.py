@@ -1,12 +1,23 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 import string
 SDLWindows = ptAttribString(1, 'SDL: windows')
 ActWindows = ptAttribActivator(2, 'clk: windows')
 RespWindowsBeh = ptAttribResponder(3, 'resp: windows oneshot')
-RespWindows = ptAttribResponder(4, 'resp: windows use', ['close',
- 'open'])
+RespWindows = ptAttribResponder(4, 'resp: windows use', ['close', 'open'])
 boolWindows = 0
 class ahnyKadishHutMOUL(ptResponder,):
 

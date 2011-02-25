@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 import random
@@ -11,13 +23,7 @@ clkBSCloth04 = ptAttribActivator(5, 'clk: BS Cloth 04')
 clkBSCloth05 = ptAttribActivator(6, 'clk: BS Cloth 05')
 clkBSCloth06 = ptAttribActivator(7, 'clk: BS Cloth 06')
 clkBSCloth07 = ptAttribActivator(8, 'clk: BS Cloth 07')
-respBSDoor = ptAttribResponder(9, 'resp: BS Door', ['0',
- '1',
- '2',
- '3',
- '4',
- '5',
- '6'], netForce=1)
+respBSDoor = ptAttribResponder(9, 'resp: BS Door', ['0', '1', '2', '3', '4', '5', '6'], netForce=1)
 respBSCloth01 = ptAttribResponder(10, 'resp: BS Cloth 01')
 respBSCloth02 = ptAttribResponder(11, 'resp: BS Cloth 02')
 respBSCloth03 = ptAttribResponder(12, 'resp: BS Cloth 03')
@@ -26,26 +32,10 @@ respBSCloth05 = ptAttribResponder(14, 'resp: BS Cloth 05')
 respBSCloth06 = ptAttribResponder(15, 'resp: BS Cloth 06')
 respBSCloth07 = ptAttribResponder(16, 'resp: BS Cloth 07')
 respBSClothDoor = ptAttribResponder(17, 'resp: BS Cloth Door', netForce=1)
-respBSFastDoor = ptAttribResponder(18, 'resp: BS Fast Door', ['0',
- '1',
- '2',
- '3',
- '4',
- '5',
- '6'])
-respBSTicMarks = ptAttribResponder(19, 'resp: BS Tic Marks', ['1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7'])
-respBSDoorOps = ptAttribResponder(20, 'resp: BS Door Ops', ['open',
- 'close'])
-respBSSymbolSpin = ptAttribResponder(21, 'resp: BS Symbol Spin', ['fwdstart',
- 'fwdstop',
- 'bkdstart',
- 'bkdstop'])
+respBSFastDoor = ptAttribResponder(18, 'resp: BS Fast Door', ['0', '1', '2', '3', '4', '5', '6'])
+respBSTicMarks = ptAttribResponder(19, 'resp: BS Tic Marks', ['1', '2', '3', '4', '5', '6', '7'])
+respBSDoorOps = ptAttribResponder(20, 'resp: BS Door Ops', ['open', 'close'])
+respBSSymbolSpin = ptAttribResponder(21, 'resp: BS Symbol Spin', ['fwdstart', 'fwdstop', 'bkdstart', 'bkdstop'])
 animBlueSpiral = ptAttribAnimation(22, 'anim: Blue Spiral', netForce=1)
 evntBSBeginning = ptAttribActivator(23, 'evnt: Blue Spiral Beginning')
 SDLBSKey = ptAttribString(24, 'SDL: BS Key')

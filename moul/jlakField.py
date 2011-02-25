@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 import xRandom
@@ -19,18 +31,11 @@ warpWidgetsPlay = ptAttribSceneobjectList(13, 'obj: widget warps - play')
 clkColumnUp = ptAttribActivatorList(14, 'clk: column up')
 clkColumnDn = ptAttribActivatorList(15, 'clk: column down')
 warpPlayers = ptAttribSceneobjectList(16, 'obj: player warps')
-respWallToggle = ptAttribResponder(17, 'resp: toggle wall', ['on',
- 'off'], netForce=0)
-respGameOps = ptAttribResponder(18, 'resp: game ops', ['start',
- 'end',
- 'reset'], netForce=0)
-respSfxColumn = ptAttribResponderList(19, 'resp: sfx column', statelist=['up',
- 'down',
- 'off'], byObject=1)
+respWallToggle = ptAttribResponder(17, 'resp: toggle wall', ['on', 'off'], netForce=0)
+respGameOps = ptAttribResponder(18, 'resp: game ops', ['start', 'end', 'reset'], netForce=0)
+respSfxColumn = ptAttribResponderList(19, 'resp: sfx column', statelist=['up', 'down', 'off'], byObject=1)
 rgnWallSensors = ptAttribActivatorList(20, 'rgn sns: wall hit sensors')
-respBulkMoveSFX = ptAttribResponder(22, 'resp: BulkMove SFX', statelist=['off',
- 'on',
- 'end'], netForce=0)
+respBulkMoveSFX = ptAttribResponder(22, 'resp: BulkMove SFX', statelist=['off', 'on', 'end'], netForce=0)
 respCreateWidgetSFX = ptAttribResponder(23, 'resp: Create Widget SFX', netForce=0)
 kInitPos = 9
 kMinPos = 0

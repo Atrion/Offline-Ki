@@ -1,12 +1,23 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from xPsnlVaultSDL import *
 clkErcana = ptAttribActivator(1, 'clk: Ercana symbol')
 clkAhnonay = ptAttribActivator(2, 'clk: Ahnonay symbol')
-respWedges = ptAttribResponder(3, 'resp: Ground Wedges', ['Ercana',
- 'Ahnonay'])
+respWedges = ptAttribResponder(3, 'resp: Ground Wedges', ['Ercana', 'Ahnonay'])
 respErcanaRing = ptAttribResponder(4, 'resp: Ercana Floating Ring')
 respAhnonayRing = ptAttribResponder(5, 'resp: Ahnonay Floating Ring')
 class bhroBahroPOTS(ptResponder,):

@@ -1,14 +1,24 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from xPsnlVaultSDL import *
 clkBSTsogal = ptAttribActivator(1, 'clk: Tsogal Blue Spiral')
 clkBSDelin = ptAttribActivator(2, 'clk: Delin Blue Spiral')
-respWedges = ptAttribResponder(3, 'resp: Ground Wedges', ['Delin',
- 'Tsogal'])
-respRings = ptAttribResponder(4, 'resp: Floating Rings', ['Delin',
- 'Tsogal'])
+respWedges = ptAttribResponder(3, 'resp: Ground Wedges', ['Delin', 'Tsogal'])
+respRings = ptAttribResponder(4, 'resp: Floating Rings', ['Delin', 'Tsogal'])
 class bhroBahroBlueSpiral(ptResponder,):
 
 

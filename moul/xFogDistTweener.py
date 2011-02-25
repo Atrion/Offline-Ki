@@ -1,33 +1,33 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 import math
-FogMode = ptAttribDropDownList(1, 'Fog Mode', ('Linear',
- 'Exponential',
- 'Exponential2'))
-Dimensions = ptAttribDropDownList(2, 'Compute Dimensions', ('XYZ',
- 'XY',
- 'Z'))
-FogStyle = ptAttribDropDownList(3, 'Fog Style', ('Linear',
- 'Radial'))
-RefreshRate = ptAttribFloat(4, 'Refresh Rate', 1.0, (0.0,
- 10.0))
+FogMode = ptAttribDropDownList(1, 'Fog Mode', ('Linear', 'Exponential', 'Exponential2'))
+Dimensions = ptAttribDropDownList(2, 'Compute Dimensions', ('XYZ', 'XY', 'Z'))
+FogStyle = ptAttribDropDownList(3, 'Fog Style', ('Linear', 'Radial'))
+RefreshRate = ptAttribFloat(4, 'Refresh Rate', 1.0, (0.0, 10.0))
 PointA_Obj = ptAttribSceneobject(5, 'Point A Obj')
 PointA_RGB = ptAttribString(6, 'Point A: Red,Green,Blue')
-PointA_Start = ptAttribInt(7, 'Point A: Start Dist', 0, (-10000,
- 1000000))
-PointA_End = ptAttribInt(8, 'Point A: End Dist', 0, (-10000,
- 1000000))
-PointA_Density = ptAttribInt(9, 'Point A: Density', 0, (0,
- 10))
+PointA_Start = ptAttribInt(7, 'Point A: Start Dist', 0, (-10000, 1000000))
+PointA_End = ptAttribInt(8, 'Point A: End Dist', 0, (-10000, 1000000))
+PointA_Density = ptAttribInt(9, 'Point A: Density', 0, (0, 10))
 PointB_Obj = ptAttribSceneobject(10, 'Point B Obj')
 PointB_RGB = ptAttribString(11, 'Point B: Red,Green,Blue')
-PointB_Start = ptAttribInt(12, 'Point B: Start Dist', 0, (-10000,
- 1000000))
-PointB_End = ptAttribInt(13, 'Point B: End Dist', 0, (-10000,
- 1000000))
-PointB_Density = ptAttribInt(14, 'Point B: Density', 0, (0,
- 10))
+PointB_Start = ptAttribInt(12, 'Point B: Start Dist', 0, (-10000, 1000000))
+PointB_End = ptAttribInt(13, 'Point B: End Dist', 0, (-10000, 1000000))
+PointB_Density = ptAttribInt(14, 'Point B: Density', 0, (0, 10))
 OnlyInRegion = ptAttribBoolean(15, 'Only Operate In Region?', default=false)
 Region = ptAttribActivator(16, 'Region Sensor')
 Enabled = 0

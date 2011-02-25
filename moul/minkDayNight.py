@@ -1,11 +1,22 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 import minkDustglobal
 respLinkIn = ptAttribResponder(1, 'resp: Link In Sound')
-respExcludeRegion = ptAttribResponder(2, 'resp: Exclude Regions', ['Clear',
- 'Release'])
+respExcludeRegion = ptAttribResponder(2, 'resp: Exclude Regions', ['Clear', 'Release'])
 HackIt = 1
 class minkDayNight(ptResponder,):
 

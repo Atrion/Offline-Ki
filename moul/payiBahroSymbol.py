@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
-SymbolAppears = ptAttribInt(1, 'Frame the Symbol Appears', 226, (0,
- 5000))
-DayFrameSize = ptAttribInt(2, 'Frames in One Day', 2000, (0,
- 5000))
+SymbolAppears = ptAttribInt(1, 'Frame the Symbol Appears', 226, (0, 5000))
+DayFrameSize = ptAttribInt(2, 'Frames in One Day', 2000, (0, 5000))
 animSkyDome = ptAttribMaterialAnimation(3, 'Sky Dome Mat Anim')
 animLightBoards = ptAttribMaterialAnimation(5, 'Light BillBoard Mat Anim')
 animBahroStones = ptAttribMaterialAnimation(6, 'Bahro Stones Mat Anim')
