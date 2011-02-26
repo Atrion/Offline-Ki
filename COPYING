@@ -1,3 +1,13 @@
+Because the Offline KI contains code by many people, and code by
+Cyan Worlds Inc., the files are licensed under different conditions.
+See the LICENSE file in the python-support folder for the terms of
+those files, and check the headers of the other files for the specific
+conditions.
+
+For the files that are licensed under GPLv2 or later, you can find here,
+for reference, the full text of that license:
+
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
 
