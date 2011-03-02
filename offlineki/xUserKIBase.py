@@ -816,7 +816,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             return True
         # Hide/show some objects
         for name in ['skyhigh', 'sunglow', 'sunround', 'cameraclouds']:
-            object = PtFindSceneobject(name, age)
+            object = PtFindSceneobject(name, 'Personal')
             object.netForce(1)
             if cmnd == 'reltostars': object.draw.disable()
             else: object.draw.enable()
@@ -829,7 +829,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         else:
             PtConsoleNet('Graphics.Renderer.Fog.SetDefLinear 1 900 2', 1)
             PtConsoleNet('Graphics.Renderer.SetClearColor .4 .4 .5', 1)
-            xUserKIAdmin.ApplyStruct('noreltostars')
+            xUserKI.ApplyStruct('noreltostars')
             if not silent: ki.IAddRTChat(None, 'Removed the stars from your Relto', 0)
         return True
     if (cmnd == 'rotsphere'):
