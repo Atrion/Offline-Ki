@@ -1251,7 +1251,7 @@ class nxusBookMachine(ptModifier):
         PtDebugPrint(('nxusBookMachine.ILinkToHood():\tattempting link to hood named %s' % hoodName))
 # Magic Hoods BEGIN
         if hoodName in MagicHoods:
-            xLinkMgr.LinkToAge(hoodName, MagicHoods[hoodName])
+            xLinkMgr.LinkToAge(str(hoodName), str(MagicHoods[hoodName]))
             return
 # Magic Hoods END
         if (hoodName == 'Bevin'):
