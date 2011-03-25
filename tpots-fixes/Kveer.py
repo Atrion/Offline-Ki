@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
@@ -97,16 +110,8 @@ class Kveer(ptResponder):
                 entry.chronicleSetValue(('%d' % 2))
                 entry.save()
                 print 'do link to X2 finale version of ferry terminal'
-                info = ptAgeInfoStruct()
-                info.setAgeFilename('DniCityX2Finale')
-                als = ptAgeLinkStruct()
-                als.setAgeInfo(info)
-                als.setLinkingRules(PtLinkingRules.kOwnedBook)
-                spawnpoint = ptSpawnPointInfo()
-                spawnpoint.setName('LinkInPointBlah')
-                als.setSpawnPoint(spawnpoint)
-                linkMgr = ptNetLinkingMgr()
-                linkMgr.linkToAge(als)
+                import xLinkMgr
+                xLinkMgr.LinkToAge('DniCityX2Finale', 'LinkInPointBlah')
                 return
             elif (MyBlah == 3):
                 print 'end blah stuff'

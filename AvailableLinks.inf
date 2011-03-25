@@ -176,7 +176,8 @@ spawnpoint:Myst,LinkInPointDefault,Default
 link:Kveer,D'ni-Kveer,file,original
 spawnpoint:Kveer,LinkInPointDefault,kverKveer
 
-link:DniCityX2Finale,D'ni-Ae'gura,file,original
+link:DniCityX2Finale,D'ni-Ae'gura,file,original,LinkInPointBlah
+spawnpoint:DniCityX2Finale,LinkInPointBlah,Blah
 ======================================================================================================
 Non-linkable ages (the invalid linking rule makes them unlinkable even for admins)
 link:AvatarCustomization,Closet,disabled,none
