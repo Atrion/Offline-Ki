@@ -40,7 +40,7 @@ import xxConfig
 import xUserKIData
 
 # Global info variables and configuration
-gUserKIVersion = '3.6'
+gUserKIVersion = '3.6.1'
 gUserKIExtensionModuleNames = ['xUserKIAdmin', 'xUserKIBase', 'xUserKIFlymode', 'xUserKIEggs', 'xUserKIHelp', 'xUserKIUamInterface']
 # Some commands are overwritten, so their order must be the one in which they are mentioned below:
 #  /link is in xUserKIAdmin and xUserKIBase
