@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
@@ -50,17 +62,8 @@ class DniCityX2Harbor(ptResponder):
             entry.chronicleSetValue(('%d' % 3))
             entry.save()
             print 'do link back to Kveer'
-            info = ptAgeInfoStruct()
-            info.setAgeFilename('Kveer')
-            als = ptAgeLinkStruct()
-            als.setAgeInfo(info)
-            als.setLinkingRules(PtLinkingRules.kOwnedBook)
-            spawnpoint = ptSpawnPointInfo()
-            spawnpoint.setName('LinkInPointDefault')
-            spawnpoint.setTitle('Default')
-            als.setSpawnPoint(spawnpoint)
-            linkMgr = ptNetLinkingMgr()
-            linkMgr.linkToAge(als)
+            import xLinkMgr
+            xLinkMgr.LinkToAge('Kveer', 'LinkInPointDefault')
 
 
 glue_cl = None
