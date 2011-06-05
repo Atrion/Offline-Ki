@@ -27,7 +27,7 @@ ImagerTime = ptAttribInt(4, 'Number of seconds on each image', default=60)
 ImagerMembersOnly = ptAttribBoolean(5, 'Members Only', 1)
 ImagerObject = ptAttribSceneobject(6, 'Imager Object (for ownership test)')
 ImagerMax = ptAttribInt(7, 'Maximum number of images', default=5)
-ImagerButtonResp = ptAttribResponder(8, 'start or stop the button animation', ['buttonOn', 'buttonOff'])
+ImagerButtonResp = ptAttribResponder(8, 'start or stop the button animation', ['start', 'stop'])
 ImagerInboxVariable = ptAttribString(9, 'Inbox SDL variable (optional)')
 ImagerPelletUpload = ptAttribBoolean(10, 'Pellet Score Imager?', 0)
 ImagerContents = []
@@ -44,6 +44,8 @@ RegionMembers = 0
 AgeStartedIn = None
 kFlipImagesTimerStates = 5
 kFlipImagesTimerCurrent = 0
+kGlowingRingTimer = 18
+kGlowingRingTime = 0.6 # time it takes the ring to reach "full glow"
 Instance = None
 
 class xSimpleImager(ptModifier):
@@ -90,7 +92,7 @@ class xSimpleImager(ptModifier):
                 Instance.IChangeCurrentContent()
                 kFlipImagesTimerCurrent = ((kFlipImagesTimerCurrent + 1) % kFlipImagesTimerStates)
                 PtAtTimeCallback(Instance.key, ImagerTime.value, kFlipImagesTimerCurrent)
-                ImagerButtonResp.run(Instance.key, state='buttonOff')
+                #ImagerButtonResp.run(Instance.key, state='buttonOff')
 # GuildPub imager fix BEGIN
             if PtGetAgeName().find('GuildPub-') != -1:
                 PtSendKIMessage(kAddPlayerDevice, ImagerName.value)
@@ -145,6 +147,7 @@ class xSimpleImager(ptModifier):
 
     def OnTimer(self, id):
         global CurrentContentIdx
+        global RegionMembers
         if (id == kFlipImagesTimerCurrent):
             if (len(ImagerContents) > 0):
                 CurrentContentIdx += 1
@@ -152,6 +155,9 @@ class xSimpleImager(ptModifier):
                     CurrentContentIdx = 0
             self.IChangeCurrentContent()
             PtAtTimeCallback(self.key, ImagerTime.value, kFlipImagesTimerCurrent)
+        elif (id == kGlowingRingTimer):
+            if RegionMembers >= 1: # if the last player left in the mean time, let it fade out again
+                ImagerButtonResp.run(self.key, state='stop')
 
 
     def OnAgeVaultEvent(self, event, tupdata):
@@ -202,7 +208,9 @@ class xSimpleImager(ptModifier):
                                     PtSendKIMessage(kAddPlayerDevice, messagetoki)
                                     RegionMembers = (RegionMembers + 1)
                                     if (RegionMembers == 1):
-                                        ImagerButtonResp.run(self.key, state='buttonOn')
+                                        ImagerButtonResp.run(self.key, state='stop', fastforward=1)
+                                        ImagerButtonResp.run(self.key, state='start')
+                                        PtAtTimeCallback(self.key, kGlowingRingTime, kGlowingRingTimer)
                                 else:
                                     PtDebugPrint('xSimpleImager: remove imager %s' % ImagerName.value)
                                     PtSendKIMessage(kRemovePlayerDevice, messagetoki)
@@ -210,7 +218,7 @@ class xSimpleImager(ptModifier):
                                     if (RegionMembers == -1):
                                         RegionMembers = 0
                                     if (RegionMembers == 0):
-                                        ImagerButtonResp.run(self.key, state='buttonOff')
+                                        ImagerButtonResp.run(self.key, state='start') # let it fade out
         else:
             for event in events:
                 if (event[0] == kVariableEvent):
