@@ -295,3 +295,15 @@ def GetLinkingImage(agename, spawnpoint = None, width = 512, height = 512):
         if os.path.exists(file):
             return PtLoadJPEGFromDisk(file, width, height)
     raise Exception("Not even the void image exists, nothing I can do")
+
+
+def DisableLinking():
+    linkMgr = ptNetLinkingMgr()
+    linkMgr.setEnabled(0)
+    print 'xLinkMgr: Linking disabled...'
+
+
+def EnableLinking():
+    linkMgr = ptNetLinkingMgr()
+    linkMgr.setEnabled(1)
+    print 'xLinkMgr: Linking enabled...'

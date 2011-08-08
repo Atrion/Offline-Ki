@@ -54,6 +54,11 @@ kOverridePanel2Time = 0.85
 kFirstPersonEnable = 1
 kFirstPersonEnableTime = 0.5
 TreasureBook = None
+#D'Lanor
+kLinkOverride = 52
+kLinkOverrideTime = 3.5
+#/D'Lanor
+kLinkOverrideAls = None
 
 class xLinkingBookGUIPopup(ptModifier):
 
@@ -103,6 +108,7 @@ class xLinkingBookGUIPopup(ptModifier):
         global BookNumber
         global OfferedBookMode
         global LocalAvatar
+        global kLinkOverrideAls
         if (id == shareRegion.id):
             if PtWasLocallyNotified(self.key):
                 for event in events:
@@ -227,21 +233,30 @@ class xLinkingBookGUIPopup(ptModifier):
                                         note.addVarNumber('LinkOut', 1)
                                         note.send()
                                     else:
-# linking rule work-arounds and ages of which the existance has to be checked BEGIN
+# linking rule work-arounds and ages of which the existence has to be checked BEGIN
                                         import xLinkMgr
+                                        kLinkOverrideAls = None
+                                        # set override flag and check for errors in advance
                                         if TargetAge.value in ['Ahnonay', 'Myst', 'Kveer', 'Neighborhood02', 'Personal02', 'MystMystV', 'AhnonayMOUL']:
-                                            xLinkMgr.LinkToAge(TargetAge.value, "LinkInPointDefault")
-                                            return
+                                            kLinkOverrideAls = xLinkMgr.GetAgeLinkStruct(TargetAge.value, "LinkInPointDefault")
                                         elif TargetAge.value == 'KirelMOUL':
-                                            xLinkMgr.LinkToAge(TargetAge.value, "kirelPerf-SpawnPointBevin02")
-                                            return
+                                            kLinkOverrideAls = xLinkMgr.GetAgeLinkStruct(TargetAge.value, "kirelPerf-SpawnPointBevin02")
                                         elif TargetAge.value == 'nb01BevinBalcony01':
-                                            xLinkMgr.LinkToAge("Neighborhood", "LinkInPointBevinBalcony01")
-                                            return
+                                            kLinkOverrideAls = xLinkMgr.GetAgeLinkStruct("Neighborhood", "LinkInPointBevinBalcony01")
                                         elif TargetAge.value == 'Garrison' and PtGetAgeName() == 'NeighborhoodMOUL':
-                                            xLinkMgr.LinkToAge(TargetAge.value, "LinkInPointDefault")
-                                            return
-# linking rule work-arounds and ages of which the existance has to be checked END
+                                            kLinkOverrideAls = xLinkMgr.GetAgeLinkStruct(TargetAge.value, "LinkInPointDefault")
+
+                                        if kLinkOverrideAls != None:
+                                            if isinstance(kLinkOverrideAls, str): # an error occured
+                                                # abort now before the oneshot loop starts! we don't want to get stuck in it.
+                                                PtSendKIMessage(kKIOKDialogNoQuit, kLinkOverrideAls)
+                                                kLinkOverrideAls = None
+                                                return
+                                            # no errors: temporarily disable linking and start override timer
+                                            xLinkMgr.DisableLinking()
+                                            PtAtTimeCallback(self.key, kLinkOverrideTime, kLinkOverride)
+                                            # continue running the responder! it will only play the oneshot now.
+# linking rule work-arounds and ages of which the existence has to be checked END
                                         respLinkResponder.run(self.key, avatar=PtGetLocalAvatar())
                                 else:
                                     PtDebugPrint(('xLinkingBookGUIPopup: Placing a bookmark for book #%d on page %d' % (BookNumber, CurrentPage)), level=kDebugDumpLevel)
@@ -783,6 +798,13 @@ class xLinkingBookGUIPopup(ptModifier):
             import booksDustGlobal
             self.OverrideLinkingImage(booksDustGlobal.BookMapRight)
         #/Dustin
+        #D'Lanor: link override moved here
+        elif (id == kLinkOverride):
+            import xLinkMgr
+            xLinkMgr.EnableLinking()
+            linkMgr = ptNetLinkingMgr()
+            linkMgr.linkToAge(kLinkOverrideAls) # use the als returned by xLinkMgr earlier
+        #/D'Lanor
 
 
     def GetOwnedAgeLink(self, vault, age):
