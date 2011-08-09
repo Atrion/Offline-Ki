@@ -56,7 +56,7 @@ kFirstPersonEnableTime = 0.5
 TreasureBook = None
 #D'Lanor
 kLinkOverride = 52
-kLinkOverrideTime = 3.5
+kLinkOverrideTime = 1.9 # time of linking marker: LinkOut: 0.84 seconds, FishBookLinkOut: 1.67 seconds
 #/D'Lanor
 kLinkOverrideAls = None
 
