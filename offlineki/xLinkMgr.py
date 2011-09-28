@@ -51,7 +51,7 @@ class _Age:
 
 def _AddAge(linktype, ageName, age):
     global _AvailableLinks, _RestorationLinks, _PublicLinks
-    print ('xLinkMgr: Found %s to %s' % (linktype, ageName))
+    #print ('xLinkMgr: Found %s to %s' % (linktype, ageName))
     _AvailableLinks[ageName] = age
     # update Nexus link lists
     if linktype == 'restorationlink':
@@ -179,7 +179,7 @@ def LinkToAge(agename, spawnpoint = None):
     # done, go!
     linkMgr = ptNetLinkingMgr()
     linkMgr.linkToAge(als)
-    print 'xLinkMgr: Linking...'
+    print 'xLinkMgr: Linking to %s...' % agename
 
 
 # If the spawnpoint is None, use the default one. If needFullInfo is True, we need the full UUID for the age.

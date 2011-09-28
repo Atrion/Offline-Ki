@@ -60,7 +60,7 @@ class _Book:
         self.pages = []
         self.cover = ''
         self.nr = nr
-        print "xCustomReltoShelf: Creating new book %d" % nr
+        #print "xCustomReltoShelf: Creating new book %d" % nr
     
     def addPage(self, page):
         if page.isVisible(): # only add page if it is actually visible
@@ -79,7 +79,7 @@ class _LinkPage:
         self.spawnpoint = spawnpoint
         self.isAge = True
         self.video = self._getVideoFile()
-        print "xCustomReltoShelf: Adding link to %s" % age
+        #print "xCustomReltoShelf: Adding link to %s" % age
 
     def _getVideoFile(self):
         files = ['avi/%s_%s.bik' % (self.age, self.spawnpoint), 'avi/%s.bik' % self.age]
@@ -122,7 +122,7 @@ class _DescriptivePage:
         text = text.replace('\\n', '\n')
         self.text = text
         self.isAge = False
-        print "xCustomReltoShelf: Adding descriptive text %s" % title
+        #print "xCustomReltoShelf: Adding descriptive text %s" % title
 
     def showBook(self):
         return False # do not show a book just because of the descriptive text
@@ -233,10 +233,10 @@ def BuildBook(bookname):
     for page in _Books[bookname].pages:
         pagename = linkBookPrefix+str(x) # the only important thing is that it is unique for the current book
         source = '<font size=28 face=Uru ><p align=center>%s\n\n<font size=24 face=Uru>%s<pb>%s' % (page.getTitle(), page.getText(), page.getPanel()) # this text has a %d for the panel ID!
-        print "xCustomReltoShelf: Source of page %s is %s" % (pagename, source)
+        #print "xCustomReltoShelf: Source of page %s is %s" % (pagename, source)
             
         # "communication" with xLinkMgrGUIPopup
-        print 'xCustomReltoShelf: Setting xLinkingBookDefs entries'
+        #print 'xCustomReltoShelf: Setting xLinkingBookDefs entries'
         xLinkingBookDefs.xAgeLinkingBooks[pagename] = (0, 1.0, 1.0, '',
             '%s%s'+(source % xLinkingBookDefs.kFirstLinkPanelID)) # fill in panel ID
         xLinkingBookDefs.xLinkDestinations[pagename] = page # we can access that later, in the click handler
@@ -261,7 +261,7 @@ def UpdateBooks(linkLibrary, objLibrary, actBook):
             print (('xCustomReltoShelf: ERROR: Custom book ' + book) + 'not in library!')
             continue
         activeBook = (book in _Books) and _Books[book].isVisible()
-        print "xCustomReltoShelf: Book %s.active: %s" % (book, str(activeBook))
+        #print "xCustomReltoShelf: Book %s.active: %s" % (book, str(activeBook))
         # (de)activate current book
         objBook = objLibrary.value[index]
         if activeBook:

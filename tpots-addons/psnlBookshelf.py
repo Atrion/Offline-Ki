@@ -188,7 +188,7 @@ class psnlBookshelf(ptModifier):
 
 
     def OnAgeVaultEvent(self, event, tupdata):
-        PtDebugPrint(('psnlBookshelf.OnAgeVaultEvent()\t:OnAgeKIEvent recvd. Event=%d and data= ' % event), tupdata)
+        #PtDebugPrint('psnlBookshelf.OnAgeVaultEvent()\t:OnAgeKIEvent recvd. Event=%d and data=%s' % (event, tupdata))
         if (event == PtVaultCallbackTypes.kVaultConnected):
             print 'psnlBookshelf: kVaultConnected event'
         elif (event == PtVaultCallbackTypes.kVaultNodeSaved):

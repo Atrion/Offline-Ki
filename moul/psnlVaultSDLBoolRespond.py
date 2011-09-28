@@ -33,7 +33,7 @@ class psnlVaultSDLBoolRespond(ptResponder,):
 
 
     def OnFirstUpdate(self):
-        PtDebugPrint(('psnlVaultSDLBoolRespond.OnFirstUpdate():\t attached to sceneobject: %s' % self.sceneobject.getName()))
+        #PtDebugPrint(('psnlVaultSDLBoolRespond.OnFirstUpdate():\t attached to sceneobject: %s' % self.sceneobject.getName()))
         if (not ((type(stringVarName.value) == type('')) and (stringVarName.value != ''))):
             PtDebugPrint('ERROR: psnlVaultSDLBoolRespond.OnFirstUpdate():\tERROR: missing SDL var name')
         try:

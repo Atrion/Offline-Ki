@@ -70,7 +70,6 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                     (size, state) = divmod(CurrentValue, 10)
                     if ((len(PtGetPlayerList()) == 0) and (state != 0)):
                         growSizes = self.TimeToGrow()
-                        PtDebugPrint(('Growsizes: %d' % growSizes))
                         if (growSizes and (size < MAX_SIZE)):
                             size = (size + growSizes)
                             if (size > MAX_SIZE):
@@ -81,8 +80,10 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                         newstate = self.UpdateState(state, size, SDLVar, AgeVault, sizechanged)
                     else:
                         newstate = state
-                    PtDebugPrint(('CurrentValue: %d, size: %d, state %d' % (CurrentValue, size, state)))
-                    self.EnableDisable(((size * 10) + newstate))
+                    state = ((size * 10) + newstate)
+                    self.EnableDisable(newstate)
+                    if (state in self.enabledStateList):
+                        print 'psnlYeeshaPageChanges: tree stats: Growsizes: %d, CurrentValue: %d, size: %d, state %d' % (growSizes, CurrentValue, size, state)
                 else:
                     if (len(PtGetPlayerList()) == 0):
                         newstate = self.UpdateState(CurrentValue, 0, SDLVar, AgeVault, 0)
@@ -123,7 +124,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
         sdl = PtGetAgeSDL()
         currentTime = PtGetDniTime()
         lastGrowth = sdl['YP10LastTreeGrowth'][0]
-        PtDebugPrint(('Dni time: %d, last growth: %d' % (currentTime, lastGrowth)))
+        #PtDebugPrint(('Dni time: %d, last growth: %d' % (currentTime, lastGrowth)))
         if (lastGrowth == 0):
             sizes = 1
         else:
