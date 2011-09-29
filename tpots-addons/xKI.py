@@ -132,7 +132,7 @@ ISawTheKIAtleastOnce = 0
 IsPlayingLookingAtKIMode = 0
 PhasedKICreateNotes = 1
 PhasedKICreateImages = 1
-PhasedKIShareYeeshaBook = 0 # disable Relto book sharing
+PhasedKIShareYeeshaBook = 1
 PhasedKIInterAgeChat = 1
 PhasedKINeighborsInDPL = 1
 PhasedKIBuddies = 1
@@ -4536,7 +4536,7 @@ class xKI(ptModifier,):
             gCurBookIsYeesha = 1
             if IsYeeshaBookEnabled:
                 if (OfferedBookMode == kNotOffering):
-                    if (PhasedKIShareYeeshaBook and (not PtIsSinglePlayerMode())):
+                    if (PhasedKIShareYeeshaBook and xxConfig.isOnline()):
                         YeeshaBDef = (xLinkingBookDefs.xYeeshaBookBase + self.IGetYeeshaPageDefs())
                     else:
                         YeeshaBDef = (xLinkingBookDefs.xYeeshaBookNoShare + self.IGetYeeshaPageDefs())
