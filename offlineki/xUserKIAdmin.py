@@ -211,6 +211,10 @@ def OnTimer(ki, id): # called by xUserKI
             return
         PtAtTimeCallback(ki.key, loopInterval, xUserKI.kLoopTimer); loopTimerActive = True
         return True
+    if id == xUserKI.kAutoLinkPrepareTimer:
+        # this will only be called once age loading is finished, so start the actual timer now!
+        PtAtTimeCallback(ki.key, 2.5, xUserKI.kAutoLinkTimer)
+        return True
     if id == xUserKI.kAutoLinkTimer:
         autoLinkAge = xUserKI.GetChronicle(kAutoLinkChronicle, '')
         if not len(autoLinkAge): return True
@@ -250,7 +254,7 @@ def OnTimer(ki, id): # called by xUserKI
 
 def OnNewAgeLoaded(ki, firstAge):
     if firstAge:
-        PtAtTimeCallback(ki.key, 2, xUserKI.kAutoLinkTimer)
+        PtAtTimeCallback(ki.key, 2.5, xUserKI.kAutoLinkPrepareTimer)
 
 
 # Main function

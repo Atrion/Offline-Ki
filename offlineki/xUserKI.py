@@ -60,6 +60,7 @@ kFlyModeTimer = 3055
 kLoopTimer = 3100
 kAutoLinkTimer = 3101
 kTourTimer = 3102
+kAutoLinkPrepareTimer = 3103
 
 
 # load extension modules
