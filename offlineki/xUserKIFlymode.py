@@ -37,7 +37,6 @@ import xLinkMgr
 import xUserKI
 import xxConfig
 
-import xUserKIData
 import PlasmaControlKeys
 
 isForward = 0
@@ -73,7 +72,7 @@ currentStrafeMotion = 'd'
 rotExtSpeed = 0.1
 lastRotExt = 0
 
-flyingObjects = []
+flyingObjects = [] # this is referenced from other files and even ages use it to detect whether flymode is enabled
 flyIsHidden = False
 flyTimerRunning = False
 nPlayers = 0
@@ -482,8 +481,9 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         (location, objects) = data
         if type(location) == type(''): # a warp point or a target object
             try:
+                import xUserKIData
                 location = xUserKIData.WarpPoints[PtGetAgeName()][location]
-            except:
+            except: # Warp point does not exist, or data module is missing
                 object = xUserKI.GetObject(ki, location, playerList)
                 if not object: return True
                 location = (object.position(), 'to %s' % xUserKI.GetObjectName(object), None) # same format as WarpPoints

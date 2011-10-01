@@ -27,6 +27,7 @@
 #==============================================================================#
 import string
 import os
+import math
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
@@ -37,8 +38,10 @@ import xLinkMgr
 import xUserKI
 import xxConfig
 
-import xUserKIData
-import math
+try:
+    import xUserKIData
+except ImportError:
+    xUserKIData = None
 
 # global constant
 kAutoLinkChronicle = 'OfflineKIAutoLink'
@@ -110,7 +113,7 @@ def GetCamera(ki, cameraName):
     camera = []
     # if no name was specified, use the default one if available
     if not len(cameraName) or cameraName == 'default':
-        if age in xUserKIData.CameraShortcuts and len(xUserKIData.CameraShortcuts[age]) == 1:
+        if xUserKIData != None and age in xUserKIData.CameraShortcuts and len(xUserKIData.CameraShortcuts[age]) == 1:
             for name in xUserKIData.CameraShortcuts[age]:
                 camera = xUserKIData.CameraShortcuts[age][name] # there will be only one camera
                 break
@@ -118,7 +121,7 @@ def GetCamera(ki, cameraName):
             ki.IDoErrorChatMessage('Can not choose default camera for this age - use "/list cameras" to see which ones are available, and specify it manually')
             return []
     # check if we got a shortcut or the camera name
-    elif age in xUserKIData.CameraShortcuts:
+    elif xUserKIData != None and age in xUserKIData.CameraShortcuts:
         if cameraName in xUserKIData.CameraShortcuts[age]:
             camera = xUserKIData.CameraShortcuts[age][cameraName]
     if not len(camera):
@@ -233,7 +236,7 @@ def OnTimer(ki, id): # called by xUserKI
         try:
             tourList = xUserKIData.CameraTours[age][tourName]
         except:
-            tourName = ''
+            tourName = '' # tour not found, or data module missing
             ki.IDoErrorChatMessage('Specified tour not found')
             return
         # let's go
@@ -590,9 +593,12 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             lambda args: len(args) >= 1, lambda args: (args[0], xUserKI.GetPlayers(ki, args[1:], playerList, thisAgeOnly=True)))
         if not valid or not data[1]: return True
         if data[0] == 'list':
-            ki.IAddRTChat(None, 'There are the following pre-defined animation sequences available: %s' % xUserKI.JoinList(xUserKIData.AnimLists), 0)
+            if xUserKIData == None:
+                ki.IDoErrorChatMessage('The Offline KI data module is missing, so there are no named animations available')
+            else:
+                ki.IAddRTChat(None, 'There are the following pre-defined animation sequences available: %s' % xUserKI.JoinList(xUserKIData.AnimLists), 0)
             return True
-        if data[0] in xUserKIData.AnimLists:
+        if xUserKIData != None and data[0] in xUserKIData.AnimLists:
             animLists = xUserKIData.AnimLists[data[0]]
         else:
             animLists = ([data[0]], [data[0]])
@@ -673,7 +679,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         # get tour data
         try:
             tourList = xUserKIData.CameraTours[PtGetAgeName()][tour]
-        except:
+        except: # no such tour, or module missing
             ki.IDoErrorChatMessage('I could not find a tour called %s in this age - use "/list tours" to see which ones are available' % tour)
             return True
         # start tour

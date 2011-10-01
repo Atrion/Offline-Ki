@@ -37,7 +37,10 @@ import xLinkMgr
 import xKI
 import xxConfig
 
-import xUserKIData
+try:
+    import xUserKIData
+except ImportError:
+    xUserKIData = None
 
 # Global info variables and configuration
 gUserKIVersion = '3.6.1'
@@ -110,6 +113,7 @@ def GetObject(ki, name, playerList, mustHaveCoord = True):
     objectExists = False
     try:
         object = PtFindSceneobject(name, PtGetAgeName())
+        if object == None: raise Exception('Object not found')
         objectExists = True
         if mustHaveCoord: testPos = object.position()
         return object
@@ -168,11 +172,11 @@ def GetObjects(ki, names, playerList, mustHaveCoord = False):
             expandedNames = []
             try: # check if it is an object list
                 expandedNames = xUserKIData.ObjectLists[PtGetAgeName()][name]
-            except: # not an object list
+            except: # not an object list, or no data found
                 try: # check if it is a struct list
                     for element in xUserKIData.StructLists[PtGetAgeName()][name]:
                         expandedNames.append(element[0][0])
-                except: # not a struct list either
+                except: # not a struct list either, or no data found
                     expandedNames = [name] # just add this one
             for expandedName in expandedNames:
                 object = GetObject(ki, expandedName, playerList, mustHaveCoord)
@@ -333,7 +337,7 @@ def ApplyStruct(structName, mode = 'normal'):
     try:
         struct = xUserKIData.StructLists[age][structName]
     except:
-        return False
+        return False # no data available, or the struct does not exist
     if mode == 'here':
         avatarPos = PtGetLocalAvatar().position()
         deltaX = avatarPos.getX() - struct[0][3][0]

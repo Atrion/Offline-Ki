@@ -334,10 +334,15 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         PtToggleAvatarClickability(0) # as we pass "ki.key" above, this is re-enabled in xKI, OnNotify
         return True
     if (cmnd == 'list'):
-        import xUserKIData
         (valid, listName) = xUserKI.GetArg(ki, cmnd, args, 'list to show',
             lambda args: len(args) == 1, lambda args: args[0])
         if not valid: return True
+        try:
+            import xUserKIData
+        except:
+            ki.IDoErrorChatMessage('The Offline KI data module is missing, so there are no %s available' % listName)
+            return True
+        # now show the list
         age = PtGetAgeName()
         lists = { 'warppoints': xUserKIData.WarpPoints,
             'tours': xUserKIData.CameraTours,
