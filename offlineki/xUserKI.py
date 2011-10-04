@@ -266,9 +266,14 @@ def SendRemoteCall(ki, command, playerList = [], toSelf = True):
         OnRemoteCall(ki, command, PtGetLocalPlayer())
 
 
-def WarpObjectRelative(object, x, y, z):
+def WarpObjectRelative(object, x, y, z, localAxes = False):
     matrix = object.getLocalToWorld()
-    matrix.translate(ptVector3(x, y, z))
+    if localAxes: # move relative to object axes
+        translateMatrix = ptMatrix44()
+        translateMatrix.makeTranslateMat(ptVector3(x, y, z))
+        matrix = matrix * translateMatrix
+    else: # move relative to global axes
+        matrix.translate(ptVector3(x, y, z))
     object.netForce(1)
     object.physics.warp(matrix)
 

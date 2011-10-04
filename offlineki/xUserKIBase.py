@@ -525,7 +525,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             ki.IDoErrorChatMessage('How do you want to jump 0 feet?!?')
             return True
         avatar = PtGetLocalAvatar()
-        xUserKI.WarpObjectRelative(avatar, 0, 0, height)
+        xUserKI.WarpObjectRelative(avatar, 0, 0, height, localAxes = True)
         if silent: return True
         if (height > 0):
             if (height == 1): ki.IAddRTChat(None, 'You jump one foot into the air', 0)
