@@ -538,7 +538,12 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         if not len(gLastSpawnPos):
             ki.IDoErrorChatMessage('I\'m sorry, I was unable to save your spawn point, so I can\'t bring you back there.')
         else:
-            xUserKI.WarpObjectToPos(PtGetLocalAvatar(), gLastSpawnPos[0], gLastSpawnPos[1], gLastSpawnPos[2])
+            avatar = PtGetLocalAvatar()
+            avatar.netForce(1)
+            avatar.avatar.exitSubWorld() # for ages like Relativity
+            newMat = ptMatrix44()
+            newMat.translate(ptVector3(gLastSpawnPos[0], gLastSpawnPos[1], gLastSpawnPos[2])) # warp to that position, reset rotation etc. in case we come from a... strange subworld
+            avatar.physics.warp(newMat)
             if not silent: ki.IDoStatusChatMessage('%s re-spawns to the starting point' % PtGetClientName())
         return True
     if (cmnd == 'spawn'):
