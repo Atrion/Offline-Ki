@@ -252,6 +252,10 @@ class grsnWallPython(ptResponder):
             #goBtnSObject.value.runAttachedResponder(kBright)
             goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="bright")
         elif (state == ptClimbingWallMsgState.kSouthSelect):
+            i = 0 # bug reported by D'Lanor: will make sure blockers are reset when we clear the Wall
+            while ((i < 171)):
+                southWall.value[i].physics.suppress(true)
+                i = (i + 1)
             self.ClearIndices(false) # added. KEEP IT.
             i = 0
             while ((i < 20)):
@@ -317,6 +321,10 @@ class grsnWallPython(ptResponder):
             #goBtnNObject.value.runAttachedResponder(kBright) # previous: dim (just above). Simply detect player sit.
             goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="bright")
         elif (state == ptClimbingWallMsgState.kNorthSelect):
+            i = 0 # bug reported by D'Lanor: will make sure blockers are reset when we clear the Wall
+            while ((i < 171)):
+                northWall.value[i].physics.suppress(true)
+                i = (i + 1)
             self.ClearIndices(true) # added and KEEP IT ! Even though it might seem useless, this will make sure the unused panel keeps matching the south on new game.
             i = 0
             while ((i < 20)):
