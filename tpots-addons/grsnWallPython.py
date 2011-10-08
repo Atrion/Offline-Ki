@@ -833,7 +833,7 @@ class grsnWallPython(ptResponder):
                         self.SetWearingMaintainerSuit(avatar)
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                     avatar.physics.warpObj(nTeamWarpPt.value.getKey())
-                    nTubeOpen.run(self.key, avatar=avatar) # my add
+                    sTubeOpen.run(self.key, avatar=avatar) # my add
         if ((id == sTeamWin.id) and state):
             print 'you win'
             PtFakeLinkAvatarToObject(avatar.getKey(), sTeamWinTeleport.value.getKey())
