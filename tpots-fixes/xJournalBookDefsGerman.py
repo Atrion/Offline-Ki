@@ -107,7 +107,7 @@ xJournalBooks = {
     'Poetry1': (1.0, 0.90000000000000002, xPoetry1JournalEnglish),
     'KingMararon': (1.0, 0.90000000000000002, xKingMararonJournalGerman),
     'KingYableshan': (1.0, 0.90000000000000002, xKingYableshanJournalGerman),
-    'GrsnWallHelp': (1.0, 1.0, xGrsnWallHelpJournalGerman),
+    'GrsnWallHelp': (1.0, 1.0, xGrsnWallHelpJournalGerman, 'bkNotebook'),
     'KingRikooth': (1.0, 0.90000000000000002, xKingRikoothJournalGerman),
     'KingJaron': (1.0, 0.90000000000000002, xKingJaronJournalGerman),
     'KingLanaren': (1.0, 0.90000000000000002, xKingLanarenJournalGerman),
