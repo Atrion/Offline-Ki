@@ -35,8 +35,10 @@ dnButtonN = ptAttribActivator(19, 'N down count button')
 readyButtonN = ptAttribActivator(20, 'N ready button')
 goButtonN = ptAttribActivator(21, 'N Go Button activator')
 goButtonS = ptAttribActivator(22, 'S Go Button activator')
-goBtnNObject = ptAttribSceneobject(23, 'N Go Button object')
-goBtnSObject = ptAttribSceneobject(24, 'S Go Button object')
+#goBtnNObject = ptAttribSceneobject(23, 'N Go Button object')
+#goBtnSObject = ptAttribSceneobject(24, 'S Go Button object')
+goBtnNResp = ptAttribResponder(23, 'N Go Button anim responder', ["unknown", "bright", "dim", "pulse"], netForce=1) # "unknown" is the default layer anim. I don't know what it is, I didn't test it.
+goBtnSResp = ptAttribResponder(24, 'S Go Button anim responder', ["unknown", "bright", "dim", "pulse"], netForce=1)
 nChairSit = ptAttribActivator(25, 'N sit component')
 sChairSit = ptAttribActivator(26, 'S sit component')
 fiveBtnN = ptAttribActivator(27, '5 btn N')
@@ -47,8 +49,8 @@ tenBtnS = ptAttribActivator(31, '10 btn S')
 fifteenBtnS = ptAttribActivator(32, '15 btn S')
 sTubeOpen = ptAttribNamedResponder(33, 'S tube open', netForce=1)
 nTubeOpen = ptAttribNamedResponder(34, 'N tube open', netForce=1)
-sTubeClose = ptAttribNamedResponder(35, 'S tube close', netForce=1)
-nTubeClose = ptAttribNamedResponder(36, 'N tube close', netForce=1)
+sTubeClose = ptAttribNamedResponder(35, 'S tube close', ['down', 'closed'], netForce=1) # new states: will make sure we won't open traps if there is no triggerer
+nTubeClose = ptAttribNamedResponder(36, 'N tube close', ['down', 'closed'], netForce=1)
 sTubeEntry = ptAttribNamedActivator(37, 'S tube entry trigger')
 nTubeEntry = ptAttribNamedActivator(38, 'N tube entry trigger')
 sTubeMulti = ptAttribBehavior(43, 's tube entry multi', netForce=0)
@@ -72,9 +74,9 @@ kTeamLightsOff = 1
 kRedOn = 3
 kRedOff = 4
 kRedFlash = 2
-kDim = 0
-kBright = 1
-kPulse = 2
+kDim = 0 # desactivated
+kBright = 1 # can be pushed...
+kPulse = 2 # tell the player that he has to press the button (same as upper, but stronger. As the Bright will just tell you can enable/reset the wall, this one will tell you you have to use this button to start the game. Just make sure after reading back the script)
 kWaiting = 0
 kNorthSit = 1
 kSouthSit = 2
@@ -97,9 +99,15 @@ SouthCount = 0
 NorthWall = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
 SouthWall = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
 ReceiveInit = false
+MaleSuit = ['03_MHAcc_SuitHelmet', '03_MLHand_Suit', '03_MRHand_Suit', '03_MTorso_Suit', '03_MLegs_Suit', '03_MLFoot_Suit', '03_MRFoot_Suit']
+FemaleSuit = ['03_FHair_SuitHelmet', '03_FLHand_Suit', '03_FRHand_Suit', '03_FTorso_Suit', '03_FLegs_Suit', '03_FLFoot_Suit', '03_FRFoot_Suit']
 
 class grsnWallPython(ptResponder):
-
+# this should be the fixed version
+# TODO: check these damn goBtnSObject, goBtnNObject. It has to be fixed in the PRPs
+# these are for a layer anim of the main button (cool !)
+# and check if the logic modifier calls a button press for south GO button (checked: only in UU file)
+# reenable tube once player is in the wall area (done, still some problems with the xrgn)
 
     def __init__(self):
         PtDebugPrint('grsnWallPython::init begin')
@@ -108,8 +116,8 @@ class grsnWallPython(ptResponder):
         self.version = 3
 
 
-    def Load(self):
-        PtDebugPrint('grsnWallPython::Load')
+#    def Load(self): # useless
+#        PtDebugPrint('grsnWallPython::Load')
 
 
     def LookupIndex(self, index, north):
@@ -158,6 +166,7 @@ class grsnWallPython(ptResponder):
                     if (i == 20):
                         print 'yikes - somehow overran the array!'
                         return
+                # WARNING !  this block is NOT to be indented !
                 NorthWall[i] = index
                 NorthCount = (NorthCount + 1)
                 print 'set north wall index ',
@@ -211,12 +220,12 @@ class grsnWallPython(ptResponder):
         global SouthCount
         i = 0
         while ((i < 171)):
-            if (i < 20):
+            if (i < 20):# as in CC
                 if north:
                     NorthWall[i] = -1
                 else:
                     SouthWall[i] = -1
-            if north:
+            if north: # this will run all the layer anims on the panel. Don't remove !
                 northLights.value[i].runAttachedResponder(kTeamLightsOff)
             else:
                 southLights.value[i].runAttachedResponder(kTeamLightsOff)
@@ -230,15 +239,20 @@ class grsnWallPython(ptResponder):
     def SetSPanelMode(self, state):
         global BlockerCountLimit
         global NorthState
+        print 'set S Panel Mode called with state ',
+        print state
         if (state == ptClimbingWallMsgState.kWaiting):
             self.ResetSouthPanel(false)
             self.ClearIndices(false)
-            sTubeExclude.clear(self.key)
-            sTubeClose.run(self.key, avatar=PtGetLocalAvatar())
+            sTubeExclude.clear(self.key) # it should be ok: before a game or between two games
+            sTubeClose.run(self.key, avatar=PtGetLocalAvatar(), state='closed')
+            #goBtnSObject.value.runAttachedResponder(kDim) # added from North
+            goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim")
         elif (state == ptClimbingWallMsgState.kSouthSit):
-            goBtnSObject.value.runAttachedResponder(kBright)
+            #goBtnSObject.value.runAttachedResponder(kBright)
+            goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="bright")
         elif (state == ptClimbingWallMsgState.kSouthSelect):
-            self.ClearIndices(false)
+            self.ClearIndices(false) # added. KEEP IT.
             i = 0
             while ((i < 20)):
                 southCountLights.value[i].runAttachedResponder(kRedFlash)
@@ -249,6 +263,9 @@ class grsnWallPython(ptResponder):
             fiveBtnS.enable()
             tenBtnS.enable()
             fifteenBtnS.enable()
+            #goBtnSObject.value.runAttachedResponder(kDim) # from north
+            goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim")
+            print 'enabled all s switches'
         elif (state == ptClimbingWallMsgState.kSouthReady):
             i = 0
             while ((i < BlockerCountLimit)):
@@ -264,14 +281,24 @@ class grsnWallPython(ptResponder):
             fiveBtnS.disable()
             tenBtnS.disable()
             fifteenBtnS.disable()
+            # goBtnSObject.value.runAttachedResponder(kRedFlash) # added from North, var name is wrong (value is right however)
+            goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="pulse")
         elif (state == ptClimbingWallMsgState.kSouthPlayerEntry):
             self.EnableSouthButtons(false)
+            # note: should stop pulse LA of GO button once pressed, even though other side not ready
+            goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim")
             if (NorthState == ptClimbingWallMsgState.kNorthPlayerEntry):
                 sTubeOpen.run(self.key, avatar=PtGetLocalAvatar())
-                goBtnSObject.value.runAttachedResponder(kBright)
+                #goBtnSObject.value.runAttachedResponder(kBright)
                 nTubeOpen.run(self.key, avatar=PtGetLocalAvatar())
-                goBtnNObject.value.runAttachedResponder(kBright)
+                # goBtnNObject.value.runAttachedResponder(kBright) # previous should be blinking
+                #goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim")
                 print 'tubes open'
+        elif ((state == ptClimbingWallMsgState.kNorthQuit) or ((state == ptClimbingWallMsgState.kNorthWin) or ((state == ptClimbingWallMsgState.kSouthQuit) or (state == ptClimbingWallMsgState.kSouthWin)))):
+            sTubeExclude.clear(self.key)
+            sTubeClose.run(self.key, avatar=PtGetLocalAvatar(), state='closed')
+            #goBtnSObject.value.runAttachedResponder(kBright)
+            goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="bright")
 
 
     def SetNPanelMode(self, state):
@@ -282,18 +309,18 @@ class grsnWallPython(ptResponder):
         if (state == ptClimbingWallMsgState.kWaiting):
             self.ResetNorthPanel(false)
             self.ClearIndices(true)
-            nTubeExclude.clear(self.key)
-            nTubeClose.run(self.key, avatar=PtGetLocalAvatar())
-            goBtnNObject.value.runAttachedResponder(kDim)
+            nTubeExclude.clear(self.key)# same as before
+            nTubeClose.run(self.key, avatar=PtGetLocalAvatar(), state='closed')
+            #goBtnNObject.value.runAttachedResponder(kDim) # previous shouldn't exist (kWaiting is not called between two games, you go from Quit/Win to Sit/Ready). To my mind this will tell the Wall is off
+            goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim")
         elif (state == ptClimbingWallMsgState.kNorthSit):
-            goBtnNObject.value.runAttachedResponder(kBright)
+            #goBtnNObject.value.runAttachedResponder(kBright) # previous: dim (just above). Simply detect player sit.
+            goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="bright")
         elif (state == ptClimbingWallMsgState.kNorthSelect):
-            self.ClearIndices(true)
+            self.ClearIndices(true) # added and KEEP IT ! Even though it might seem useless, this will make sure the unused panel keeps matching the south on new game.
             i = 0
             while ((i < 20)):
                 northCountLights.value[i].runAttachedResponder(kRedFlash)
-                print 'run red flash ',
-                print i
                 i = (i + 1)
             upButtonN.enable()
             dnButtonN.enable()
@@ -301,7 +328,8 @@ class grsnWallPython(ptResponder):
             fiveBtnN.enable()
             tenBtnN.enable()
             fifteenBtnN.enable()
-            goBtnNObject.value.runAttachedResponder(kDim)
+            #goBtnNObject.value.runAttachedResponder(kDim) # now that we just pressed it to turn the Wall on, we must disable it
+            goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim")
             print 'enabled all n switches'
         elif (state == ptClimbingWallMsgState.kNorthReady):
             i = 0
@@ -318,15 +346,23 @@ class grsnWallPython(ptResponder):
             fiveBtnN.disable()
             tenBtnN.disable()
             fifteenBtnN.disable()
-            goBtnNObject.value.runAttachedResponder(kRedFlash)
+            #goBtnNObject.value.runAttachedResponder(kRedFlash) # will run fine, but variable is totally wrong. This should be kPulse. Previous state is dim, now tell player to push it (once he has set his blockers, of course)
+            goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="pulse")
         elif (state == ptClimbingWallMsgState.kNorthPlayerEntry):
             self.EnableNorthButtons(false)
+            goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim") # better put it dim than bright
             if (SouthState == ptClimbingWallMsgState.kSouthPlayerEntry):
                 sTubeOpen.run(self.key, avatar=PtGetLocalAvatar())
-                goBtnSObject.value.runAttachedResponder(kBright)
+                #goBtnSObject.value.runAttachedResponder(kBright)
+                #goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="bright") # not needed now that it is enabled by each panel and not by only one
                 nTubeOpen.run(self.key, avatar=PtGetLocalAvatar())
-                goBtnNObject.value.runAttachedResponder(kBright)
+                #goBtnNObject.value.runAttachedResponder(kBright) # now that we locked the Blockers, the game can be played. PrevState=kPulse
                 print 'tubes open'
+        elif ((state == ptClimbingWallMsgState.kNorthQuit) or ((state == ptClimbingWallMsgState.kNorthWin) or ((state == ptClimbingWallMsgState.kSouthQuit) or (state == ptClimbingWallMsgState.kSouthWin)))):
+            nTubeExclude.clear(self.key)
+            nTubeClose.run(self.key, avatar=PtGetLocalAvatar(), state='closed')
+            #goBtnNObject.value.runAttachedResponder(kBright) # PrevState= kBright, so it shouldn't be needed. However I modified it to make sure state is dim if the game is playing
+            goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="bright")
 
 
     def IAmMaster(self):
@@ -381,7 +417,7 @@ class grsnWallPython(ptResponder):
             print 'failed to receive init'
             return
         if (type == ptClimbingWallMsgType.kEndGameState):
-            ReceiveInit = false
+            ReceiveInit = false # our game now ended, don't thikn we're still running
             print 'finished receiving total game state'
             i = 0
             while ((i < BlockerCountLimit)):
@@ -430,7 +466,7 @@ class grsnWallPython(ptResponder):
         global BlockerCountLimit
         global NorthWall
         global SouthWall
-        if ReceiveInit:
+        if ReceiveInit: # this makes sure it doesn't respond if the game is running
             return
         print 'grsnClimbingWall::OnClimbingWallMsg type ',
         print type,
@@ -477,25 +513,25 @@ class grsnWallPython(ptResponder):
         global ReceiveInit
         PtDebugPrint('grsnWallPython::OnServerInitComplete')
         solo = true
-        if len(PtGetPlayerList()):
+        if len(PtGetPlayerList()): # in case a game is already running, it will ask its state
             solo = false
             ReceiveInit = true
-            i = 0
+            """i = 0 # from..
             while ((i < 171)):
                 southWall.value[i].physics.suppress(true)
                 northWall.value[i].physics.suppress(true)
                 i = (i + 1)
-            sTubeClose.run(self.key, fastforward=true, netForce=0)
-            nTubeClose.run(self.key, fastforward=true, netForce=0)
+            #sTubeClose.run(self.key, fastforward=true, netForce=0) # all this paragraph is totally useless. It should be commented out
+            #nTubeClose.run(self.key, fastforward=true, netForce=0) #...to: added. I guess it will be reverted if we have a game running"""
             print 'requesting game state message from master client'
             msg = ptClimbingWallMsg(self.key)
             msg.init(ptClimbingWallMsgType.kRequestGameState, 0, 0)
             msg.send()
             return
-        else:
+        else: # we don't need to ask game state
             print 'solo in climbing wall'
         ageSDL = PtGetAgeSDL()
-        ageSDL.setFlags('nChairOccupant', 0, 1)
+        ageSDL.setFlags('nChairOccupant', 0, 1) # makes sure we don't sit on another player's knees
         ageSDL.setFlags('sChairOccupant', 0, 1)
         ageSDL.setNotify(self.key, 'nChairOccupant', 0.0)
         ageSDL.setNotify(self.key, 'sChairOccupant', 0.0)
@@ -503,8 +539,10 @@ class grsnWallPython(ptResponder):
         ageSDL.sendToClients('sChairOccupant')
         self.ResetSouthPanel(false)
         self.ResetNorthPanel(false)
-        sTubeClose.run(self.key)
-        nTubeClose.run(self.key)
+        sTubeClose.run(self.key, state='closed')
+        nTubeClose.run(self.key, state='closed')
+        sTubeExclude.clear(self.key)
+        nTubeExclude.clear(self.key)
         if solo:
             ageSDL.setIndex('nChairOccupant', 0, -1)
             ageSDL.setIndex('sChairOccupant', 0, -1)
@@ -515,7 +553,7 @@ class grsnWallPython(ptResponder):
 
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
-        return
+        return # was used for chair I think
 
 
     def UpdateBlockerCountDisplay(self, flash):
@@ -641,9 +679,11 @@ class grsnWallPython(ptResponder):
             if (enable == 0):
                 southWall.value[i].physics.suppress(true)
             i = (i + 1)
+        self.ClearIndices(false) # from CC, makes sure we don't have any blocker displayed -> OK
         self.ZeroBlockerCount()
         SouthCount = 0
-        goBtnSObject.value.runAttachedResponder(kDim)
+        #goBtnSObject.value.runAttachedResponder(kDim)
+        goBtnSResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim")
 
 
     def ResetNorthPanel(self, enable):
@@ -660,21 +700,68 @@ class grsnWallPython(ptResponder):
             else:
                 northWall.value[i].physics.suppress(true)
             i = (i + 1)
+        self.ClearIndices(true) # from CC
         self.ZeroBlockerCount()
         NorthCount = 0
-        goBtnNObject.value.runAttachedResponder(kDim)
+        #goBtnNObject.value.runAttachedResponder(kDim)# should be OnServerInitComplete only ( it seems reseting it is not the same part)
+        goBtnNResp.run(self.key, avatar=PtGetLocalAvatar(), state="dim")
 
 
-    def OnTimer(self, id):
+    def OnTimer(self, id): # not in CC. This will link avatar to Nexus (+ removed old error)
         avatar = PtGetLocalAvatar()
         if (id == kNorthQuit):
             PtFakeLinkAvatarToObject(avatar.getKey(), sTeamWinTeleport.value.getKey())
-            self.ChangeGameState(ptClimbingWallMsgState.kSouthQuit)
-            self.ChangeGameState(ptClimbingWallMsgState.kNorthWin)
+            # originally these were wrong (made the winning team lose). But as we need to wait the avatar to touch the button before doing it, I placed it here
+            self.ChangeGameState(ptClimbingWallMsgState.kNorthQuit)
+            self.ChangeGameState(ptClimbingWallMsgState.kSouthWin)
         else:
             PtFakeLinkAvatarToObject(avatar.getKey(), nTeamWinTeleport.value.getKey())
-            self.ChangeGameState(ptClimbingWallMsgState.kSouthWin)
-            self.ChangeGameState(ptClimbingWallMsgState.kNorthQuit)
+            self.ChangeGameState(ptClimbingWallMsgState.kNorthWin)
+            self.ChangeGameState(ptClimbingWallMsgState.kSouthQuit)
+
+
+    def SetWearingMaintainerSuit(self, avatar):
+        currentgender = avatar.avatar.getAvatarClothingGroup()
+        # get the gender of our avatar
+        if (currentgender == kFemaleClothingGroup):
+            clothing = FemaleSuit
+        else:
+            clothing = MaleSuit
+
+        if (not (self.IItemInCloset(avatar, clothing[0]))):
+            # we don't have the suit in our Relto, so let's add it.
+            avatar.avatar.addWardrobeClothingItem(clothing[0], ptColor().white(), ptColor().white())
+            print "grsnWallPython: added the suit to your wardrobe"
+
+        # check the clothing our avatar is wearing
+        worn = avatar.avatar.getAvatarClothingList()
+        #print "Before operation, avatar's clothes are: ", worn
+        for item in worn:
+            name = item[0]
+            #type = item[1]
+            #print "Name is '%s'" % name
+            if (name in clothing):
+                print "Avatar seems to be wearing the suit already."
+                return
+                # Avatar is wearing suit !
+                #print "  -> removing..."
+                #PtSendKIMessage(25, "found wrong piece of suit: '%s'" % name)
+                #avatar.avatar.removeClothingItem(name)
+                #PtWearDefaultClothingType(avatar.getKey(), type)
+        #avatar.avatar.saveClothing() # if we don't save the clothing, then the avatar should be wearing it on next start-up ? Both are not the best solutions.
+        #print "After operation, avatar's clothes are: ", avatar.avatar.getAvatarClothingList()
+
+        # avatar is now wearing default clothing, we can give him his suit.
+        PtWearMaintainerSuit(avatar.getKey(), true)
+        print "grsnWallPython: avatar is now wearing suit."
+
+
+    def IItemInCloset(self, avatar, clothingName):
+        clothingList = avatar.avatar.getWardrobeClothingList()
+        for item in clothingList:
+            if (clothingName == item[0]):
+                return 1
+        return 0
 
 
     def OnNotify(self, state, id, events):
@@ -712,13 +799,16 @@ class grsnWallPython(ptResponder):
             for event in events:
                 if ((event[0] == kMultiStageEvent) and ((event[1] == 0) and (event[2] == kEnterStage))):
                     print 'Smart seek completed. close tube'
-                    nTubeClose.run(self.key, avatar=avatar)
+                    nTubeExclude.clear(self.key) #my add
+                    nTubeClose.run(self.key, avatar=avatar, state='down')
                 elif ((event[0] == kMultiStageEvent) and ((event[1] == 0) and (event[2] == kAdvanceNextStage))):
                     print 'multistage complete, warp to wall south room with suit'
                     if (avatar == PtGetLocalAvatar()):
-                        PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), true)
+                        #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), true)
+                        self.SetWearingMaintainerSuit(avatar)
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                     avatar.physics.warpObj(sTeamWarpPt.value.getKey())
+                    nTubeOpen.run(self.key, avatar=avatar) # my add
         if (id == sTubeOpen.id):
             print 'tube finished opening'
             sTubeExclude.release(self.key)
@@ -726,13 +816,16 @@ class grsnWallPython(ptResponder):
             for event in events:
                 if ((event[0] == kMultiStageEvent) and ((event[1] == 0) and (event[2] == kEnterStage))):
                     print 'Smart seek completed. close tube'
-                    sTubeClose.run(self.key, avatar=avatar)
+                    sTubeExclude.clear(self.key) #my add
+                    sTubeClose.run(self.key, avatar=avatar, state='down')
                 elif ((event[0] == kMultiStageEvent) and ((event[1] == 0) and (event[2] == kAdvanceNextStage))):
                     print 'multistage complete, warp to wall north room with suit'
                     if (avatar == PtGetLocalAvatar()):
-                        PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), true)
+                        #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), true)
+                        self.SetWearingMaintainerSuit(avatar)
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                     avatar.physics.warpObj(nTeamWarpPt.value.getKey())
+                    nTubeOpen.run(self.key, avatar=avatar) # my add
         if ((id == sTeamWin.id) and state):
             print 'you win'
             PtFakeLinkAvatarToObject(avatar.getKey(), sTeamWinTeleport.value.getKey())
@@ -745,13 +838,14 @@ class grsnWallPython(ptResponder):
             self.ChangeGameState(ptClimbingWallMsgState.kSouthQuit)
         if ((id == nTeamQuit.id) and state):
             avatar.avatar.runBehaviorSetNotify(nQuitBehavior.value, self.key, nQuitBehavior.netForce)
-            self.ChangeGameState(ptClimbingWallMsgState.kNorthQuit)
-            self.ChangeGameState(ptClimbingWallMsgState.kSouthWin)
+            # these are called too early: the avatar doesn't have time to touch the button. Swapped to OnTimer
+            #self.ChangeGameState(ptClimbingWallMsgState.kNorthQuit)
+            #self.ChangeGameState(ptClimbingWallMsgState.kSouthWin)
             return
         if ((id == sTeamQuit.id) and state):
             avatar.avatar.runBehaviorSetNotify(sQuitBehavior.value, self.key, sQuitBehavior.netForce)
-            self.ChangeGameState(ptClimbingWallMsgState.kNorthWin)
-            self.ChangeGameState(ptClimbingWallMsgState.kSouthQuit)
+            #self.ChangeGameState(ptClimbingWallMsgState.kNorthWin)
+            #self.ChangeGameState(ptClimbingWallMsgState.kSouthQuit)
             return
         if (id == southChair.id):
             print 'clicked south chair'
@@ -760,17 +854,19 @@ class grsnWallPython(ptResponder):
                 occupant = ageSDL['sChairOccupant'][0]
                 print 'occupant ',
                 print occupant
-                if 1:
+                if (occupant == -1):# from CC: should make sure we don't try to sit on an occupied chair. (should not happen anyway as its physics are disabled, but OK)
                     print 'sitting down in south chair'
                     southChair.disable()
                     ageSDL.setIndex('sChairOccupant', 0, avID)
                     if ((southState == ptClimbingWallMsgState.kWaiting) or ((southState == ptClimbingWallMsgState.kSouthWin) or (southState == ptClimbingWallMsgState.kSouthQuit))):
                         self.ChangeGameState(ptClimbingWallMsgState.kSouthSit)
+#                        if ((northState == ptClimbingWallMsgState.kNorthQuit) or (northState == ptClimbingWallMsgState.kNorthWin)): #from CC, don't use it as it crashes a bit the panels
+#                            self.ChangeGameState(ptClimbingWallMsgState.kWaiting)
                     return
         if (id == sChairSit.id):
             for event in events:
                 if ((event[0] == 6) and ((event[1] == 1) and (state == 0))):
-                    if 1:
+                    if (ageSDL['sChairOccupant'][0] != -1): # from CC -> OK
                         print 'standing up from south chair'
                         southChair.enable()
                         ageSDL.setIndex('sChairOccupant', 0, -1)
@@ -782,17 +878,19 @@ class grsnWallPython(ptResponder):
                 occupant = ageSDL['nChairOccupant'][0]
                 print 'occupant ',
                 print occupant
-                if 1:
-                    print 'sitting down in south chair'
+                if (occupant == -1):# from CC
+                    print 'sitting down in north chair'
                     northChair.disable()
                     ageSDL.setIndex('nChairOccupant', 0, avID)
                     if ((northState == ptClimbingWallMsgState.kWaiting) or ((northState == ptClimbingWallMsgState.kNorthWin) or (northState == ptClimbingWallMsgState.kNorthQuit))):
                         self.ChangeGameState(ptClimbingWallMsgState.kNorthSit)
+#                        if ((southState == ptClimbingWallMsgState.kSouthQuit) or (southState == ptClimbingWallMsgState.kSouthWin)): # from CC: remember to delete this once you know its efects (which can be only bad)
+#                            self.ChangeGameState(ptClimbingWallMsgState.kWaiting)
                     return
         if (id == nChairSit.id):
             for event in events:
                 if ((event[0] == 6) and ((event[1] == 1) and (state == 0))):
-                    if 1:
+                    if (ageSDL['nChairOccupant'][0] != -1): # from CC
                         print 'standing up from north chair'
                         northChair.enable()
                         ageSDL.setIndex('nChairOccupant', 0, -1)
@@ -862,9 +960,9 @@ class grsnWallPython(ptResponder):
             print 'picked s go button'
             if (southState == ptClimbingWallMsgState.kSouthSit):
                 print 'set index to kSouthSelect'
-                self.ClearIndices(false)
+                #self.ClearIndices(false) # we don't need to put it here as it is called in SetSPanelMode, so DON'T ADD IT BACK.
                 self.ChangeGameState(ptClimbingWallMsgState.kSouthSelect)
-                sPanelSound.run(self.key, avatar=PtGetLocalAvatar(), state='main')
+                sPanelSound.run(self.key, avatar=PtGetLocalAvatar(), state='main') # next line has more states than in CC but it is OK as it will make things OK if you are running a second game
                 if ((northState == ptClimbingWallMsgState.kWaiting) or ((northState == ptClimbingWallMsgState.kNorthSit) or ((northState == ptClimbingWallMsgState.kNorthWin) or (northState == ptClimbingWallMsgState.kNorthQuit)))):
                     print 'force north chair to keep up'
                     self.ChangeGameState(ptClimbingWallMsgState.kNorthSelect)
@@ -877,6 +975,9 @@ class grsnWallPython(ptResponder):
                 else:
                     self.ChangeGameState(ptClimbingWallMsgState.kSouthPlayerEntry)
                     sPanelSound.run(self.key, avatar=PtGetLocalAvatar(), state='gameStart')
+            else:
+                # added to tell the button to play denied sfx as it is always touchable (never desactivated)
+                sPanelSound.run(self.key, avatar=PtGetLocalAvatar(), state='denied')
             return
         if (id == upButtonN.id):
             print 'up button north'
@@ -930,9 +1031,9 @@ class grsnWallPython(ptResponder):
             if (northState == ptClimbingWallMsgState.kNorthSit):
                 print 'set index to kNorthSelect'
                 self.ChangeGameState(ptClimbingWallMsgState.kNorthSelect)
-                self.ClearIndices(true)
-                nPanelSound.run(self.key, avatar=PtGetLocalAvatar(), state='main')
-                if ((southState == ptClimbingWallMsgState.kWaiting) or ((southState == ptClimbingWallMsgState.kSouthSit) or ((southState == ptClimbingWallMsgState.kSouthWin) or (southState == ptClimbingWallMsgState.kSouthWin)))):
+                #self.ClearIndices(true) # we don't need to put it here as it is called in SetNPanelMode, so DON'T ADD IT BACK.
+                nPanelSound.run(self.key, avatar=PtGetLocalAvatar(), state='main') # next line has more states than in CC -> OK
+                if ((southState == ptClimbingWallMsgState.kWaiting) or ((southState == ptClimbingWallMsgState.kSouthSit) or ((southState == ptClimbingWallMsgState.kSouthWin) or (southState == ptClimbingWallMsgState.kSouthQuit)))): # corrected: this test used two times kSouthWin, and never kSouthQuit.... mauvais perdant !
                     self.ChangeGameState(ptClimbingWallMsgState.kSouthSelect)
                     print 'force south chair to keep up'
             elif (northState == ptClimbingWallMsgState.kNorthReady):
@@ -944,6 +1045,9 @@ class grsnWallPython(ptResponder):
                 else:
                     self.ChangeGameState(ptClimbingWallMsgState.kNorthPlayerEntry)
                     nPanelSound.run(self.key, avatar=PtGetLocalAvatar(), state='gameStart')
+            else:
+                # added to tell the button to play denied sfx as it is always touchable (never desactivated)
+                nPanelSound.run(self.key, avatar=PtGetLocalAvatar(), state='denied')
             return
         for event in events:
             if ((event[0] == kPickedEvent) and (event[1] == 1)):

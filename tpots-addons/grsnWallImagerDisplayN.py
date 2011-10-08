@@ -46,9 +46,9 @@ class grsnWallImagerDisplayN(ptResponder):
 
     def OnServerInitComplete(self):
         global ReceiveInit
-        PtDebugPrint('grsnWallPython::OnServerInitComplete')
+        PtDebugPrint('grsnWallImagerDisplayN::OnServerInitComplete')
         solo = true
-        if len(PtGetPlayerList()):
+        if len(PtGetPlayerList()):# might sound strange, but this /should/ be only if we are linking and a game is already running
             solo = false
             ReceiveInit = true
             return
@@ -58,7 +58,7 @@ class grsnWallImagerDisplayN(ptResponder):
 
     def OnClimbingWallInit(self, type, state, value):
         global ReceiveInit
-        print 'grsnClimbingWall::OnClimbingWallInit type ',
+        print 'grsnWallImagerDisplayN::OnClimbingWallInit type ',
         print type,
         print ' state ',
         print state,
@@ -148,6 +148,25 @@ def glue_getVersion():
     return ver
 
 
+def glue_findAndAddAttribs(obj, glue_params):
+    if isinstance(obj, ptAttribute):
+        if glue_params.has_key(obj.id):
+            if glue_verbose:
+                print 'WARNING: Duplicate attribute ids!'
+                print ('%s has id %d which is already defined in %s' % (obj.name, obj.id, glue_params[obj.id].name))
+        else:
+            glue_params[obj.id] = obj
+    elif (type(obj) == type([])):
+        for o in obj:
+            glue_findAndAddAttribs(o, glue_params)
+    elif (type(obj) == type({})):
+        for o in obj.values():
+            glue_findAndAddAttribs(o, glue_params)
+    elif (type(obj) == type(())):
+        for o in obj:
+            glue_findAndAddAttribs(o, glue_params)
+
+
 def glue_getParamDict():
     global glue_params
     global glue_paramKeys
@@ -155,13 +174,7 @@ def glue_getParamDict():
         glue_params = {}
         gd = globals()
         for obj in gd.values():
-            if isinstance(obj, ptAttribute):
-                if glue_params.has_key(obj.id):
-                    if glue_verbose:
-                        print 'WARNING: Duplicate attribute ids!'
-                        print ('%s has id %d which is already defined in %s' % (obj.name, obj.id, glue_params[obj.id].name))
-                else:
-                    glue_params[obj.id] = obj
+            glue_findAndAddAttribs(obj, glue_params)
         glue_paramKeys = glue_params.keys()
         glue_paramKeys.sort()
         glue_paramKeys.reverse()
@@ -257,6 +270,26 @@ def glue_isMultiModifier():
     if isinstance(inst, ptMultiModifier):
         return 1
     return 0
+
+
+def glue_getVisInfo(number):
+    global glue_paramKeys
+    pd = glue_getParamDict()
+    if (pd != None):
+        if (type(glue_paramKeys) == type([])):
+            if ((number >= 0) and (number < len(glue_paramKeys))):
+                return pd[glue_paramKeys[number]].getVisInfo()
+            else:
+                print ('glue_getVisInfo: Error! %d out of range of attribute list' % number)
+        else:
+            pl = pd.values()
+            if ((number >= 0) and (number < len(pl))):
+                return pl[number].getVisInfo()
+            elif glue_verbose:
+                print ('glue_getVisInfo: Error! %d out of range of attribute list' % number)
+    if glue_verbose:
+        print 'GLUE: Attribute list error'
+    return None
 
 
 

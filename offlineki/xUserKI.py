@@ -439,7 +439,7 @@ def OnCommand(ki, command, playerList, KIContent, silent):
         if not len(parts): return False
         if (parts[0].lower() == 'info'):
             ki.IDoStatusChatMessage('This is the Offline KI %s by diafero' % gUserKIVersion, netPropagate=0)
-            ki.IDoStatusChatMessage('Also containing contributions by Agenotfound, Almlys, a\'moaca\', Ashtar, cjkelly1, DarkFalkon, D\'Lanor, Dustin, LCC, GPNMilano, H\'astin, Hoikas, Kaelis Ebonrai, Zrax and unknown AdminKI and UserKI programmers', netPropagate=0)
+            ki.IDoStatusChatMessage('Also containing contributions by Agenotfound, Almlys, a\'moaca\', Ashtar, cjkelly1, DarkFalkon, D\'Lanor, Dustin, LCC, GPNMilano, H\'astin, Hoikas, Kaelis Ebonrai, Sirius, Zrax and unknown AdminKI and UserKI programmers', netPropagate=0)
             return True
         # relay event
         return RunUserKIExtensions('OnCommand', lambda f: f(ki, command[len(parts[0])+1:], parts[0].lower(), parts[1:], playerList, KIContent, silent), everyone=False)

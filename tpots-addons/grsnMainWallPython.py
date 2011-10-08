@@ -56,7 +56,7 @@ class grsnMainWallPython(ptResponder):
         global ReceiveInit
         PtDebugPrint('grsnWallPython::OnServerInitComplete')
         solo = true
-        if len(PtGetPlayerList()):
+        if len(PtGetPlayerList()): # used to make sure we don't link-in while a game is playing
             solo = false
             ReceiveInit = true
             return
@@ -156,13 +156,13 @@ class grsnMainWallPython(ptResponder):
                 i = 0
                 while ((i < 171)):
                     southWall.value[i].runAttachedResponder(kTeamLightsOff)
-                    if (i < 20):
+                    if (i < 20): # should help when drawing solution
                         SouthBlockers[i] = -1
                     i = (i + 1)
             elif (state == ptClimbingWallMsgState.kNorthSelect):
                 i = 0
                 while ((i < 171)):
-                    if (i < 20):
+                    if (i < 20): # same
                         NorthBlockers[i] = -1
                     northWall.value[i].runAttachedResponder(kTeamLightsOff)
                     i = (i + 1)
@@ -223,6 +223,16 @@ class grsnMainWallPython(ptResponder):
             print index,
             print ' from list slot ',
             print i
+
+
+    def OnNotify(self, state, id, events):
+        if ((id == -1) and state):
+            blocker = events[0][1]
+            bNumber = int(blocker[2:])
+            if (blocker[0] == "n"):
+                northWall.value[bNumber-1].runAttachedResponder(kTeamLightsBlink)
+            else:
+                southWall.value[bNumber-1].runAttachedResponder(kTeamLightsBlink)
 
 
 glue_cl = None

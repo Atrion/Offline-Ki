@@ -15,7 +15,7 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
-purpleResp = ptAttribResponder(1, 'purple responder')
+purpleResp = ptAttribResponder(1, 'purple responder')# no longer used
 yellowResp = ptAttribResponder(2, 'yellow responder')
 bookPurpleInPos = ptAttribActivator(3, 'Purple book in position event')
 bookYellowInPos = ptAttribActivator(4, 'Yellow book in position event')
@@ -53,18 +53,22 @@ class grsnNexusBookMachine(ptResponder):
     def OnTimer(self, id):
         global yellowLink
         avatar = PtGetLocalAvatar()
-        if yellowLink:
-            PtFakeLinkAvatarToObject(avatar.getKey(), teamYellowTeleport.value.getKey())
+        if (id == 0):
+            if yellowLink:
+                PtFakeLinkAvatarToObject(avatar.getKey(), teamYellowTeleport.value.getKey())
+            else:
+                PtFakeLinkAvatarToObject(avatar.getKey(), teamPurpleTeleport.value.getKey())
+            #resetResponder.run(self.key, avatar=PtGetLocalAvatar())
+            PtAtTimeCallback(self.key, 3.0, 1)
+            PtSendKIMessage(kEnableEntireYeeshaBook, 0)
         else:
-            PtFakeLinkAvatarToObject(avatar.getKey(), teamPurpleTeleport.value.getKey())
-        resetResponder.run(self.key, avatar=PtGetLocalAvatar())
-        PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+            resetResponder.run(self.key, avatar=PtGetLocalAvatar()) # don't reset too soon elevator or player will see it.
 
 
-    def OnNotify(self, state, id, events):
+    def OnNotify(self, state, id, events):  # removed prints as it extends a LOT the log
         global yellowLink
-        print 'id ',
-        print id
+#        print 'id ',
+#        print id
         avatar = PtFindAvatar(events)
         local = PtGetLocalAvatar()
         if (avatar != local):
@@ -80,10 +84,10 @@ class grsnNexusBookMachine(ptResponder):
         if (not (state)):
             return
         if (id == bookPurpleInPos.id):
-            print 'Purple book aligned'
+#            print 'Purple book aligned'
             bookPurpleOutResponder.run(self.key)
         if (id == bookYellowInPos.id):
-            print 'Yellow book aligned'
+#            print 'Yellow book aligned'
             bookYellowOutResponder.run(self.key)
         if (id == entryTrigger.id):
             PtWearMaintainerSuit(avatar.getKey(), false)
