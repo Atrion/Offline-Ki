@@ -257,7 +257,7 @@ def OnTimer(ki, id): # called by xUserKI
 
 def OnNewAgeLoaded(ki, firstAge):
     if firstAge:
-        PtAtTimeCallback(ki.key, 2.5, xUserKI.kAutoLinkPrepareTimer)
+        PtAtTimeCallback(ki.key, 1.0, xUserKI.kAutoLinkPrepareTimer)
 
 
 # Main function
