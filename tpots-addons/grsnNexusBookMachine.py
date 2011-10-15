@@ -31,6 +31,7 @@ fakeLinkBehavior = ptAttribBehavior(13, 'link out behavior', netForce=0)
 waitingOnPBook = false
 waitingOnYBook = false
 yellowLink = false
+suitDone = False
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -66,7 +67,7 @@ class grsnNexusBookMachine(ptResponder):
 
 
     def OnNotify(self, state, id, events):  # removed prints as it extends a LOT the log
-        global yellowLink
+        global yellowLink, suitDone
 #        print 'id ',
 #        print id
         avatar = PtFindAvatar(events)
@@ -90,15 +91,19 @@ class grsnNexusBookMachine(ptResponder):
 #            print 'Yellow book aligned'
             bookYellowOutResponder.run(self.key)
         if (id == entryTrigger.id):
-            PtWearMaintainerSuit(avatar.getKey(), false)
+            if not suitDone:
+                suitDone = True
+                PtWearMaintainerSuit(avatar.getKey(), false)
         if (id == bookPurpleClickable.id):
             print 'touched purple team room book'
             yellowLink = false
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value, self.key, fakeLinkBehavior.netForce)
+            suitDone = False
         if (id == bookYellowClickable.id):
             print 'touched yellow team room book'
             yellowLink = true
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value, self.key, fakeLinkBehavior.netForce)
+            suitDone = False
 
 
 glue_cl = None
