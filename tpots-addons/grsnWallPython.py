@@ -829,6 +829,7 @@ class grsnWallPython(ptResponder):
         if (id == nTubeOpen.id):
             print 'tube finished opening'
             nTubeExclude.release(self.key)
+            nTubeEntry.enable()
         if (id == nTubeMulti.id):
             for event in events:
                 if ((event[0] == kMultiStageEvent) and ((event[1] == 0) and (event[2] == kEnterStage))):
@@ -845,6 +846,7 @@ class grsnWallPython(ptResponder):
         if (id == sTubeOpen.id):
             print 'tube finished opening'
             sTubeExclude.release(self.key)
+            sTubeEntry.enable()
         if (id == sTubeMulti.id):
             for event in events:
                 if ((event[0] == kMultiStageEvent) and ((event[1] == 0) and (event[2] == kEnterStage))):
@@ -928,11 +930,13 @@ class grsnWallPython(ptResponder):
             #trigger = PtFindAvatar(events)
             print 'entered team 1 tube, run behavior'
             #ageSDL.setIndex('nWallPlayer', 0, PtGetClientIDFromAvatarKey(trigger.getKey()))
+            nTubeEntry.disable()
             avatar.avatar.runBehaviorSetNotify(nTubeMulti.value, self.key, 0)
         if (id == sTubeEntry.id):
             #trigger = PtFindAvatar(events)
             print 'entered team 2 tube, run behavior'
             #ageSDL.setIndex('sWallPlayer', 0, PtGetClientIDFromAvatarKey(trigger.getKey()))
+            sTubeEntry.disable()
             avatar.avatar.runBehaviorSetNotify(sTubeMulti.value, self.key, 0)
         if (avatar != PtGetLocalAvatar()):
             print 'not activated by me'
