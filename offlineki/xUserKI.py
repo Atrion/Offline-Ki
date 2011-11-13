@@ -56,6 +56,7 @@ gAgeInitialized = False
 # 3000-3049 is reserved for xUserKIBase
 kEnableTimer = 3000
 kCrashTimer = 3001
+kAgeLoadTimer = 3002
 # 3050-3099 is reserved for xUserKIFlymode
 kReposTimer = 3050
 kFlyModeTimer = 3055

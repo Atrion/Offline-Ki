@@ -306,6 +306,10 @@ def OnTimer(ki, id):
             PtSendRTChat(PtGetLocalPlayer(), [], "/!silentping", xKI.ChatFlags(0).flags)
             gCrashResponsesPending = gCrashResponsesPending+1
         return True
+    # relto pages
+    elif id == xUserKI.kAgeLoadTimer:
+        import xCustomReltoPages
+        xCustomReltoPages.LoadReltoPages()
     return False
 
 
@@ -338,12 +342,14 @@ def OnNewAgeLoaded(ki, firstAge):
     # load additional pages
     if PtGetAgeName() in xxConfig.AutoPages:
         PtPageInNode(xxConfig.AutoPages[PtGetAgeName()]) # we expect these pages to belong to the current age, so we do not care about unloading them
-    # check if the POTS additions are installed (can only be done in Relto)
     if PtGetAgeName() == 'Personal':
+        # check if the POTS additions are installed (can only be done in Relto)
         import booksDustGlobal
         if not booksDustGlobal.DynCoverLoaded:
             ki.IDoErrorChatMessage('You do not have the POTS Patches applied, so you will miss some functionality. To get them, select the "Coversion" tab '+
                 'in Drizzle, select your POTS folder, and hit the "Start" button next to that selection.')
+        # soon load relto pages
+        PtAtTimeCallback(ki.key, 0.1, xUserKI.kAgeLoadTimer)
     if xxConfig.isOnline():
         # some online-only things
         global gOnlineState, gCrashTimerRunning

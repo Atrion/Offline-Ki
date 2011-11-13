@@ -1,0 +1,325 @@
+# -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    Copyright 2005-2010 Dustin Bernard                                        #
+#    Copyright 2011      Diafero                                               #
+#                                                                              #
+#    This file is part of the Offline KI, based on code from                   #
+#    UruAgeManager/Drizzle.                                                    #
+#                                                                              #
+#    This program is free software: you can redistribute it and/or modify      #
+#    it under the terms of the GNU General Public License as published by      #
+#    the Free Software Foundation, either version 3 of the License, or         #
+#    (at your option) any later version, with or (at your option) without      #
+#    the Uru exception (see below).                                            #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             #
+#    GNU General Public License for more details.                              #
+#                                                                              #
+#    Please see the file COPYING for the full GPLv3 license, or see            #
+#    <http://www.gnu.org/licenses/>                                            #
+#                                                                              #
+#==============================================================================#
+import Plasma
+import PlasmaConstants
+import os
+
+ReltoPages = None #{}
+
+### From _UamUtils
+#For dealing with String->String dictionaries (musn't contain ; nor = nor rely on whitespace on the ends. )
+def _DictToString(dict):
+    str_list = []
+    first = True
+    for key in dict:
+        val = dict[key]
+        if not first:
+            str_list.append(";")
+        str_list.append(key+"="+val)
+        first = False
+    result = ''.join(str_list)
+    return result
+def _StringToDict(str):
+    result = {}
+    if str=="":
+        return result
+    list = str.split(";")
+    for item in list:
+        #parts = item.split("=")
+        #if len(parts)==2:
+        #    result[parts[0].strip()] = parts[1].strip()  #remove whitespace off the ends
+        #else:
+        #    #skip this part
+        #    pass
+        ind = item.find("=")
+        if ind!=-1:
+            result[item[:ind].strip()] = item[ind+1:].strip()  #remove whitespace off the ends
+        else:
+            #skip this part
+            pass
+    return result
+def _ListToString(list):
+    str_list = []
+    first = True
+    for val in list:
+        if not first:
+            str_list.append(";")
+        str_list.append(val)
+        first = False
+    result = ''.join(str_list)
+    return result
+def _StringToList(str):
+    result = []
+    if str=="":
+        return result
+    list = str.split(";")
+    for item in list:
+        item = item.strip()
+        if item!="":
+            result.append(item)
+    return result
+
+def AmInMyRelto():
+    return Plasma.ptVault().inMyPersonalAge()
+
+def HideObject(objectname):
+    #Hides and disables a sceneobject
+    #print "hide:"+objectname
+    agename = GetAgeName()
+    try:
+        av = Plasma.PtFindSceneobject(objectname, agename)
+    except:
+        print "_UamUtils.HideObject unable to find object: "+objectname
+        return False
+    av.draw.disable()
+    av.physics.suppress(1)
+    return True
+
+def GetLanguage():
+    langnum = Plasma.PtGetLanguage()
+    if langnum==0:
+        return "en"
+    elif langnum==1:
+        return "fr"
+    elif langnum==2:
+        return "de"
+    else:
+        raise Exception("Unexpected language")
+
+
+
+### From uam
+def SetAgeChronicle(varname, value):
+    #print "SetAgeChronicle name=" + `varname` + " value="+`value`
+    ageVault = Plasma.ptAgeVault()
+    _SetChronicle(varname,value,ageVault)
+def _SetChronicle(varname, value, vault, type=1):
+    chronnode = vault.findChronicleEntry(varname)
+    #print "cronnode:"+`chronnode`
+    if chronnode==None:
+        #create it
+        vault.addChronicleEntry(varname,1,value) #type 1 seems to be stuff that *might* be for other players.  I think it might be ignored.
+    else:
+        chronnode.chronicleSetValue(value)
+        chronnode.save()
+def _SetPlayerChronicle(varname, value, type=1):
+    #print "SetPlayerChronicle name=" + `varname` + " value="+`value`
+    vault = Plasma.ptVault()
+    _SetChronicle(varname,value,vault,type)
+def GetAgeChronicle(varname):
+    #print "GetAgeChronicle name=" + `varname`
+    ageVault = Plasma.ptAgeVault()
+    return _GetChronicle(varname,ageVault)
+def _GetChronicle(varname, vault):
+    chronnode = vault.findChronicleEntry(varname)
+    #print "cronnode:"+`chronnode`
+    if chronnode==None:
+        #print "chronnode not found: "+`varname`
+        #return None
+        return ""
+    else:
+        value = chronnode.chronicleGetValue()
+        #print "chronnode value: "+`value`
+        return value
+def _GetPlayerChronicle(varname):        
+    #print "GetPlayerChronicle name=" + `varname`
+    vault = Plasma.ptVault()
+    return _GetChronicle(varname,vault)
+
+
+
+### From _UamMod_ReltoPages
+def TogglePage(pagenum):
+    #Get page for this pagenum
+    pagedict = FindPage(pagenum)
+    if pagedict==None:
+        return False
+    pagename = pagedict["pagename"]
+
+    #Get the current status of the pages
+    chronstr = GetAgeChronicle("UamReltoPages") #on, off, or unattained
+    pages = _StringToDict(chronstr)
+    #print "chronstr: "+chronstr
+    
+    status = pages.get(pagename,pagedict["default"])  #Get the status or use the default for this page.
+    if status=="on":
+        status = "off"
+    elif status=="off":
+        status = "on"
+    else:
+        raise "Unexpected page state"
+    
+    #save the new status
+    pages[pagename] = status
+    pagesstr = _DictToString(pages)
+    SetAgeChronicle("UamReltoPages",pagesstr)
+    #print "chronstr: "+pagesstr
+    return True
+    
+def FindPage(pagenum):
+    for page in ReltoPages:
+        pagedict = ReltoPages[page]
+        curpagenum = int(pagedict["pagenum"])
+        if pagenum==curpagenum:
+            return pagedict
+    return None
+
+#Read definitions from /img/UamRelto folder?
+def ReadPageInfo():
+    global ReltoPages
+    ReltoPages = {}
+    print "xCustomReltoPages: reading page info"
+    if os.path.exists("img/UamRelto/"):
+        files = os.listdir("img/UamRelto/")
+    else:
+        return
+    for filename in files:
+        if filename.startswith("UamRelto--") and filename.endswith(".txt"):
+            pagename = filename[len("UamRelto--"):len(filename)-len(".txt")] #get the inside part
+            #print "pagename: "+pagename
+            f = file("img/UamRelto/"+filename,"r")
+            contents = f.read()
+            f.close()
+            pagedict = _StringToDict(contents)
+            pagenum = int(pagedict["pagenum"])
+            if pagenum<100:
+                raise Exception("pagenum must be over 100.")
+            pagestate = pagedict["default"]
+            if pagestate!="off" and pagestate!="unattained":
+                raise Exception("default must be either 'off' or 'unattained'")
+            en = pagedict.get("text--en")
+            de = pagedict.get("text--de")
+            fr = pagedict.get("text--fr")
+            hidetxt = pagedict.get("hide") #looks like Object1,Object2,Object3
+            hideitems = []
+            if hidetxt!=None:
+                for hideitem in hidetxt.split(","):
+                    hideitem = hideitem.strip()
+                    if hideitem!="":
+                        hideitems.append(hideitem)
+            #default text is English if we got it, otherwise just the pagename.
+            if en!=None:
+                dt = en
+            else:
+                dt = pagename
+            if en==None:
+                en = dt
+            if de==None:
+                de = dt
+            if fr==None:
+                fr = dt
+            pagedict["text--en"] = en
+            pagedict["text--de"] = en
+            pagedict["text--fr"] = en
+            pagedict["pagename"] = pagename
+            pagedict["hide"] = hideitems
+            ReltoPages[pagename] = pagedict
+
+#Listen for link-in to a Relto, so we can load the appropriate pages
+def LoadReltoPages():
+    #Read any updated pages
+    ReadPageInfo()
+
+    #Do tasks given from other Ages
+    if AmInMyRelto():
+        tasksstr = _GetPlayerChronicle("UamTasks")
+        tasks = _StringToList(tasksstr)
+        numtasks = len(tasks)
+        for task in tasks:
+            #print "task to do: "+task
+            if task.startswith("EnableReltoPage="):
+                page = task[len("EnableReltoPage="):]
+                #enable the page
+                pages = _StringToDict(GetAgeChronicle("UamReltoPages"))
+                pages[page] = "on"  #whether it was unset or on or off or unattained, it is on now!
+                SetAgeChronicle("UamReltoPages",_DictToString(pages))
+                #remove from task list
+                tasks.remove(task)
+        if numtasks!=len(tasks):
+            #removed some, so save
+            _SetPlayerChronicle("UamTasks",_ListToString(tasks))
+    
+    #Load pages
+    PagesToLoad = {} #set() #Sets don't exist in Python 2.2 :P
+    ObjectsToHide = {} #set() #Sets don't exist in Python 2.2 :P
+    print "xCustomReltoPages: Loading Uam pages..."
+    chronstr = GetAgeChronicle("UamReltoPages") #on, off, or unattained
+    pages = _StringToDict(chronstr)
+    #print "UamReltoPages: "+chronstr
+    for pagename in pages:
+        status = pages[pagename]
+        if status=="on":
+            #PagesToLoad.add(pagename)
+            PagesToLoad[pagename] = None #we're using this dict as a set
+            for hideitem in ReltoPages[pagename]["hide"]:
+                #ObjectsToHide.add(hideitem)
+                ObjectsToHide[hideitem] = None #we're using this dict as a set
+    #Turn into sorted lists
+    PagesToLoad = PagesToLoad.keys()
+    ObjectsToHide = ObjectsToHide.keys()
+    PagesToLoad.sort()
+    ObjectsToHide.sort()
+    #Hide the objects
+    for hideitem in ObjectsToHide:
+        #print "Hiding obj: "+hideitem
+        HideObject(hideitem)
+    #Load the pages
+    for pagename in PagesToLoad:
+        #print "Loading page: "+pagename
+        Plasma.PtPageInNode("UamPage-"+pagename)  #doesn't throw an exception if page not present; simply doesn't load.
+
+#Listen to page defs for the Relto book
+def CustomYeeshaPageDefs():
+    #print "_UamModReltopages._IGetYeeshaPageDefs"
+    result = ''
+    
+    #Can only change this while in your Relto
+    vault = Plasma.ptVault()
+    if not vault.inMyPersonalAge():
+        result += "<pb><pb><font size=20><p align=center>You can only change the fan-made pages while on your Relto."
+        return result
+
+    #Get the current status of the pages
+    chronstr = GetAgeChronicle("UamReltoPages") #on, off, or unattained
+    pages = _StringToDict(chronstr)
+    
+
+    for page in ReltoPages:
+        pagedict = ReltoPages[page]
+        pagenum = int(pagedict["pagenum"])
+        lang = GetLanguage()
+        #print "language: "+`lang`
+        linktext = pagedict["text--"+lang]
+        linknum = pagenum + 200  #just to get it out of Cyan's hair
+        turnedon = 1  #1 or 0
+        status = pages.get(page,pagedict["default"])  #Get the status or use the default for this page.
+        #print "status: "+status
+        if status=="on":
+            turnedon = 1
+        else:
+            turnedon = 0  #either off or unattained
+        if status=="on" or status=="off":
+            result += '<pb><font size=20><p align=center>'+linktext+'<pb><img src="xYeeshaPageAlphaSketchFiremarbles*1#0.hsm" align=center check=00ff18,00800c,'+str(turnedon)+' link='+str(linknum)+'>'
+    return result

@@ -1224,6 +1224,11 @@ class xKI(ptModifier,):
                                     linkmgr.linkToMyPersonalAgeWithYeeshaBook()
                                     PtToggleAvatarClickability(true)
                     elif (event[2] >= xLinkingBookDefs.kYeeshaPageStartID):
+# Custom relto pages BEGIN
+                        import xCustomReltoPages
+                        if xCustomReltoPages.TogglePage(event[2] - 200):
+                            return
+# Custom relto pages END
                         whatpage = (event[2] - xLinkingBookDefs.kYeeshaPageStartID)
                         sdlvar = xLinkingBookDefs.xYeeshaPages[whatpage][0]
                         self.IToggleYeeshaPageSDL(sdlvar, 1)
@@ -1248,6 +1253,11 @@ class xKI(ptModifier,):
                     pass
                 elif (event[1] == PtBookEventTypes.kNotifyCheckUnchecked):
                     if (event[2] >= xLinkingBookDefs.kYeeshaPageStartID):
+# Custom relto pages BEGIN
+                        import xCustomReltoPages
+                        if xCustomReltoPages.TogglePage(event[2] - 200):
+                            return
+# Custom relto pages END
                         whatpage = (event[2] - xLinkingBookDefs.kYeeshaPageStartID)
                         sdlvar = xLinkingBookDefs.xYeeshaPages[whatpage][0]
                         self.IToggleYeeshaPageSDL(sdlvar, 0)
@@ -4577,7 +4587,10 @@ class xKI(ptModifier,):
                 PtDebugPrint(('xKI: Error trying to access the Chronicle psnlSDL. psnlSDL = %s' % psnlSDL), level=kErrorLevel)
         else:
             PtDebugPrint("xKI: Error trying to access the Vault. Can't access YeeshaPageChanges chronicle.", level=kErrorLevel)
-        return pagedef
+# custom relto pages BEGIN
+        import xCustomReltoPages
+        return pagedef + xCustomReltoPages.CustomYeeshaPageDefs()
+# custom relto pages END
 
 
 
