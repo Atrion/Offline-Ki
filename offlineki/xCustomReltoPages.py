@@ -25,6 +25,7 @@
 import Plasma
 import PlasmaConstants
 import os
+import uam
 
 ReltoPages = None #{}
 
@@ -110,46 +111,6 @@ def GetLanguage():
 
 
 
-### From uam
-def SetAgeChronicle(varname, value):
-    #print "SetAgeChronicle name=" + `varname` + " value="+`value`
-    ageVault = Plasma.ptAgeVault()
-    _SetChronicle(varname,value,ageVault)
-def _SetChronicle(varname, value, vault, type=1):
-    chronnode = vault.findChronicleEntry(varname)
-    #print "cronnode:"+`chronnode`
-    if chronnode==None:
-        #create it
-        vault.addChronicleEntry(varname,1,value) #type 1 seems to be stuff that *might* be for other players.  I think it might be ignored.
-    else:
-        chronnode.chronicleSetValue(value)
-        chronnode.save()
-def _SetPlayerChronicle(varname, value, type=1):
-    #print "SetPlayerChronicle name=" + `varname` + " value="+`value`
-    vault = Plasma.ptVault()
-    _SetChronicle(varname,value,vault,type)
-def GetAgeChronicle(varname):
-    #print "GetAgeChronicle name=" + `varname`
-    ageVault = Plasma.ptAgeVault()
-    return _GetChronicle(varname,ageVault)
-def _GetChronicle(varname, vault):
-    chronnode = vault.findChronicleEntry(varname)
-    #print "cronnode:"+`chronnode`
-    if chronnode==None:
-        #print "chronnode not found: "+`varname`
-        #return None
-        return ""
-    else:
-        value = chronnode.chronicleGetValue()
-        #print "chronnode value: "+`value`
-        return value
-def _GetPlayerChronicle(varname):        
-    #print "GetPlayerChronicle name=" + `varname`
-    vault = Plasma.ptVault()
-    return _GetChronicle(varname,vault)
-
-
-
 ### From _UamMod_ReltoPages
 def TogglePage(pagenum):
     #Get page for this pagenum
@@ -159,7 +120,7 @@ def TogglePage(pagenum):
     pagename = pagedict["pagename"]
 
     #Get the current status of the pages
-    chronstr = GetAgeChronicle("UamReltoPages") #on, off, or unattained
+    chronstr = uam.GetAgeChronicle("UamReltoPages") #on, off, or unattained
     pages = _StringToDict(chronstr)
     #print "chronstr: "+chronstr
     
@@ -174,7 +135,7 @@ def TogglePage(pagenum):
     #save the new status
     pages[pagename] = status
     pagesstr = _DictToString(pages)
-    SetAgeChronicle("UamReltoPages",pagesstr)
+    uam.SetAgeChronicle("UamReltoPages",pagesstr)
     #print "chronstr: "+pagesstr
     return True
     
@@ -231,8 +192,8 @@ def ReadPageInfo():
             if fr==None:
                 fr = dt
             pagedict["text--en"] = en
-            pagedict["text--de"] = en
-            pagedict["text--fr"] = en
+            pagedict["text--de"] = de
+            pagedict["text--fr"] = fr
             pagedict["pagename"] = pagename
             pagedict["hide"] = hideitems
             ReltoPages[pagename] = pagedict
@@ -244,7 +205,7 @@ def LoadReltoPages():
 
     #Do tasks given from other Ages
     if AmInMyRelto():
-        tasksstr = _GetPlayerChronicle("UamTasks")
+        tasksstr = _uam.GetPlayerChronicle("UamTasks")
         tasks = _StringToList(tasksstr)
         numtasks = len(tasks)
         for task in tasks:
@@ -252,20 +213,20 @@ def LoadReltoPages():
             if task.startswith("EnableReltoPage="):
                 page = task[len("EnableReltoPage="):]
                 #enable the page
-                pages = _StringToDict(GetAgeChronicle("UamReltoPages"))
+                pages = _StringToDict(uam.GetAgeChronicle("UamReltoPages"))
                 pages[page] = "on"  #whether it was unset or on or off or unattained, it is on now!
-                SetAgeChronicle("UamReltoPages",_DictToString(pages))
+                uam.SetAgeChronicle("UamReltoPages",_DictToString(pages))
                 #remove from task list
                 tasks.remove(task)
         if numtasks!=len(tasks):
             #removed some, so save
-            _SetPlayerChronicle("UamTasks",_ListToString(tasks))
+            uam._SetPlayerChronicle("UamTasks",_ListToString(tasks))
     
     #Load pages
     PagesToLoad = {} #set() #Sets don't exist in Python 2.2 :P
     ObjectsToHide = {} #set() #Sets don't exist in Python 2.2 :P
     print "xCustomReltoPages: Loading Uam pages..."
-    chronstr = GetAgeChronicle("UamReltoPages") #on, off, or unattained
+    chronstr = uam.GetAgeChronicle("UamReltoPages") #on, off, or unattained
     pages = _StringToDict(chronstr)
     #print "UamReltoPages: "+chronstr
     for pagename in pages:
@@ -302,7 +263,7 @@ def CustomYeeshaPageDefs():
         return result
 
     #Get the current status of the pages
-    chronstr = GetAgeChronicle("UamReltoPages") #on, off, or unattained
+    chronstr = uam.GetAgeChronicle("UamReltoPages") #on, off, or unattained
     pages = _StringToDict(chronstr)
     
 
