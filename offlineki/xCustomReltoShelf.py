@@ -232,7 +232,7 @@ def BuildBook(bookname):
     print ('xCustomReltoShelf: Building up Linking book ' + bookname)
     for page in _Books[bookname].pages:
         pagename = linkBookPrefix+str(x) # the only important thing is that it is unique for the current book
-        source = '<font size=28 face=Uru ><p align=center>%s\n\n<font size=24 face=Uru>%s<pb>%s' % (page.getTitle(), page.getText(), page.getPanel()) # this text has a %d for the panel ID!
+        source = '<font size=32 face=Uru ><p align=center>%s\n\n<font size=26 face=Uru>%s<pb>%s' % (page.getTitle(), page.getText(), page.getPanel()) # this text has a %d for the panel ID!
         #print "xCustomReltoShelf: Source of page %s is %s" % (pagename, source)
             
         # "communication" with xLinkMgrGUIPopup

@@ -151,7 +151,7 @@ def LoadReltoPages():
     #Read any updated pages
     ReadPageInfo()
 
-    #Do tasks given from other Ages
+    #Do tasks given from other Ages: The player collected a Relto page, enable it
     if AmInMyRelto():
         tasksstr = uam._GetPlayerChronicle("UamTasks")
         tasks = uam._StringToList(tasksstr)
@@ -207,7 +207,7 @@ def CustomYeeshaPageDefs():
     #Can only change this while in your Relto
     vault = Plasma.ptVault()
     if not vault.inMyPersonalAge():
-        result += "<pb><pb><font size=20><p align=center>You can only change the fan-made pages while on your Relto."
+        result += "<pb><pb><font size=32 face=Uru><p align=center>You can only change the fan-made pages while on your Relto."
         return result
 
     #Get the current status of the pages
@@ -215,7 +215,9 @@ def CustomYeeshaPageDefs():
     pages = uam._StringToDict(chronstr)
     
 
-    for page in ReltoPages:
+    names = ReltoPages.keys()
+    names.sort()
+    for page in names:
         pagedict = ReltoPages[page]
         pagenum = int(pagedict["pagenum"])
         lang = GetLanguage()
@@ -230,5 +232,6 @@ def CustomYeeshaPageDefs():
         else:
             turnedon = 0  #either off or unattained
         if status=="on" or status=="off":
-            result += '<pb><font size=20><p align=center>'+linktext+'<pb><img src="xYeeshaPageAlphaSketchFiremarbles*1#0.hsm" align=center check=00ff18,00800c,'+str(turnedon)+' link='+str(linknum)+'>'
+            result += '<pb><font size=32 face=Uru ><p align=center>'+linktext
+            result += '<pb><img src="xYeeshaPageAlphaSketchFiremarbles*1#0.hsm" align=center check=00ff18,00800c,'+str(turnedon)+' link='+str(linknum)+'>'
     return result
