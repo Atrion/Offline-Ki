@@ -30,58 +30,6 @@ import uam
 ReltoPages = None #{}
 
 ### From _UamUtils
-#For dealing with String->String dictionaries (musn't contain ; nor = nor rely on whitespace on the ends. )
-def _DictToString(dict):
-    str_list = []
-    first = True
-    for key in dict:
-        val = dict[key]
-        if not first:
-            str_list.append(";")
-        str_list.append(key+"="+val)
-        first = False
-    result = ''.join(str_list)
-    return result
-def _StringToDict(str):
-    result = {}
-    if str=="":
-        return result
-    list = str.split(";")
-    for item in list:
-        #parts = item.split("=")
-        #if len(parts)==2:
-        #    result[parts[0].strip()] = parts[1].strip()  #remove whitespace off the ends
-        #else:
-        #    #skip this part
-        #    pass
-        ind = item.find("=")
-        if ind!=-1:
-            result[item[:ind].strip()] = item[ind+1:].strip()  #remove whitespace off the ends
-        else:
-            #skip this part
-            pass
-    return result
-def _ListToString(list):
-    str_list = []
-    first = True
-    for val in list:
-        if not first:
-            str_list.append(";")
-        str_list.append(val)
-        first = False
-    result = ''.join(str_list)
-    return result
-def _StringToList(str):
-    result = []
-    if str=="":
-        return result
-    list = str.split(";")
-    for item in list:
-        item = item.strip()
-        if item!="":
-            result.append(item)
-    return result
-
 def AmInMyRelto():
     return Plasma.ptVault().inMyPersonalAge()
 
@@ -121,7 +69,7 @@ def TogglePage(pagenum):
 
     #Get the current status of the pages
     chronstr = uam.GetAgeChronicle("UamReltoPages") #on, off, or unattained
-    pages = _StringToDict(chronstr)
+    pages = uam._StringToDict(chronstr)
     #print "chronstr: "+chronstr
     
     status = pages.get(pagename,pagedict["default"])  #Get the status or use the default for this page.
@@ -134,7 +82,7 @@ def TogglePage(pagenum):
     
     #save the new status
     pages[pagename] = status
-    pagesstr = _DictToString(pages)
+    pagesstr = uam._DictToString(pages)
     uam.SetAgeChronicle("UamReltoPages",pagesstr)
     #print "chronstr: "+pagesstr
     return True
@@ -163,7 +111,7 @@ def ReadPageInfo():
             f = file("img/UamRelto/"+filename,"r")
             contents = f.read()
             f.close()
-            pagedict = _StringToDict(contents)
+            pagedict = uam._StringToDict(contents)
             pagenum = int(pagedict["pagenum"])
             if pagenum<100:
                 raise Exception("pagenum must be over 100.")
@@ -205,29 +153,29 @@ def LoadReltoPages():
 
     #Do tasks given from other Ages
     if AmInMyRelto():
-        tasksstr = _uam.GetPlayerChronicle("UamTasks")
-        tasks = _StringToList(tasksstr)
+        tasksstr = uam._GetPlayerChronicle("UamTasks")
+        tasks = uam._StringToList(tasksstr)
         numtasks = len(tasks)
         for task in tasks:
             #print "task to do: "+task
             if task.startswith("EnableReltoPage="):
                 page = task[len("EnableReltoPage="):]
                 #enable the page
-                pages = _StringToDict(uam.GetAgeChronicle("UamReltoPages"))
+                pages = uam._StringToDict(uam.GetAgeChronicle("UamReltoPages"))
                 pages[page] = "on"  #whether it was unset or on or off or unattained, it is on now!
-                uam.SetAgeChronicle("UamReltoPages",_DictToString(pages))
+                uam.SetAgeChronicle("UamReltoPages",uam._DictToString(pages))
                 #remove from task list
                 tasks.remove(task)
         if numtasks!=len(tasks):
             #removed some, so save
-            uam._SetPlayerChronicle("UamTasks",_ListToString(tasks))
+            uam._SetPlayerChronicle("UamTasks",uam._ListToString(tasks))
     
     #Load pages
     PagesToLoad = {} #set() #Sets don't exist in Python 2.2 :P
     ObjectsToHide = {} #set() #Sets don't exist in Python 2.2 :P
     print "xCustomReltoPages: Loading Uam pages..."
     chronstr = uam.GetAgeChronicle("UamReltoPages") #on, off, or unattained
-    pages = _StringToDict(chronstr)
+    pages = uam._StringToDict(chronstr)
     #print "UamReltoPages: "+chronstr
     for pagename in pages:
         status = pages[pagename]
@@ -264,7 +212,7 @@ def CustomYeeshaPageDefs():
 
     #Get the current status of the pages
     chronstr = uam.GetAgeChronicle("UamReltoPages") #on, off, or unattained
-    pages = _StringToDict(chronstr)
+    pages = uam._StringToDict(chronstr)
     
 
     for page in ReltoPages:

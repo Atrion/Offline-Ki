@@ -24,6 +24,61 @@
 #==============================================================================#
 import Plasma
 
+# From _UamUtils
+#For dealing with String->String dictionaries (musn't contain ; nor = nor rely on whitespace on the ends. )
+def _DictToString(dict):
+    str_list = []
+    first = True
+    for key in dict:
+        val = dict[key]
+        if not first:
+            str_list.append(";")
+        str_list.append(key+"="+val)
+        first = False
+    result = ''.join(str_list)
+    return result
+def _StringToDict(str):
+    result = {}
+    if str=="":
+        return result
+    list = str.split(";")
+    for item in list:
+        #parts = item.split("=")
+        #if len(parts)==2:
+        #    result[parts[0].strip()] = parts[1].strip()  #remove whitespace off the ends
+        #else:
+        #    #skip this part
+        #    pass
+        ind = item.find("=")
+        if ind!=-1:
+            result[item[:ind].strip()] = item[ind+1:].strip()  #remove whitespace off the ends
+        else:
+            #skip this part
+            pass
+    return result
+def _ListToString(list):
+    str_list = []
+    first = True
+    for val in list:
+        if not first:
+            str_list.append(";")
+        str_list.append(val)
+        first = False
+    result = ''.join(str_list)
+    return result
+def _StringToList(str):
+    result = []
+    if str=="":
+        return result
+    list = str.split(";")
+    for item in list:
+        item = item.strip()
+        if item!="":
+            result.append(item)
+    return result
+
+
+# From uam
 def SetAgeChronicle(varname, value):
     #print "SetAgeChronicle name=" + `varname` + " value="+`value`
     ageVault = Plasma.ptAgeVault()
@@ -60,3 +115,17 @@ def _GetPlayerChronicle(varname):
     #print "GetPlayerChronicle name=" + `varname`
     vault = Plasma.ptVault()
     return _GetChronicle(varname,vault)
+
+
+def EnableReltoPage(pagename):
+    print "uam.EnableReltoPage: "+`pagename`
+    #get current task list
+    tasksstr = _GetPlayerChronicle("UamTasks")
+    tasks = _StringToList(tasksstr)
+    #add item
+    tasks.append("EnableReltoPage="+pagename)
+    #save task list
+    taskstr = _ListToString(tasks)
+    _SetPlayerChronicle("UamTasks",taskstr)
+    Plasma.PtSendKIMessageInt(PlasmaKITypes.kStartBookAlert, 0)  #Flash the Relto book.
+    print "current tasks: "+taskstr
