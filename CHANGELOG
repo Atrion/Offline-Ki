@@ -1,0 +1,131 @@
+Offline KI:
+- The links I had to fix now use the proper book-touch animation (thanks to D'Lanor)
+- Fixed Relto imager (thanks to Sirius for the prp fix)
+
+Offline KI 3.6.1 (7.4.2011):
+- Fixed /reltostars and /noreltostars commands
+- Fixed linking from Nexus to Seret or the Guild Neighborhood
+- Fixed "/link Direbo"
+- Fixed the link from Kveer to the "POTS Finale City" and back
+
+Offline KI 3.6 (26.2.2011):
+- The source code of the Offline KI is now available for download
+- Added commands for camera tours (based on old AdminKI code): /tour, /tourstop, /printcam
+- Added /getsparklies command to collect all the sparklies at once (for the lazy ones...)
+- Added /rotsphere command to rotate the spheres in the MOUL version of Ahnonay without animation glitches (thanks to Sirius). This also works for non-admins, unlike the old /set sphere command!
+- Added global Python scripts for fan-ages by D'Lanor: xDynamicPanel, xMoviePlayer, xAgeSDLBoolTagRespond, xRandomResp
+- Auto-detect how Python File Mod initialization has to be done in some global scripts (so that it works for both dynamically an statically loaded pages)
+- Auto-detect missing POTS patches and tell the user how to apply them if necessary
+- remove useless, broken and obsolete <hiddentext> "feature" (thanks to Sirius)
+- Fix for Kadish sparkly: it now moves with the pillar correctly (thanks to D'Lanor)
+
+Offline KI 3.5 (7.12.2010):
+- Object struct commands (inspired by and based on old UserKI and AdminKI code): /reltostars, /struct, /printstruct
+- Camera commands (dito about the code origin): /observe, /entercam, /leavecam
+- Added some administrative linking commands: /link can now also link other players, /linkto links you to someone else, /linkhere links someone to you
+- /flymode now works on multiple objects at once, including other players ("/flymode all" will take every player in the current age except for you into flymode, "/flymode all me" includes you)
+- Added some advanced flymode commands: /warp can warp the controlled object(s) to a specific location, a predefined warp point or another object, /scale scales them on all three or just one axis, /rot rotates them around a given axis
+- /list can give you a list of available structs, cameras, warppoints and objectlists (the latter can be used wherever a "list of objects" is taken by a command)
+- The music player now saves the last played song and starts it again when you link back in
+- Age descriptions are now specified in the age links file and could be used in other places (besides Relto) - this makes it much easier for me to add descriptions for not permanently displayed ages
+- French people can not enter the !, so allow server-side commands to start with /%
+- Added Python scripts by D'Lanor to be used by fan-ages: xSimplePanel, xMultiDialogToggle
+- Hide the arrow for choosing marker game type
+- Some fixes for fan-ages to be able to use the global scripts for pages loaded deferred (thanks to D'Lanor!)
+- Cleaned up the way the Shelf works internally, including a file format change (the old format is still read, but not all of its options are supported anymore)
+
+Offline KI 3.4 (27.9.2010):
+- You can now download updates for the fan-age data in a dedicated UAM package - the /updateshelf command has therefore been removed
+- Added a bunch of admin-only commands to manipulate objects in the age you are in: /xyz, /x, /y, /z, /hide, /show, /ghost, /unghost, /normalize, /repos, /location
+- Reduced "This player is afk/can not see the KI" spam: The KI remembers whom it sent the notification and waits two minutes before sending it to the same person again (except for private chat)
+- Add support for the server-side /!resetage command that can be used to reset the state of a fan-age
+- Brought the hood Bahro back
+- The KI can now fetch the Alcugs Shard Identifier to know ages are (un)available
+- "/link KirelMOUL" and "/link city" work again
+- Fix chat breakage when linking out of a private chat area (thanks to D'Lanor!)
+- Fixed book covers of wall jorunals in Gahreesen (thanks to kaelis for noticing this)
+- Disabled non-functional GZ markers in Seret
+- Fix for the link from Kemo to the hood not to add a link to the Relto book on Alcugs Shards
+- Fixed linking from Seret to Gahreesen on Alcugs Shards
+
+Offline KI 3.3 (21.8.2010):
+- Added link to Seret in the city and the Nexus (needs MOUL ages converted with Drizzle 27). Thanks a lot to Kaelis Ebonrai!
+- Added autolink feature: "/autolink <age filename>" tells the KI to automatically link you to the specified age on next startup. "/autolink disable" disables this feature.
+- Added /listsdl command to list all SDL variables available in the current age. Optionally takes a case-insensitive filter as argument (e.g. "/listsdl yeesha" will only list SDL variables with "yeesha" in their name)
+- Added /linksp command to link to a certain spawnpoint in an age (instead of LinkInPointDefault, where /link links to)
+- Added support for MQO ages (thanks to Dustin for some Python patches)
+- Nexus now shows a column header ("Name") for the categories "Public Links" and "Restoration Links": Clicking on it reverses the order in which the ages are presented
+- Added MOUL-era entries to Sharper's journal in his city office (thanks to Kaelis Ebonrai)
+- The KI now adds unknown buddies to the recent list (i.e. people that you don't have on your buddy list sending you buddy chat) - thanks a lot to D'Lanor for this patch!
+- The Guild Neighborhood is also available from Nexus
+- Don't allow people to use /hood or /nexus to get out of the Cleft before collecting a Relto book
+- Linking definitions for fan-ages and Cyan's ages are now managed in different files
+- /link can now also link to not-yet registered owned ages
+- Some updates required because Drizzle now converts the MOUL hood into a new age instead of adding parts of it to the old hood
+- Kaelis fixed an issue with the pedestal models for the hood->city and city->Jalak links, and some world model <-> GUI inconsistencies
+- Fixed the visitor logger in the Guild Neighborhood
+- Fixed Sparkly fireworks in multiplayer environments
+- Fixed MOUL Bahro caves to no longer allow to walk on other age's platforms (thanks to Dustin for help on this)
+- Fixed many Bahro stones offering sharing even though it won't work (thanks to Kaelis Ebonrai for helping testing)
+- Fix for being able to circumvent the quit-the-game-error-dialogue with the "Esc" key
+- Fixed Bahro stone linking panels (thanks to Kaelis Ebonrai for catching this)
+- Fixed /link command to no longer attempt to link to unavailable ages
+
+Offline KI 3.2 (14.3.2010):
+- Be sure to hit the "Start" button next to the POTS folder selection in Drizzle Simplicity after installing the Offline KI. We moved a lot of prp file changes from the Offline KI (where the full file had to be distributed) to Drizzle (which can patch the file in-place). You have to do this only once though, and each time this part of Drizzle (the so-called "inplacemods") is updated.
+- Added soccer ball in the city which most likely was created by Cyan during D'mala, extracted by unknown hackers and now put into a separate file by Agenotfound
+- Enabled DRC and Cyan logos for the leather jacket and the long shirt
+- Added SDL variables for the additional hood linking books so that they can be disabled - thanks to Agenotfound!
+- Added support for the Kadish Gallery doors and the Gallery music player from Drizzle 23
+- Added support for sub-age linking (thanks to D'Lanor for some information)
+- German and French players can now also link to Eder Tsogal (requires MOUL files to be re-converted using Drizzle 23)
+- New command /m to join several commands into one ("/m /firstcommand & /secondcommand & ...") - this is especially useful in combination with the loop command (inspired by an old AdminKI)
+- Move the Jalak column states into the sav directory
+- Properly fixed the problem of linking while playing a marker mission - the game is now seamlessly continues after linking, so games with markers in many ages are no longer that annoying :)
+- Fixed some locks in Relto not really "locking" the book for visitors
+- Fixed the hood visitor loggers to no longer reset after 15 visits
+- Fixed the Gahreesen maintainer suit machine to also deliver the suit if you already have it in your closet
+- Fixed wrong linking images being shown in the Relto books
+
+Offline KI 3.1 (20.1.2010):
+- Offline KI now contains empty (dummy) sum files for all TPOTS ages to prevent errors due to changed checksums (Drizzle already creates such empty files for the converted ages)
+- The new "/help" command opens a book listing all available commands (inspired by an old AdminKI)
+- Added "/getfissure" command by D'Lanor, takes the fissure stage (1-4) as argument
+- Added "/anim" command to run a specified animation (can even run aniamtions from the "wrong" gender :D ) on yourself or other players. "/anim list" gives you some pre-defined animation sequences (inspired by an old AdminKI)
+- Enabled a new Bahro stone in Gahreesen - have fun finding it :) (thanks to Agenotfound for the tip)
+- Added Hex Isle linking images (thanks a lot to Perlenstern)
+- Added global chronicle helper script by D'Lanor to be used by fan ages
+- New commands: /loopstart will start running a KI command in a certain interval, /loopstop can stop it (inspired by an old AdminKI)
+- New /goto places in Minkata, Kadish and Er'cana
+- Both /goto and /set accept the "list" argument to show all values for the current age as well as "listall" to show all values for all ages
+- Admins can also use /float and /nofloat on objects and other players
+- Slight adjustments to properly align the book covers (thanks to Rainforce)
+- Fixed showing a sender for the global KI messages
+- Flymode timer only runs if flymode is enabled
+- Fixed flymode behaving strange if a key is pressed while flymode is disabled
+- Fixed registering the Nexus link in Kirel
+- Fixed the hard hats in the city - online, they no longer disappear if someone collects them
+
+Offline KI 3.0 (10.11.2009):
+- The Offline KI now supports being used on Alcugs Shards and brings a lot of multiplayer fixes written by various people (see /info)
+- Administrative KI commands can now be enabled and disabled based on who logs in where (so the same KI can be an AdminKI on one Shard and a UserKI on another one, depending on the privileges of the logged in user)
+- When Flymode is enabled, the num-pad key "-" can be used to move the avatar up, and "+" moves it down (the first is located above the latter)
+- Flymode also works online, but the position other players see is updated only when a key is pressed or released
+- Added SDL options for the tickers and the Myst V books in the city (thanks a lot to Agenotfound!). There are also new /set options for these: "/set tickers 0|1" and "/set mystvbooks 0|1".
+- "/set guildhall 0|1" now also enables/disables the guild hall accident (thanks to Agenotfound and Dustin)
+- Added /set option for the ticker in the hood - Agenotfound fixed the issue of it not being properly disabled
+- New developer commands: /getchron to read a chronicle value, /getversion to check the KI version of another player, /about to get some information about an object and /name to change your avatar name
+- Replaced "/getlibrarybooks" by "/set librarybooks 0|1", the option is now permanently saved in SDL vars (so that the books are still there when you come back). In addition, the textures of Ahnonay and Er'cana linking book are fixed in the city and the Er'cana linking book works (thanks to Agenotfound)
+- Added KI command /kiusage to show you how many pictures, notes and so on you already used up
+- The new command /checkaccess shows your current access level
+- Thanks to Dustin, Relto's custom book covers load much faster now and take less memory, as do the custom linking images in Nexus
+- The heek table no longer looks broken - thanks to Dustin and Agenotfound (it still can not be used though). Use "/set heek" to control it: 0 = no heek table; 1 = heek table looks correct, but is disabled; 2 = heek table looks correct and is enabled; 3 = heek table looks broken
+- Added a patch by Dustin which fixes multiplayer issues in Ahnonay Sphere 1
+- "/link" is now case-insensitive
+- "/updateshelf silence" is now permanent, you have to type "/updateshelf remind" to enable the reminder again
+- "/hideki" now also hides the cursor (until you move it again...)
+- Re-organized pak file structure
+- Fixed crash when entering the wall area in Gahreesen (this does NOT make the wall itself functional!)
+- Fixed multiplayer issue in Phil's Relto (thanks to D'Lanor)
+- Fixed multiplayer issue with the "patience puzzle" in Watcher's Sanctuary
+- Another attempt to fix the city barrier
