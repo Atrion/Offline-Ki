@@ -1,5 +1,26 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    Offline KI                                                                #
+#                                                                              #
+#    Copyright (C) 2008-2011  Diafero                                          #
+#                                                                              #
+#    This program is free software: you can redistribute it and/or modify      #
+#    it under the terms of the GNU General Public License as published by      #
+#    the Free Software Foundation, either version 3 of the License, or         #
+#    (at your option) any later version, with or (at your option) without      #
+#    the Uru exception (see below).                                            #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             #
+#    GNU General Public License for more details.                              #
+#                                                                              #
+#    Please see the file COPYING for the full GPLv3 license, or see            #
+#    <http://www.gnu.org/licenses/>                                            #
+#                                                                              #
+#==============================================================================#
 import sys, os, subprocess
 from linkfix_config import java, drizzle, lists, wdir
 from createpak import getfile, create_pak
