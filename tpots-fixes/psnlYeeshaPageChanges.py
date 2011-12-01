@@ -67,8 +67,9 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                     CurrentValue = 0
                 if (PageNumber.value == 10):
                     MAX_SIZE = 10
-                    (size, state) = divmod(CurrentValue, 10)
+                    (size, state) = divmod(CurrentValue, 10) # decode current value to current size and state
                     if ((len(PtGetPlayerList()) == 0) and (state != 0)):
+                        # check for growth
                         growSizes = self.TimeToGrow()
                         if (growSizes and (size < MAX_SIZE)):
                             size = (size + growSizes)
@@ -77,13 +78,15 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                             sizechanged = 1
                         else:
                             sizechanged = 0
-                        newstate = self.UpdateState(state, size, SDLVar, AgeVault, sizechanged)
+                        # write it back to SDL
+                        newValue = self.UpdateState(state, size, SDLVar, AgeVault, sizechanged)
                     else:
-                        newstate = state
-                    state = ((size * 10) + newstate)
-                    self.EnableDisable(newstate)
-                    if (state in self.enabledStateList):
-                        print 'psnlYeeshaPageChanges: tree stats: Growsizes: %d, CurrentValue: %d, size: %d, state %d' % (growSizes, CurrentValue, size, state)
+                        # no groth, keep value
+                        newValue = CurrentValue
+                    # now forget about decoded value, EnableDisable expects the new encoded one
+                    self.EnableDisable(newValue)
+                    if (newValue in self.enabledStateList):
+                        print 'psnlYeeshaPageChanges: tree stats: new value %d, size %d, old value %d' % (newValue, size, CurrentValue)
                 else:
                     if (len(PtGetPlayerList()) == 0):
                         newstate = self.UpdateState(CurrentValue, 0, SDLVar, AgeVault, 0)
@@ -149,7 +152,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
         elif sizechanged:
             SDLVar.setInt(((size * 10) + state))
             AgeVault.updateAgeSDL(self.ageSDL)
-        return state
+        return SDLVar.getInt()
 
 
     def OnBackdoorMsg(self, target, param):
