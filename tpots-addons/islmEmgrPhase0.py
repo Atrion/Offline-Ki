@@ -139,7 +139,7 @@ class islmEmgrPhase0(ptResponder):
                 PtDebugPrint(('setting notify on %s' % variable))
                 ageSDL.setNotify(self.key, variable, 0.0)
                 StateVARs[variable](variable, ageSDL[variable][0])
-        if xxConfig.isOnline():
+        if xxConfig.isOnline() and not len(PtGetPlayerList()):
             ISetSeasonalStates()
 
 

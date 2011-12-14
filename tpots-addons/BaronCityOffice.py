@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+#==============================================================================#
+#                                                                              #
+#    This is a patched file that was originally written by Cyan Worlds Inc.    #
+#    See the file AUTHORS for more info about the contributors of the changes  #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful,           #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      #
+#                                                                              #
+#    You may re-use the code in this file within the context of Uru.           #
+#                                                                              #
+#==============================================================================#
 from Plasma import *
 from PlasmaTypes import *
 
@@ -8,6 +21,20 @@ class BaronCityOffice(ptResponder):
         ptResponder.__init__(self)
         self.id = 5208
         self.version = 1
+
+
+    def OnServerInitComplete(self):
+        import time, xxConfig
+        if len(PtGetPlayerList()) or xxConfig.isOffline(): # only update tree when we are alone in the age, and online
+            return
+        dnitime = PtGetDniTime()
+        month = int(time.strftime('%m', time.gmtime(dnitime)))
+        day = int(time.strftime('%d', time.gmtime(dnitime)))
+        ageSDL = PtGetAgeSDL()
+        if (month == 12 and day > 12) or (month == 1 and day < 10):
+            ageSDL['bcoChristmasVis'] = (1,)
+        else:
+            ageSDL['bcoChristmasVis'] = (0,)
 
 
     def OnFirstUpdate(self):
