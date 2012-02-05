@@ -52,12 +52,15 @@ class _Age:
 def _AddAge(linktype, ageName, age):
     global _AvailableLinks, _RestorationLinks, _PublicLinks
     #print ('xLinkMgr: Found %s to %s' % (linktype, ageName))
-    _AvailableLinks[ageName] = age
     # update Nexus link lists
     if linktype == 'restorationlink':
         if IsAgeAvailable(ageName): _RestorationLinks.append([ageName, age.displayName])
     elif linktype == 'publiclink':
         if IsAgeAvailable(ageName): _PublicLinks.append([ageName, age.displayName])
+    elif linktype != 'link': # unknown link type...
+        raise Exception("Unknown link type "+linktype)
+    # and add the age (do this afterwards, so if the link type is invalid, you can not link here, which I will probably notice)
+    _AvailableLinks[ageName] = age
 
 
 def _LoadAvailableLinks():

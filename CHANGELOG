@@ -1,3 +1,6 @@
+TODO:
+- disable our Relto page support if the UAM KI plugin is present
+
 Offline KI:
 - The links I had to fix now use the proper book-touch animation (thanks to D'Lanor)
 - Fixed Relto imager (thanks to Sirius for the prp fix)
