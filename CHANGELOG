@@ -4,6 +4,7 @@ TODO:
 Offline KI:
 - The links I had to fix now use the proper book-touch animation (thanks to D'Lanor)
 - Fixed Relto imager (thanks to Sirius for the prp fix)
+- Fixed Kadish pillars in case the MOUL aditions did not get converted (good catch, Sirius)
 
 Offline KI 3.6.1 (7.4.2011):
 - Fixed /reltostars and /noreltostars commands

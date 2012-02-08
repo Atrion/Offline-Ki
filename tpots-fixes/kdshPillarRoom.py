@@ -93,12 +93,14 @@ class kdshPillarRoom(ptResponder):
     
     def DoDelayedInit(self):
         # fix (partially by D'Lanor) to attach sparkly to pillar
-        import xUserKI
-        objSparklyDecal = PtFindSceneobject('CalendarStarDecal', PtGetAgeName()) # leave the spark and the regions where they are, they are not supposed to move
-        objPillar = PtFindSceneobject('pillar03', PtGetAgeName())
-        dst = objPillar.position()
-        xUserKI.WarpObjectToPos(objSparklyDecal, dst.getX(), dst.getY(), dst.getZ()) # warp decal to pillar (it will be just at the top)
-        PtAttachObject(objSparklyDecal.getKey(), objPillar.getKey()) # and attach the two to each other
+        try: # may fail if MOUL files did not get converted
+            import xUserKI
+            objSparklyDecal = PtFindSceneobject('CalendarStarDecal', PtGetAgeName()) # leave the spark and the regions where they are, they are not supposed to move
+            objPillar = PtFindSceneobject('pillar03', PtGetAgeName())
+            dst = objPillar.position()
+            xUserKI.WarpObjectToPos(objSparklyDecal, dst.getX(), dst.getY(), dst.getZ()) # warp decal to pillar (it will be just at the top)
+            PtAttachObject(objSparklyDecal.getKey(), objPillar.getKey()) # and attach the two to each other
+        except: pass
         # end of fix
         ageSDL = PtGetAgeSDL()
         if (ageSDL == None):
