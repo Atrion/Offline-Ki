@@ -27,6 +27,13 @@ import PlasmaConstants
 import os
 import uam
 
+# Detect UAM Relto page support
+try:
+    import _UamMod_ReltoPages
+    haveUamPlugin = True
+except:
+    haveUamPlugin = False
+
 ReltoPages = None #{}
 
 ### From _UamUtils
@@ -61,6 +68,7 @@ def GetLanguage():
 
 ### From _UamMod_ReltoPages
 def TogglePage(pagenum):
+    if haveUamPlugin: return False
     #Get page for this pagenum
     pagedict = FindPage(pagenum)
     if pagedict==None:
@@ -148,6 +156,7 @@ def ReadPageInfo():
 
 #Listen for link-in to a Relto, so we can load the appropriate pages
 def LoadReltoPages():
+    if haveUamPlugin: return
     #Read any updated pages
     ReadPageInfo()
 
@@ -203,6 +212,7 @@ def LoadReltoPages():
 def CustomYeeshaPageDefs():
     #print "_UamModReltopages._IGetYeeshaPageDefs"
     result = ''
+    if haveUamPlugin: return result
     
     #Can only change this while in your Relto
     vault = Plasma.ptVault()
