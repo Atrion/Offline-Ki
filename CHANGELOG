@@ -1,10 +1,15 @@
-TODO:
-- disable our Relto page support if the UAM KI plugin is present
-
-Offline KI:
+Offline KI 3.7:
+- The wall in Gahreesen now works! (All the credits go to Sirius)
+- Add support for UAM-style custom Relto pages (so you do not need the UAM KI plugin for this)
+- Offline KI no longer depends on the "patch TPOTS" functionality of Drizzle, it contains all data it needs itself
+- /jump now always jumps "upwards", seen from the avatar
 - The links I had to fix now use the proper book-touch animation (thanks to D'Lanor)
+- Automatically hide and show the menorah and the Christmas tree on Shards (thanks to D'Lanor)
+- Fix a bug that made the growing tree in Relto disappear
 - Fixed Relto imager (thanks to Sirius for the prp fix)
 - Fixed Kadish pillars in case the MOUL aditions did not get converted (good catch, Sirius)
+- Fix /a to work properly when the avatar is in a subworld
+- Fix the delay of the autolink on game startup
 
 Offline KI 3.6.1 (7.4.2011):
 - Fixed /reltostars and /noreltostars commands
