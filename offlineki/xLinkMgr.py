@@ -213,7 +213,7 @@ def _FindUnknownAges():
         if ageName in _AvailableLinks: continue
         # found an unknown age, add it to global list and to resoration links in Nexus
         print 'Adding unknown age %s' % ageName
-        _AddAge('restorationlink', ageName, _Age(ageName + " (unknown age)"))
+        _AddAge('restorationlink', _Age(ageName, ageName + " (unknown age)"))
 
 
 # Public API
