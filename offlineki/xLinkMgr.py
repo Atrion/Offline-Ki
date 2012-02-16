@@ -69,7 +69,7 @@ class _Age:
     def GetAgeLinkStruct(self, spawnpoint = None, needFullInfo = False):
         # check general age availability
         if not self.IsAvailable():
-            return 'The age with filename \"%s\" is not available on your PC or on this Shard.' % self.filename
+            return 'xLinkMgr: The age with filename \"%s\" is not available on your PC or on this Shard.' % self.filename
         # get correct spawn point
         if spawnpoint == None: spawnpoint = self.defaultSpawnpoint
         # check subage
@@ -212,7 +212,7 @@ def _FindUnknownAges():
         ageName = fname[:len(fname)-4]
         if ageName in _AvailableLinks: continue
         # found an unknown age, add it to global list and to resoration links in Nexus
-        print 'Adding unknown age %s' % ageName
+        print 'xLinkMgr: Adding unknown age %s' % ageName
         _AddAge('restorationlink', _Age(ageName, ageName + " (unknown age)"))
 
 

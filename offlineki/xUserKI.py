@@ -43,7 +43,7 @@ except ImportError:
     xUserKIData = None
 
 # Global info variables and configuration
-gUserKIVersion = '3.6.1'
+gUserKIVersion = '3.7'
 gUserKIExtensionModuleNames = ['xUserKIAdmin', 'xUserKIBase', 'xUserKIFlymode', 'xUserKIEggs', 'xUserKIHelp', 'xUserKIUamInterface']
 # Some commands are overwritten, so their order must be the one in which they are mentioned below:
 #  /link is in xUserKIAdmin and xUserKIBase

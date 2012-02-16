@@ -1,8 +1,8 @@
-Offline KI 3.7:
-- The wall in Gahreesen now works! (All the credits go to Sirius)
+Offline KI 3.7 (17.2.2012):
+- The wall in Gahreesen now works! (all the credits go to Sirius)
 - Add support for UAM-style custom Relto pages (so you do not need the UAM KI plugin for this)
 - Offline KI no longer depends on the "patch TPOTS" functionality of Drizzle, it contains all data it needs itself
-- /jump now always jumps "upwards", seen from the avatar
+- /jump now always jumps "upwards", seen from the avatar (thanks to tachzusamm for the idea)
 - The links I had to fix now use the proper book-touch animation (thanks to D'Lanor)
 - Automatically hide and show the menorah and the Christmas tree on Shards (thanks to D'Lanor)
 - Fix a bug that made the growing tree in Relto disappear

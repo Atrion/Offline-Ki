@@ -214,18 +214,19 @@ def ParseULMFile():
 
 
 def GetLinkingImage(bookname, pageid, width, height):
+    if not bookname in _Books: return None
     book = _Books[bookname]
     page = book.pages[pageid]
     return page.linkingImage(width, height)
 
 
 def GetBookCover(bookname):
-    global _Books
-    if (not bookname in _Books): return ''
+    if not bookname in _Books: return ''
     return _Books[bookname].cover
 
 
 def BuildBook(bookname):
+    if not bookname in _Books: return ({},{})
     SpawnPoint_Dict = {}
     x = xLinkingBookDefs.kFirstLinkPanelID
     linkBookPrefix = 'xxCustomBookxx_' # the way xLinkMgrGUIPopup works requires us to write stuff into the global linking definition array - we use this name plus the index of the page to avoid overwriting anything
