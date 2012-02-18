@@ -24,6 +24,9 @@
 #==============================================================================#
 import Plasma
 
+_book = None # needs to be a global variable so the book will actually be shown
+_ki = None # will be set in xUserKIBase
+
 # Chronicle helpers
 def SetAgeChronicle(varname, value):
     #print "SetAgeChronicle name=" + `varname` + " value="+`value`
@@ -85,5 +88,22 @@ def PrintKiMessage(msg):
     _ki.IAddRTChat(None, msg, 0)
 def SetTimer(callback, time):
     # will only work if UAM KI plugin is actually installed
-    import _UamTimer
+    try:
+        import _UamTimer
+    except:
+        raise Exception("UAM KI plugin not installed, can not set timer")
     _UamTimer.Timer(callback, time, False, True) #isweak=False, so that we can use local functions, and removewhenlink=True, so that timers are cancelled when linking out.
+
+# showing a Book
+def DisplayJournal(text, isOpen):
+    _DisplayBook(text, isOpen, "bkNotebook")
+def DisplayBook(text, isOpen):
+    _DisplayBook(text, isOpen, "bkBook")
+def _DisplayBook(text, isOpen, booktype):
+    #booktype can be bkNotebook, bkBook, or bkBahroRockBook
+    global _book
+    _book = Plasma.ptBook(text, _ki.key)
+    _book.setSize(1.0, 1.0)
+    _book.setGUI(booktype)
+    _book.allowPageTurning(True)
+    _book.show(isOpen)

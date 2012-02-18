@@ -339,6 +339,9 @@ def OnDefaultKey(ki, isShift, isCtrl, keycode):
 
 
 def OnNewAgeLoaded(ki, firstAge):
+    # tell the uam module about the KI (this will work both if the UAM KI Plugin's uam.py is used, and for our)
+    import uam
+    uam._ki = ki
     # load additional pages
     if PtGetAgeName() in xxConfig.AutoPages:
         PtPageInNode(xxConfig.AutoPages[PtGetAgeName()]) # we expect these pages to belong to the current age, so we do not care about unloading them
