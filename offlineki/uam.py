@@ -24,61 +24,7 @@
 #==============================================================================#
 import Plasma
 
-# From _UamUtils
-#For dealing with String->String dictionaries (musn't contain ; nor = nor rely on whitespace on the ends. )
-def _DictToString(dict):
-    str_list = []
-    first = True
-    for key in dict:
-        val = dict[key]
-        if not first:
-            str_list.append(";")
-        str_list.append(key+"="+val)
-        first = False
-    result = ''.join(str_list)
-    return result
-def _StringToDict(str):
-    result = {}
-    if str=="":
-        return result
-    list = str.split(";")
-    for item in list:
-        #parts = item.split("=")
-        #if len(parts)==2:
-        #    result[parts[0].strip()] = parts[1].strip()  #remove whitespace off the ends
-        #else:
-        #    #skip this part
-        #    pass
-        ind = item.find("=")
-        if ind!=-1:
-            result[item[:ind].strip()] = item[ind+1:].strip()  #remove whitespace off the ends
-        else:
-            #skip this part
-            pass
-    return result
-def _ListToString(list):
-    str_list = []
-    first = True
-    for val in list:
-        if not first:
-            str_list.append(";")
-        str_list.append(val)
-        first = False
-    result = ''.join(str_list)
-    return result
-def _StringToList(str):
-    result = []
-    if str=="":
-        return result
-    list = str.split(";")
-    for item in list:
-        item = item.strip()
-        if item!="":
-            result.append(item)
-    return result
-
-
-# From uam
+# Chronicle helpers
 def SetAgeChronicle(varname, value):
     #print "SetAgeChronicle name=" + `varname` + " value="+`value`
     ageVault = Plasma.ptAgeVault()
@@ -116,7 +62,7 @@ def _GetPlayerChronicle(varname):
     vault = Plasma.ptVault()
     return _GetChronicle(varname,vault)
 
-
+# Relto page enabling
 def EnableReltoPage(pagename):
     print "uam.EnableReltoPage: "+`pagename`
     #get current task list
@@ -129,3 +75,15 @@ def EnableReltoPage(pagename):
     _SetPlayerChronicle("UamTasks",taskstr)
     Plasma.PtSendKIMessageInt(PlasmaKITypes.kStartBookAlert, 0)  #Flash the Relto book.
     print "current tasks: "+taskstr
+
+# Misc little tools
+def LinkToAge(agename, spawnpoint):
+    #Use the OfflineKI for Pots/Alcugs:
+    import xLinkMgr
+    xLinkMgr.LinkToAge(agename,spawnpoint)
+def PrintKiMessage(msg):
+    _ki.IAddRTChat(None, msg, 0)
+def SetTimer(callback, time):
+    # will only work if UAM KI plugin is actually installed
+    import _UamTimer
+    _UamTimer.Timer(callback, time, False, True) #isweak=False, so that we can use local functions, and removewhenlink=True, so that timers are cancelled when linking out.
