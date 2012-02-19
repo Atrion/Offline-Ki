@@ -67,17 +67,18 @@ def _GetPlayerChronicle(varname):
 
 # Relto page enabling
 def EnableReltoPage(pagename):
-    print "uam.EnableReltoPage: "+`pagename`
+    import xCustomReltoPages # I leave the string helpers out of here because the original does not have them - and I want to be compatible in both directions
+    print "uam.EnableReltoPage: "+str(pagename)
     #get current task list
     tasksstr = _GetPlayerChronicle("UamTasks")
-    tasks = _StringToList(tasksstr)
+    tasks = xCustomReltoPages._StringToList(tasksstr)
     #add item
     tasks.append("EnableReltoPage="+pagename)
     #save task list
-    taskstr = _ListToString(tasks)
+    taskstr = xCustomReltoPages._ListToString(tasks)
     _SetPlayerChronicle("UamTasks",taskstr)
     Plasma.PtSendKIMessageInt(PlasmaKITypes.kStartBookAlert, 0)  #Flash the Relto book.
-    print "current tasks: "+taskstr
+    print "uam.EnableReltoPage: current tasks: "+taskstr
 
 # Misc little tools
 def LinkToAge(agename, spawnpoint):
