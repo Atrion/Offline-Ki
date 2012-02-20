@@ -22,7 +22,7 @@
 #    <http://www.gnu.org/licenses/>                                            #
 #                                                                              #
 #==============================================================================#
-import Plasma
+import Plasma, PlasmaKITypes, PlasmaConstants
 
 _book = None # needs to be a global variable so the book will actually be shown
 _ki = None # will be set in xUserKIBase
