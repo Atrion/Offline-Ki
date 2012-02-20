@@ -1197,6 +1197,13 @@ class xKI(ptModifier,):
                 else:
                     plybkCB = ptGUIControlCheckBox(KIBlackbar.dialog.getControlFromTag(kJournalBookCBID))
                 if (event[1] == PtBookEventTypes.kNotifyImageLink):
+# uam API for linking books
+                    if event[2] == 100:
+                        try :
+                            import uam
+                            if uam._handleClick(): return
+                        except: pass # we are using the actual UAM plugin
+# END uam API for linking books
                     if (event[2] == xLinkingBookDefs.kYeeshaBookShareID):
                         if IsYeeshaBookEnabled:
                             PtClearOfferBookMode()
@@ -1233,7 +1240,12 @@ class xKI(ptModifier,):
                         sdlvar = xLinkingBookDefs.xYeeshaPages[whatpage][0]
                         self.IToggleYeeshaPageSDL(sdlvar, 1)
                 elif (event[1] == PtBookEventTypes.kNotifyShow):
-                    pass
+# uam API for linking books
+                    try:
+                        import uam
+                        uam._bookShown()
+                    except: pass
+# END uam API for linking books
                 elif (event[1] == PtBookEventTypes.kNotifyHide):
                     PtDebugPrint('xKI:Book: NotifyHide', level=kDebugDumpLevel)
                     PtToggleAvatarClickability(true)
@@ -1247,6 +1259,12 @@ class xKI(ptModifier,):
                     elif (not gCurBookIsYeesha):
                         JBText = JournalBook.getEditableText()
                         WriteHTMLFile((xLocalization.xJournalBookDefs.xPlayerJournalTitle % PtGetClientName()), JBText, MakeJournalFilename())
+# uam API for linking books
+                    try:
+                        import uam
+                        uam._bookHidden()
+                    except: pass
+# END uam API for linking books
                 elif (event[1] == PtBookEventTypes.kNotifyNextPage):
                     pass
                 elif (event[1] == PtBookEventTypes.kNotifyPreviousPage):

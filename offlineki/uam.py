@@ -25,6 +25,8 @@
 import Plasma, PlasmaKITypes, PlasmaConstants
 
 _book = None # needs to be a global variable so the book will actually be shown
+_agename = None
+_spawnpoint = None
 _ki = None # will be set in xUserKIBase
 
 # Chronicle helpers
@@ -108,3 +110,34 @@ def _DisplayBook(text, isOpen, booktype):
     _book.setGUI(booktype)
     _book.allowPageTurning(True)
     _book.show(isOpen)
+def DisplayLinkingBook(agename, spawnpoint):
+    global _book
+    global _agename
+    global _spawnpoint
+    _agename = agename
+    _spawnpoint = spawnpoint
+    contents = '<pb><img src="xLinkPanelBlackVoid*1#0.hsm" align=center link=100 blend=alpha >'
+    _book = Plasma.ptBook(contents, _ki.key)
+    _book.setSize(1.0, 1.0)
+    _book.setGUI('BkBook')
+    _book.allowPageTurning(True)
+    _book.show(1)
+def _handleClick():
+    #after this, the .kNotifyHide event will still be called, so the _book = None can be done then.
+    if _book != None and _agename != None and _spawnpoint != None:
+        print "uam._handleClick: linking"
+        _book.hide()
+        LinkToAge(_agename,_spawnpoint)
+        return True #don't let xKI.py process the rest!
+    return False
+def _bookHidden():
+    global _book
+    _book = None
+def _bookShown():
+    if _book != None and _agename != None and _spawnpoint != None:
+        import booksDustGlobal
+        bookmap = booksDustGlobal.BookMapRight
+        import xLinkMgr
+        img = xLinkMgr.GetLinkingImage(_agename, _spawnpoint, width=410, height=168)
+        if img != None:
+            bookmap.textmap.drawImage(50, 60, img, 0)
