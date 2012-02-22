@@ -153,6 +153,8 @@ commands = '''=== Avatar appearance and animation commands ===
 */nofloat <[list of objects]> - locked in some ages if you don't have at least story access, the list of objects can only be used by admins
 */call <[Urwin|Monkey]> (works only in Negilahn and Payiferen)
 */rotsphere (works only in the MOUL version of Ahnonay)
+*/reltostars (works only in Relto)
+*/noreltostars (works only in Relto)
 */getfissure <fissure stage (1-4)> (works only in Relto)
 */bahro <name> (possible names in the city: 1-6, ferry, palace, library; in the hood: shouter) - requires admin access
 */getzandoni - requires admin access
