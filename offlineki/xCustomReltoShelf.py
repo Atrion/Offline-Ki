@@ -89,7 +89,7 @@ class _LinkPage:
                 return file
         return None
 
-    def showBook(self): # returns whether the book should be shown if only this page is visible
+    def showBook(self): # returns whether the book should be shown if only this page is visible (will only be called for visible books!)
         return True
 
     def isVisible(self): # returns whether this page has anything to display
@@ -231,18 +231,18 @@ def BuildBook(bookname):
     x = xLinkingBookDefs.kFirstLinkPanelID
     linkBookPrefix = 'xxCustomBookxx_' # the way xLinkMgrGUIPopup works requires us to write stuff into the global linking definition array - we use this name plus the index of the page to avoid overwriting anything
     print ('xCustomReltoShelf: Building up Linking book ' + bookname)
-    for page in _Books[bookname].pages:
+    for page in _Books[bookname].pages: # iterate over book pages (only visible pages end up in there)
         pagename = linkBookPrefix+str(x) # the only important thing is that it is unique for the current book
         source = '<font size=32 face=Uru ><p align=center>%s\n\n<font size=26 face=Uru>%s<pb>%s' % (page.getTitle(), page.getText(), page.getPanel()) # this text has a %d for the panel ID!
         #print "xCustomReltoShelf: Source of page %s is %s" % (pagename, source)
-            
+
         # "communication" with xLinkMgrGUIPopup
         #print 'xCustomReltoShelf: Setting xLinkingBookDefs entries'
         xLinkingBookDefs.xAgeLinkingBooks[pagename] = (0, 1.0, 1.0, '',
             '%s%s'+(source % xLinkingBookDefs.kFirstLinkPanelID)) # fill in panel ID
         xLinkingBookDefs.xLinkDestinations[pagename] = page # we can access that later, in the click handler
         xLinkingBookDefs.xLinkingPages[pagename] = '<pb>'+source # keep the panel ID (xLinkMgrGUIPopup will fill in)
-        
+
         # some finalization
         SpawnPoint_Dict[x] = pagename
         x += 1
