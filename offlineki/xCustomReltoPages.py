@@ -242,11 +242,11 @@ def LoadReltoPages():
     #print "UamReltoPages: "+chronstr
     for pagename in pages:
         status = pages[pagename]
-        if status=="on":
-            #PagesToLoad.add(pagename)
+        if not pagename in ReltoPages:
+            print "xCustomReltoPages: You collected a Relto page which is not installed: %s" % pagename
+        elif status=="on":
             PagesToLoad[pagename] = None #we're using this dict as a set
             for hideitem in ReltoPages[pagename]["hide"]:
-                #ObjectsToHide.add(hideitem)
                 ObjectsToHide[hideitem] = None #we're using this dict as a set
     #Turn into sorted lists
     PagesToLoad = PagesToLoad.keys()
