@@ -107,7 +107,7 @@ def SetTimer(callback, time):
         raise Exception("UAM KI plugin not installed, can not set timer")
     _UamTimer.Timer(callback, time, False, True) #isweak=False, so that we can use local functions, and removewhenlink=True, so that timers are cancelled when linking out.
 
-# showing a Book
+# showing a text-only Book
 def DisplayJournal(text, isOpen):
     _DisplayBook(text, isOpen, "bkNotebook")
 def DisplayBook(text, isOpen):
@@ -120,6 +120,8 @@ def _DisplayBook(text, isOpen, booktype):
     _book.setGUI(booktype)
     _book.allowPageTurning(True)
     _book.show(isOpen)
+
+# showing a linking book
 def DisplayLinkingBook(agename, spawnpoint):
     global _book
     global _agename
@@ -127,11 +129,7 @@ def DisplayLinkingBook(agename, spawnpoint):
     _agename = agename
     _spawnpoint = spawnpoint
     contents = '<pb><img src="xLinkPanelBlackVoid*1#0.hsm" align=center link=100 blend=alpha >'
-    _book = Plasma.ptBook(contents, _ki.key)
-    _book.setSize(1.0, 1.0)
-    _book.setGUI('BkBook')
-    _book.allowPageTurning(True)
-    _book.show(1)
+    _DisplayBook(contents, 1, 'BkBook')
 def _handleClick():
     #after this, the .kNotifyHide event will still be called, so the _book = None can be done then.
     if _book != None and _agename != None and _spawnpoint != None:
