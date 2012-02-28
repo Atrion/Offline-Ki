@@ -67,6 +67,16 @@ def _GetPlayerChronicle(varname):
     vault = Plasma.ptVault()
     return _GetChronicle(varname,vault)
 
+# SDL helpers
+def SetAgeSdl(varname, value, index=0):
+    sdl = Plasma.PtGetAgeSDL()
+    sdl.setFlags(varname, 1, 1)
+    sdl.sendToClients(varname)
+    sdl.setIndex(varname, index, value)
+def GetAgeSdl(varname, index=0):
+    sdl = Plasma.PtGetAgeSDL()
+    return sdl[varname][index]
+
 # Relto page enabling
 def EnableReltoPage(pagename):
     import xCustomReltoPages # I leave the string helpers out of here because the original does not have them - and I want to be compatible in both directions
