@@ -3,9 +3,9 @@ NOT TOUCH it or you will end up with inconsistent behaviour. It was hard work to
 I repeat - DO NOT TOUCH THIS FILE! Fan-age linking rules are managed in AvailableFanLinks.inf
 ======================================================================================================
 ======================================================================================================
-Fan-Ages
+Fan-Ages (do not remove this include, even if all fan-ages are converted to the per-age descriptor;
+UAM packages still do not contain the descriptor file)
 include:AvailableFanLinks.inf
-include:AvailableExtraLinks.inf
 ======================================================================================================
 Hex Isle
 restorationlink:CatfishCanyon,Catfish Canyon,file

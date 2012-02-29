@@ -33,7 +33,7 @@ from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 import os
 import re
-import xxConfig
+import xxConfig, xUserKI
 
 _AvailableLinks = {}
 _PublicLinks = []
@@ -41,7 +41,7 @@ _RestorationLinks = []
 
 # Age datastructure and its operations
 class _Age:
-    def __init__(self, filename, displayName, detect = 'dataserver', linkrule = 'basic', defaultSpawnpoint = 'LinkInPointDefault'):
+    def __init__(self, filename, displayName, detect = 'dataserver', linkrule = 'basic', defaultSpawnpoint = 'LinkInPointDefault', publicLink = False, restorationLink = False):
         self.filename = filename
         self.displayName = displayName
         self.detect = detect
@@ -49,6 +49,11 @@ class _Age:
         self.defaultSpawnpoint = defaultSpawnpoint
         self.spawnpoints = {}
         self.description = ''
+        # add us to the correct lists
+        if self.IsAvailable():
+            if publicLink: _PublicLinks.append((filename, displayName))
+            if restorationLink: _RestorationLinks.append((filename, displayName))
+        _AvailableLinks[filename] = self
 
     def IsAvailable(self):
         if self.detect == 'disabled':
@@ -128,30 +133,37 @@ class _Age:
 
 
 # Code for collecting available ages
-def _AddAge(linktype, age):
-    global _AvailableLinks, _RestorationLinks, _PublicLinks
-    #print ('xLinkMgr: Found %s to %s' % (linktype, age.filename))
-    # update Nexus link lists (iff the age is actually available)
-    if linktype == 'restorationlink':
-        if age.IsAvailable(): _RestorationLinks.append([age.filename, age.displayName])
-    elif linktype == 'publiclink':
-        if age.IsAvailable(): _PublicLinks.append([age.filename, age.displayName])
-    elif linktype != 'link': # unknown link type...
-        raise Exception("Unknown link type "+linktype)
-    # and add the age (do this afterwards, so if the link type is invalid, you can not link here, which I will probably notice)
-    _AvailableLinks[age.filename] = age
-
-
 def _LoadAvailableLinks():
     global _AvailableLinks, _RestorationLinks, _PublicLinks
     if len(_AvailableLinks): # don't re-load
         return
+    # reset lists
     _AvailableLinks = {}
     _PublicLinks = []
     _RestorationLinks = []
+    # load information
     _LoadAvailableLinksFile('AvailableLinks.inf')
+    _LoadPerAgeDescriptors('img/AgeInfo') # load this after the global information, so it can be overwritten
     if xxConfig.isOffline():
         _FindUnknownAges()
+    # sort lists
+    def ageListCmp(entry1, entry2): # an age list entry is a two-element tuple, return the 2nd element
+        return cmp(entry1[1].lower(), entry2[1].lower())
+    _RestorationLinks.sort(ageListCmp)
+    _PublicLinks.sort(ageListCmp)
+
+def _LoadPerAgeDescriptors(folder):
+    if not os.path.exists(folder): return
+    for file in os.listdir(folder):
+        if not file.endswith(".txt"): continue # skip unininteresting files
+        age = file[:-len(".txt")]
+        descriptor = xUserKI.LoadConfigFile(os.path.join(folder, file))[''] # load default section
+        displayName = descriptor.get('displayName', age)
+        hidden = descriptor.get('hidden', 'false') in ("1", "yes", "true")
+        description = descriptor.get('description')
+        # create the age
+        age = _Age(age, displayName=displayName, restorationLink=not hidden)
+        if description is not None: age.description = description
 
 
 def _LoadAvailableLinksFile(filename):
@@ -165,7 +177,7 @@ def _LoadAvailableLinksFile(filename):
             if not len(line) or line.startswith('#'): continue # skip
             pos = line.find(':')
             if pos <= 0: continue # a comment
-            type = line[:pos]
+            type = line[:pos].lower()
             data = line[pos+1:].split(",")
             # process line
             # read include
@@ -173,15 +185,17 @@ def _LoadAvailableLinksFile(filename):
                 if len(data) == 1:
                     _LoadAvailableLinksFile(data[0])
             # read link
-            elif type.endswith('link'):
+            elif type in ('link', 'restorationlink', 'publiclink'):
+                restorationLink = (type == 'restorationlink')
+                publicLink = (type == 'publiclink')
                 if len(data) == 5:
-                    _AddAge(type, _Age(data[0], data[1], data[2], data[3], data[4]))
+                    _Age(data[0], data[1], data[2], data[3], data[4], publicLink=publicLink, restorationLink=restorationLink)
                 elif len(data) == 4:
-                    _AddAge(type, _Age(data[0], data[1], data[2], data[3]))
+                    _Age(data[0], data[1], data[2], data[3], publicLink=publicLink, restorationLink=restorationLink)
                 elif len(data) == 3:
-                    _AddAge(type, _Age(data[0], data[1], data[2]))
+                   _Age(data[0], data[1], data[2], publicLink=publicLink, restorationLink=restorationLink)
                 elif len(data) == 2:
-                    _AddAge(type, _Age(data[0], data[1]))
+                    _Age(data[0], data[1], publicLink=publicLink, restorationLink=restorationLink)
             # read spawnpoint
             elif type == 'spawnpoint':
                 if len(data) == 3:
@@ -200,6 +214,9 @@ def _LoadAvailableLinksFile(filename):
                         description = description.replace(';', ',')
                         description = description.replace('\\n', '\n')
                         _AvailableLinks[age].description = description
+            # complain
+            else:
+                raise Exception("Unknown type "+type)
     finally:
         f.close()
 
@@ -213,7 +230,7 @@ def _FindUnknownAges():
         if ageName in _AvailableLinks: continue
         # found an unknown age, add it to global list and to resoration links in Nexus
         print 'xLinkMgr: Adding unknown age %s' % ageName
-        _AddAge('restorationlink', _Age(ageName, ageName + " (unknown age)"))
+        _Age(ageName, displayName=ageName + " (unknown age)", restorationLink=True)
 
 
 # Public API
