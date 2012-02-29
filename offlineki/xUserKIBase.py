@@ -366,7 +366,7 @@ def OnNewAgeLoaded(ki, firstAge):
         # get auth level
         import xKI
         PtSendRTChat(PtGetLocalPlayer(), [], "/!getauthlevel", xKI.ChatFlags(0).flags) # we update after every linking because it coud have changed
-        # shard identifier (not expected to change)
+        # shard identifier (not expected to change). Also, receiving it will re-load all age infos, which we don't want to do for each link.
         if firstAge:
             PtSendRTChat(PtGetLocalPlayer(), [], "/!getshardidentifier", xKI.ChatFlags(0).flags)
     else:
@@ -430,6 +430,8 @@ def OnServerCommand(ki, cmnd, args):
         return True
     elif (cmnd == 'shardidentifier'):
         xxConfig.shardIdentifier = args[0]
+        print "xUserKIBase: Got shard identifier %s. Reseting age list." % xxConfig.shardIdentifier
+        xLinkMgr.ResetAvailableLinks() # changing the shard identifer might make some ages (un)available
         return True
     elif (cmnd == 'relink'):
         linkMgr = ptNetLinkingMgr()

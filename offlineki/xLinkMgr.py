@@ -42,6 +42,8 @@ _RestorationLinks = []
 # Age datastructure and its operations
 class _Age:
     def __init__(self, filename, displayName, detect = 'dataserver', linkrule = 'basic', defaultSpawnpoint = 'LinkInPointDefault', publicLink = False, restorationLink = False):
+        print "xLinkMgr: Adding age %s: display=%s, detect=%s, linkrule=%s, spawn=%s, public=%s, restoration=%s" % (filename,
+            displayName, detect, linkrule, defaultSpawnpoint, str(publicLink), str(restorationLink)),
         self.filename = filename
         self.displayName = displayName
         self.detect = detect
@@ -59,12 +61,16 @@ class _Age:
             removeFromList(_PublicLinks)
             removeFromList(_RestorationLinks)
         # add us to the correct lists
-        if self.IsAvailable():
+        self.available = self._IsAvailable() # store this information, it is not supposed to change anyway
+        if self.available:
+            print " (available)"
             if publicLink: _PublicLinks.append((filename, displayName))
             if restorationLink: _RestorationLinks.append((filename, displayName))
+        else:
+            print " (not available)"
         _AvailableLinks[filename] = self
 
-    def IsAvailable(self):
+    def _IsAvailable(self):
         if self.detect == 'disabled':
             return xxConfig.isOffline() and os.path.exists('dat\\%s.age' % self.filename)
         if self.detect == 'file' or (self.detect.startswith('dataserver') and xxConfig.isOffline()):
@@ -82,7 +88,7 @@ class _Age:
     # If the spawnpoint is None, use the default one. If needFullInfo is True, we need the full UUID for the age.
     def GetAgeLinkStruct(self, spawnpoint = None, needFullInfo = False):
         # check general age availability
-        if not self.IsAvailable():
+        if not self.available:
             return 'xLinkMgr: The age with filename \"%s\" is not available on your PC or on this Shard.' % self.filename
         # get correct spawn point
         if spawnpoint == None: spawnpoint = self.defaultSpawnpoint
@@ -160,6 +166,7 @@ def _LoadAvailableLinks():
         return cmp(entry1[1].lower(), entry2[1].lower())
     _RestorationLinks.sort(ageListCmp)
     _PublicLinks.sort(ageListCmp)
+
 
 def _LoadPerAgeDescriptors(folder):
     if not os.path.exists(folder): return
@@ -240,7 +247,6 @@ def _FindUnknownAges():
         ageName = fname[:len(fname)-4]
         if ageName in _AvailableLinks: continue
         # found an unknown age, add it to global list and to resoration links in Nexus
-        print 'xLinkMgr: Adding unknown age %s' % ageName
         _Age(ageName, displayName=ageName + " (unknown age)", restorationLink=True)
 
 
@@ -256,7 +262,7 @@ def IsAgeAvailable(ageName):
     if not ageName in _AvailableLinks:
         print "xLinkMgr: Age %s is not available as it's not listed at all" % ageName
         return False
-    return _AvailableLinks[ageName].IsAvailable()
+    return _AvailableLinks[ageName].available
 
 
 def GetInstanceName(ageName):

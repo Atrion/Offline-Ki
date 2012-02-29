@@ -392,23 +392,26 @@ def LoadConfigFile(file):
     currentSection = {}
     result = { '': currentSection }
     file = open(file)
-    for line in file:
-        line = line.strip()
-        if not len(line) or line.startswith("#"): continue # skip empty and comment lines
-        if line.startswith('['):
-            # section header
-            if not line.endswith(']'): raise Exception("Invalid config file line "+line)
-            line = line[1:len(line)-1] # remove the []
-            # start a new section
-            currentSection = {}
-            result[line] = currentSection
-        else:
-            # config file line
-            pos = line.index("=") # will raise exception when substring is not found
-            key = line[:pos]
-            value = line[pos+1:]
-            value = value.replace("\\n", "\n") # deal with newlines
-            currentSection[key] = value
+    try:
+        for line in file:
+            line = line.strip()
+            if not len(line) or line.startswith("#"): continue # skip empty and comment lines
+            if line.startswith('['):
+                # section header
+                if not line.endswith(']'): raise Exception("Invalid config file line "+line)
+                line = line[1:len(line)-1] # remove the []
+                # start a new section
+                currentSection = {}
+                result[line] = currentSection
+            else:
+                # config file line
+                pos = line.index("=") # will raise exception when substring is not found
+                key = line[:pos]
+                value = line[pos+1:]
+                value = value.replace("\\n", "\n") # deal with newlines
+                currentSection[key] = value
+    finally: # always clsoe the file
+        file.close()
     return result
 
 
