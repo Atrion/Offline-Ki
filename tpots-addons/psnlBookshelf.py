@@ -122,8 +122,6 @@ class psnlBookshelf(ptModifier):
         self.initComplete = 0
         print '__init__psnlBookshelf v.',
         print version
-        import xLinkMgr
-        xLinkMgr.ResetAvailableLinks()
         xCustomReltoShelf.ParseULMFile()
 
 

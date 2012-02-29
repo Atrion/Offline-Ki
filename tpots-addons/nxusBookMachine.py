@@ -176,7 +176,6 @@ class nxusBookMachine(ptModifier):
         self.version = version
         print '__init__nxusBookMachine v.',
         print version
-        xLinkMgr.ResetAvailableLinks()
 
 
     def OnFirstUpdate(self):
