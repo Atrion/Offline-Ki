@@ -49,6 +49,15 @@ class _Age:
         self.defaultSpawnpoint = defaultSpawnpoint
         self.spawnpoints = {}
         self.description = ''
+        # get rid of leftovers if we were already added
+        if filename in _AvailableLinks:
+            def removeFromList(list):
+                for cur in list:
+                    if cur[0] == filename:
+                        list.remove(cur)
+                        break
+            removeFromList(_PublicLinks)
+            removeFromList(_RestorationLinks)
         # add us to the correct lists
         if self.IsAvailable():
             if publicLink: _PublicLinks.append((filename, displayName))
@@ -159,10 +168,12 @@ def _LoadPerAgeDescriptors(folder):
         age = file[:-len(".txt")]
         descriptor = xUserKI.LoadConfigFile(os.path.join(folder, file))[''] # load default section
         displayName = descriptor.get('displayName', age)
-        hidden = descriptor.get('hidden', 'false') in ("1", "yes", "true")
+        showIn = descriptor.get('showIn', 'restoration').lower()
+        defaultSpawnpoint = descriptor.get('defaultSpawnpoint', 'LinkInPointDefault')
         description = descriptor.get('description')
+        detect = descriptor.get('availableVia', 'dataserver')
         # create the age
-        age = _Age(age, displayName=displayName, restorationLink=not hidden)
+        age = _Age(age, displayName=displayName, detect=detect, defaultSpawnpoint=defaultSpawnpoint, restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'))
         if description is not None: age.description = description
 
 
