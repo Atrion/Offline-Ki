@@ -51,8 +51,11 @@ class _Age:
         self.defaultSpawnpoint = defaultSpawnpoint
         self.spawnpoints = {}
         self.description = ''
+        self.available = self._IsAvailable() # store this information, it is not supposed to change anyway
+        print ", available=%s" % str(self.available)
         # get rid of leftovers if we were already added
         if filename in _AvailableLinks:
+            print "xLinkMgr: WARNING: %s was already in the age list." % self.filename
             def removeFromList(list):
                 for cur in list:
                     if cur[0] == filename:
@@ -61,13 +64,9 @@ class _Age:
             removeFromList(_PublicLinks)
             removeFromList(_RestorationLinks)
         # add us to the correct lists
-        self.available = self._IsAvailable() # store this information, it is not supposed to change anyway
         if self.available:
-            print " (available)"
             if publicLink: _PublicLinks.append((filename, displayName))
             if restorationLink: _RestorationLinks.append((filename, displayName))
-        else:
-            print " (not available)"
         _AvailableLinks[filename] = self
 
     def _IsAvailable(self):
@@ -173,15 +172,20 @@ def _LoadPerAgeDescriptors(folder):
     for file in os.listdir(folder):
         if not file.endswith(".txt"): continue # skip unininteresting files
         age = file[:-len(".txt")]
-        descriptor = xUserKI.LoadConfigFile(os.path.join(folder, file))[''] # load default section
-        displayName = descriptor.get('displayName', age)
-        showIn = descriptor.get('showIn', 'restoration').lower()
-        defaultSpawnpoint = descriptor.get('defaultSpawnpoint', 'LinkInPointDefault')
-        description = descriptor.get('description')
-        detect = descriptor.get('availableVia', 'dataserver')
+        descriptor = xUserKI.LoadConfigFile(os.path.join(folder, file)) # load default section
+        defSection = descriptor['']
+        displayName = defSection.get('displayName', age)
+        showIn = defSection.get('showIn', 'restoration').lower()
+        defaultSpawnpoint = defSection.get('defaultSpawnpoint', 'LinkInPointDefault')
+        description = defSection.get('description')
+        detect = defSection.get('availableVia', 'dataserver')
+        link = defSection.get('link', 'basic')
         # create the age
-        age = _Age(age, displayName=displayName, detect=detect, defaultSpawnpoint=defaultSpawnpoint, restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'))
+        age = _Age(age, displayName=displayName, detect=detect, linkrule=link, defaultSpawnpoint=defaultSpawnpoint,
+                restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'))
         if description is not None: age.description = description
+        # add spawn points (name-to-title mapping)
+        age.spawnpoints = descriptor.get('SpawnPoints', {}) # default to no specific spawn points
 
 
 def _LoadAvailableLinksFile(filename):
