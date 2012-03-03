@@ -162,7 +162,7 @@ statusBarText = u''
 numCityLinks = 0
 numGZLinks = 0
 GZLinkNode = None
-dynLinkCategories = [kIDBtnLinkCategory03, kIDBtnLinkCategory04]
+dynLinkCategories = (kIDBtnLinkCategory03, kIDBtnLinkCategory04)
 global dynLinkSortBy, dynLinkReverse # initailized when clicking the category
 MagicHoods = {'KirelMOUL': 'kirelPerf-SpawnPointBevin02', 'NeighborhoodMOUL': 'LinkInPointDefault'}
 
@@ -608,11 +608,13 @@ class nxusBookMachine(ptModifier):
         if idCategorySelected in dynLinkCategories:
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW(xLocalization.xNexus.xNameHeader)
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameHeaderBtn)).enable()
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString('Last update')
-            ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).enable()
         else:
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString('')
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameHeaderBtn)).disable()
+        if idCategorySelected == kIDBtnLinkCategory04:
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString('Last restoration activity')
+            ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).enable()
+        else:
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString('')
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).disable()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameAscArrow)).hide()
@@ -1029,7 +1031,7 @@ class nxusBookMachine(ptModifier):
 
     def IUpdateDynLinks(self):
         global statusBarText, dynLinkSortBy, dynLinkReverse
-        if (idCategorySelected == kIDBtnLinkCategory03):
+        if idCategorySelected == kIDBtnLinkCategory03:
             dynLinks = xLinkMgr.GetPublicAges(dynLinkSortBy, dynLinkReverse)
         else:
             dynLinks = xLinkMgr.GetRestorationAges(dynLinkSortBy, dynLinkReverse)
@@ -1071,9 +1073,12 @@ class nxusBookMachine(ptModifier):
             fullLinkName.append(Uni(displayName))
             if (len(displayName) > kMaxDisplayableChars):
                 displayName = (displayName[:kMaxDisplayableChars] + '...')
-            lastUpdate = xLinkMgr.GetAgeLastUpdate(ageName)
-            if lastUpdate is None: stringLinkInfo = ''
-            else: stringLinkInfo = time.strftime(xLocalization.xGlobal.xDateFormat, lastUpdate)
+            if idCategorySelected == kIDBtnLinkCategory04:
+                lastUpdate = xLinkMgr.GetAgeLastUpdate(ageName)
+                if lastUpdate is None: stringLinkInfo = ''
+                else: stringLinkInfo = time.strftime(xLocalization.xGlobal.xDateFormat, lastUpdate)
+            else:
+                stringLinkInfo = '%05d%   04d%   04d' % (0, 0, 0)
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(idTextbox)).setString(displayName)
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag((idTextbox + 1))).setString(stringLinkInfo)
             idTextbox = (idTextbox + 10)

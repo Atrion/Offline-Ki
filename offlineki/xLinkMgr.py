@@ -303,6 +303,8 @@ def IsAgeAvailable(ageName):
 
 def GetInstanceName(ageName):
     _LoadAvailableLinks()
+    if not ageName in _AvailableLinks: # for example when the KI passes an already instanciated name to us
+        return ageName
     return _AvailableLinks[ageName].displayName
 
 
