@@ -163,7 +163,7 @@ numCityLinks = 0
 numGZLinks = 0
 GZLinkNode = None
 dynLinkCategories = [kIDBtnLinkCategory03, kIDBtnLinkCategory04]
-dynLinkOrderReverse = False
+global dynLinkSortBy, dynLinkReverse # initailized when clicking the category
 MagicHoods = {'KirelMOUL': 'kirelPerf-SpawnPointBevin02', 'NeighborhoodMOUL': 'LinkInPointDefault'}
 
 class nxusBookMachine(ptModifier):
@@ -447,6 +447,7 @@ class nxusBookMachine(ptModifier):
         global idDeleteCandidateName
         global idLinkSelected
         global indexDisplayStart
+        global dynLinkReverse, dynLinkSortBy
         if (id != NexusGUI.id):
             print 'nxusBookMachine.OnGUINotify():\tunexpected message id'
             return
@@ -497,6 +498,10 @@ class nxusBookMachine(ptModifier):
                     boolBookPresented = false
                     boolGetBookAfterBookRetract = false
                     idBookPresented = 0
+                # reset sorting
+                dynLinkSortBy = xLinkMgr.kSortByName
+                dynLinkReverse = False
+                # update GUI
                 self.IUpdateLinks()
                 return
             if ((ctrlID == kIDBtnScrollUp) and (indexDisplayStart > 0)):
@@ -540,24 +545,31 @@ class nxusBookMachine(ptModifier):
                         respBookRetract.run(self.key)
                 self.IUpdateLinks()
                 return
-            elif (ctrlID == kIDNameHeaderBtn):
-                global dynLinkOrderReverse
-                dynLinkOrderReverse = not dynLinkOrderReverse
-                # reset the presented book
-                if idBookPresented:
-                    boolBookPresented = false
-                    boolGetBookAfterBookRetract = false
-                    idBookPresented = 0
-                    respBookRetract.run(self.key)
-                # reset the selected age
-                idLinkSelected = 0
-                if boolGetBookBtnUp:
-                    respButtonPress.run(self.key)
-                    self.IDisableGUIButtons()
-                    boolGetBookBtnUp = false
-                    boolGetBookAfterBtnPress = false
-                # update dynamic age list
-                self.IUpdateLinks()
+            elif (ctrlID in (kIDNameHeaderBtn, kIDPopHeaderBtn)):
+                if idCategorySelected in dynLinkCategories:
+                    # update sorting and reversing
+                    if ctrlID == kIDNameHeaderBtn: sortBy = xLinkMgr.kSortByName
+                    else: sortBy = xLinkMgr.kSortByDate
+                    if sortBy == dynLinkSortBy:
+                        dynLinkReverse = not dynLinkReverse
+                    else:
+                        dynLinkSortBy = sortBy
+                        dynLinkReverse = False
+                    # reset the presented book
+                    if idBookPresented:
+                        boolBookPresented = False
+                        boolGetBookAfterBookRetract = False
+                        idBookPresented = 0
+                        respBookRetract.run(self.key)
+                    # reset the selected age
+                    idLinkSelected = 0
+                    if boolGetBookBtnUp:
+                        respButtonPress.run(self.key)
+                        self.IDisableGUIButtons()
+                        boolGetBookBtnUp = False
+                        boolGetBookAfterBtnPress = False
+                    # update dynamic age list
+                    self.IUpdateLinks()
         if (event == kInterestingEvent):
             if (type(control) != type(None)):
                 if control.isInteresting() and not idBookPresented:
@@ -589,11 +601,13 @@ class nxusBookMachine(ptModifier):
         if idCategorySelected in dynLinkCategories:
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW(xLocalization.xNexus.xNameHeader)
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameHeaderBtn)).enable()
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString('Last update')
+            ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).enable()
         else:
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString('')
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameHeaderBtn)).disable()
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString('')
-        ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).disable()
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString('')
+            ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).disable()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameAscArrow)).hide()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameDescArrow)).hide()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopAscArrow)).hide()
@@ -1007,15 +1021,14 @@ class nxusBookMachine(ptModifier):
 
 
     def IUpdateDynLinks(self):
-        global statusBarText, dynLinkOrderReverse
+        global statusBarText, dynLinkSortBy, dynLinkReverse
         if (idCategorySelected == kIDBtnLinkCategory03):
-            dynLinks = xLinkMgr.GetPublicLinks()
+            dynLinks = xLinkMgr.GetPublicAges(dynLinkSortBy, dynLinkReverse)
         else:
-            dynLinks = xLinkMgr.GetRestorationLinks()
-            if xxConfig.isOnline():
-                statusBarText = u'Ages displayed in darker color are those you have not yet visited'
-                ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription)).setStringW(statusBarText)
-        if dynLinkOrderReverse: dynLinks.reverse()
+            dynLinks = xLinkMgr.GetRestorationAges(dynLinkSortBy, dynLinkReverse)
+        if xxConfig.isOnline():
+            statusBarText = u'Ages displayed in darker color are those you have not yet visited'
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription)).setStringW(statusBarText)
         if (indexDisplayStart > 0):
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnScrollUp)).show()
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnScrollUp)).enable()
@@ -1025,13 +1038,12 @@ class nxusBookMachine(ptModifier):
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnScrollDn)).enable()
         index = -1
         idTextbox = kIDTxtLinkName01
-        for link in dynLinks:
+        for ageName in dynLinks:
             index = (index + 1)
             if (index < indexDisplayStart):
                 continue
             if (index > ((indexDisplayStart + kNumDisplayFields) - 1)):
                 break
-            (ageName, displayName) = link
             if (idBookPresented == (idTextbox - 1)):
                 ptGUIControlButton(NexusGUI.dialog.getControlFromTag((idTextbox - 1))).disable()
                 ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(idTextbox)).setForeColor(colorPresented)
@@ -1048,12 +1060,15 @@ class nxusBookMachine(ptModifier):
                     ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(idTextbox)).setForeColor(colorNormal)
                     ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag((idTextbox + 1))).setForeColor(colorNormal)
             untranslatedName.append(Uni(ageName))
+            displayName = xLinkMgr.GetInstanceName(ageName)
             fullLinkName.append(Uni(displayName))
             if (len(displayName) > kMaxDisplayableChars):
                 displayName = (displayName[:kMaxDisplayableChars] + '...')
-            stringLinkInfo = (u'%05d%   04d%   04d' % (0, 0, 0))
+            lastUpdate = xLinkMgr.GetAgeLastUpdate(ageName)
+            if lastUpdate is None: stringLinkInfo = ''
+            else: stringLinkInfo = time.strftime(xLocalization.xGlobal.xDateFormat, lastUpdate)
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(idTextbox)).setString(displayName)
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag((idTextbox + 1))).setStringW(stringLinkInfo)
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag((idTextbox + 1))).setString(stringLinkInfo)
             idTextbox = (idTextbox + 10)
 
 

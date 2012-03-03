@@ -31,19 +31,22 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
-import os
-import re
+import os, re, time
 import xxConfig, xUserKI
 
 _AvailableLinks = {}
+# these arrays will always be empty, they must be present for the UAM KI plugin not to crash
 _PublicLinks = []
 _RestorationLinks = []
 
+# sort constants
+kSortByName = 0
+kSortByDate = 1
+
 # Age datastructure and its operations
 class _Age:
-    def __init__(self, filename, displayName, detect = 'dataserver', linkrule = 'basic', defaultSpawnpoint = 'LinkInPointDefault', publicLink = False, restorationLink = False):
-        print "xLinkMgr: Adding age %s: display=%s, detect=%s, linkrule=%s, spawn=%s, public=%s, restoration=%s" % (filename,
-            displayName, detect, linkrule, defaultSpawnpoint, str(publicLink), str(restorationLink)),
+    def __init__(self, filename, displayName, detect = 'dataserver', linkrule = 'basic', defaultSpawnpoint = 'LinkInPointDefault',
+            lastUpdate = None, publicLink = False, restorationLink = False):
         self.filename = filename
         self.displayName = displayName
         self.detect = detect
@@ -51,23 +54,30 @@ class _Age:
         self.defaultSpawnpoint = defaultSpawnpoint
         self.spawnpoints = {}
         self.description = ''
+        self.publicLink = publicLink
+        self.restorationLink = restorationLink
         self.available = self._IsAvailable() # store this information, it is not supposed to change anyway
-        print ", available=%s" % str(self.available)
-        # get rid of leftovers if we were already added
+        self._setLastUpdate(lastUpdate)
+        # print
+        print "xLinkMgr: Adding age %s: display=%s, public=%s, restoration=%s, available=%s" % (filename,
+            displayName, str(publicLink), str(restorationLink), str(self.available))
+        # warn about adding the same age twice
         if filename in _AvailableLinks:
             print "xLinkMgr: WARNING: %s was already in the age list." % self.filename
-            def removeFromList(list):
-                for cur in list:
-                    if cur[0] == filename:
-                        list.remove(cur)
-                        break
-            removeFromList(_PublicLinks)
-            removeFromList(_RestorationLinks)
-        # add us to the correct lists
-        if self.available:
-            if publicLink: _PublicLinks.append((filename, displayName))
-            if restorationLink: _RestorationLinks.append((filename, displayName))
+        # add us to the global list
         _AvailableLinks[filename] = self
+
+    
+    def _setLastUpdate(self, lastUpdate):
+        if lastUpdate is None:
+            self.lastUpdate = None
+            return
+        # parse YYYY-MM-DD
+        m = re.search('^([0-9]{4})-([0-9]{2})-([0-9]{2})$', lastUpdate)
+        if m is None: raise Exception("Invalid date %s, must be in form YYYY-MM-DD" % lastUpdate)
+        # create a struct_time-sized tuple
+        self.lastUpdate = (int(m.groups()[0]), int(m.groups()[1]), int(m.groups()[2]), 0, 0, 0, 0, 0, 0)
+    
 
     def _IsAvailable(self):
         if self.detect == 'disabled':
@@ -148,23 +158,16 @@ class _Age:
 
 # Code for collecting available ages
 def _LoadAvailableLinks():
-    global _AvailableLinks, _RestorationLinks, _PublicLinks
+    global _AvailableLinks
     if len(_AvailableLinks): # don't re-load
         return
     # reset lists
     _AvailableLinks = {}
-    _PublicLinks = []
-    _RestorationLinks = []
     # load information
     _LoadAvailableLinksFile('AvailableLinks.inf')
     _LoadPerAgeDescriptors('img/AgeInfo') # load this after the global information, so it can be overwritten
     if xxConfig.isOffline():
         _FindUnknownAges()
-    # sort lists
-    def ageListCmp(entry1, entry2): # an age list entry is a two-element tuple, return the 2nd element
-        return cmp(entry1[1].lower(), entry2[1].lower())
-    _RestorationLinks.sort(ageListCmp)
-    _PublicLinks.sort(ageListCmp)
 
 
 def _LoadPerAgeDescriptors(folder):
@@ -180,8 +183,9 @@ def _LoadPerAgeDescriptors(folder):
         description = defSection.get('description')
         detect = defSection.get('availableVia', 'dataserver')
         link = defSection.get('link', 'basic')
+        lastUpdate = defSection.get('lastUpdate')
         # create the age
-        age = _Age(age, displayName=displayName, detect=detect, linkrule=link, defaultSpawnpoint=defaultSpawnpoint,
+        age = _Age(age, displayName=displayName, detect=detect, linkrule=link, defaultSpawnpoint=defaultSpawnpoint, lastUpdate=lastUpdate,
                 restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'))
         if description is not None: age.description = description
         # add spawn points (name-to-title mapping)
@@ -254,6 +258,34 @@ def _FindUnknownAges():
         _Age(ageName, displayName=ageName + " (unknown age)", restorationLink=True)
 
 
+def _GetAgeList(filterFunction, cmpFunction, reverse):
+    _LoadAvailableLinks()
+    ages = filter(filterFunction, _AvailableLinks.itervalues())
+    ages.sort(cmpFunction)
+    if reverse: ages.reverse()
+    return map(lambda age: age.filename, ages) # return only filenames
+
+
+def _AgeNameCmp(age1, age2):
+    return cmp(age1.displayName.lower(), age2.displayName.lower())
+
+
+def _AgeDateCmp(age1, age2):
+    if age1.lastUpdate is None and age2.lastUpdate is None: return _AgeNameCmp(age1, age2)
+    if age1.lastUpdate is None: # and age2 is not, so age2 is newer
+        return 1
+    if age2.lastUpdate is None: # age1 is newer
+        return -1
+    # both have a date, compare it
+    return -cmp(age1.lastUpdate, age2.lastUpdate) # a bigger date goes further up, so reverse the order here
+
+# Map sort-keys to compare functions
+_SortBy = {
+    kSortByName: _AgeNameCmp,
+    kSortByDate: _AgeDateCmp,
+}
+
+
 # Public API
 def ResetAvailableLinks():
     global _AvailableLinks
@@ -271,20 +303,21 @@ def IsAgeAvailable(ageName):
 
 def GetInstanceName(ageName):
     _LoadAvailableLinks()
-    if not ageName in _AvailableLinks:
-        return ageName
     return _AvailableLinks[ageName].displayName
 
 
 def GetDescription(ageName):
     _LoadAvailableLinks()
-    if not ageName in _AvailableLinks:
-        return ''
     return _AvailableLinks[ageName].description
 
 
-def LinkToAge(agename, spawnpoint = None):
-    als = GetAgeLinkStruct(agename, spawnpoint)
+def GetAgeLastUpdate(ageName):
+    _LoadAvailableLinks()
+    return _AvailableLinks[ageName].lastUpdate
+
+
+def LinkToAge(ageName, spawnpoint = None):
+    als = GetAgeLinkStruct(ageName, spawnpoint)
     if isinstance(als, str): # an error occured
         print als
         PtSendKIMessage(kKIOKDialogNoQuit, als)
@@ -292,49 +325,50 @@ def LinkToAge(agename, spawnpoint = None):
     # done, go!
     linkMgr = ptNetLinkingMgr()
     linkMgr.linkToAge(als)
-    print 'xLinkMgr: Linking to %s...' % agename
+    print 'xLinkMgr: Linking to %s...' % ageName
 
 
-# If the spawnpoint is None, use the default one. If needFullInfo is True, we need the full UUID for the age.
-def GetAgeLinkStruct(agename, spawnpoint = None, needFullInfo = False):
+def GetAgeLinkStruct(ageName, spawnpoint = None, needFullInfo = False):
     _LoadAvailableLinks()
-    if not agename in _AvailableLinks:
-        return 'The age with filename \"%s\" does not exist at all.' % agename
-    return _AvailableLinks[agename].GetAgeLinkStruct(spawnpoint, needFullInfo)
+    if not ageName in _AvailableLinks:
+        return 'The age with filename \"%s\" does not exist at all.' % ageName
+    return _AvailableLinks[ageName].GetAgeLinkStruct(spawnpoint, needFullInfo)
 
 
-def IsBasicLinkAge(agename):
+def IsBasicLinkAge(ageName):
     _LoadAvailableLinks()
-    if not agename in _AvailableLinks:
+    if not ageName in _AvailableLinks:
         return False
-    return _AvailableLinks[agename].IsBasicLinkAge()
+    return _AvailableLinks[ageName].IsBasicLinkAge()
 
 
-def IsOriginalBookAge(agename):
+def IsOriginalBookAge(ageName):
     _LoadAvailableLinks()
-    if not agename in _AvailableLinks:
+    if not ageName in _AvailableLinks:
         return False
-    return _AvailableLinks[agename].IsOriginalBookAge()
+    return _AvailableLinks[ageName].IsOriginalBookAge()
 
 
-def IsSubAge(agename): # returns the name of the parent age, or an empty string
+def IsSubAge(ageName): # returns the name of the parent age, or an empty string
     _LoadAvailableLinks()
-    if not agename in _AvailableLinks:
-        return ''
-    linkrule = _AvailableLinks[agename].linkrule
+    linkrule = _AvailableLinks[ageName].linkrule
     if linkrule.startswith("subageof(") and linkrule.endswith(")"):
         return linkrule[len("subageof("):-1]
     return ''
 
 
+def GetRestorationAges(sortBy = kSortByName, reverse = False):
+    return _GetAgeList(lambda age: age.available and age.restorationLink, _SortBy[sortBy], reverse)
+# Deprecated
 def GetRestorationLinks():
-    _LoadAvailableLinks()
-    return _RestorationLinks[:] # return a copy of the list, not a reference
+    return map(lambda name: (name, GetInstanceName(name)), GetRestorationAges())
 
 
+def GetPublicAges(sortBy = kSortByName, reverse = False):
+    return _GetAgeList(lambda age: age.available and age.publicLink, _SortBy[sortBy], reverse)
+# Deprecated
 def GetPublicLinks():
-    _LoadAvailableLinks()
-    return _PublicLinks[:] # return a copy of the list, not a reference
+    return map(lambda name: (name, GetInstanceName(name)), GetPublicAges())
 
 
 def GetCorrectFilenameCase(age1): # takes a non-case-sensitive filename and returns the correct case, if existing
@@ -343,12 +377,13 @@ def GetCorrectFilenameCase(age1): # takes a non-case-sensitive filename and retu
         if age1.lower() == age2.lower(): return age2
     return age1 # not found
 
-def GetLinkingImage(agename, spawnpoint = None, width = 512, height = 512):
+
+def GetLinkingImage(ageName, spawnpoint = None, width = 512, height = 512):
     if spawnpoint == None:
         # get default spawn point of that age (fail if the age dos not exist, that's okay)
         _LoadAvailableLinks()
-        spawnpoint = _AvailableLinks[agename].defaultSpawnpoint
-    files = ['img/LinkingImage_%s_%s.jpg' % (agename, spawnpoint), 'img/LinkingImage_%s.jpg' % agename, 'img/LinkingImage_Void.jpg']
+        spawnpoint = _AvailableLinks[ageName].defaultSpawnpoint
+    files = ['img/LinkingImage_%s_%s.jpg' % (ageName, spawnpoint), 'img/LinkingImage_%s.jpg' % ageName, 'img/LinkingImage_Void.jpg']
     for file in files:
         if os.path.exists(file):
             return PtLoadJPEGFromDisk(file, width, height)
@@ -365,3 +400,4 @@ def EnableLinking():
     linkMgr = ptNetLinkingMgr()
     linkMgr.setEnabled(1)
     print 'xLinkMgr: Linking enabled...'
+
