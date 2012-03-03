@@ -573,7 +573,14 @@ class nxusBookMachine(ptModifier):
         if (event == kInterestingEvent):
             if (type(control) != type(None)):
                 if control.isInteresting() and not idBookPresented:
-                    ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription)).setStringW(self.IGetFullName(control.getTagID()))
+                    text = self.IGetFullName(control.getTagID())
+                    if idCategorySelected in dynLinkCategories and control.getTagID() <= 300: # append age description (but not for the hood)
+                        desc = xLinkMgr.GetDescription(str(self.IGetUntranslatedName(control.getTagID())))
+                        if len(desc): text += u': ' + Uni(desc)
+                    if len(text) > 72: # shorten the text
+                        text = text[:72] + u'...'
+                    # and show it
+                    ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription)).setStringW(text)
                 else:
                     ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription)).setStringW(statusBarText)
 
@@ -1130,7 +1137,7 @@ class nxusBookMachine(ptModifier):
             index = (index - 210)
             index /= 10
             index = index+indexDisplayStart
-            PtDebugPrint(((((('index: ' + str(index)) + ' numCityLinks: ') + str(numCityLinks)) + ' numGZLinks: ') + str(numGZLinks)))
+            PtDebugPrint('index: ' + str(index) + ' numCityLinks: ' + str(numCityLinks) + ' numGZLinks: ' + str(numGZLinks))
             if (index < numCityLinks):
                 self.ILinkToCity()
             elif (index < (numCityLinks + numGZLinks)):
@@ -1139,7 +1146,7 @@ class nxusBookMachine(ptModifier):
                 self.ILinkToHood()
             return
         elif (idCategorySelected in dynLinkCategories):
-            self.ILinkToDynAge(self.IGetUntranslatedName((idBookPresented + 1)))
+            xLinkMgr.LinkToAge(str(self.IGetUntranslatedName(idBookPresented + 1)))
             return
         elif (idCategorySelected == kIDBtnLinkCategory02):
             folder = vault.getAgesICanVisitFolder()
@@ -1284,10 +1291,6 @@ class nxusBookMachine(ptModifier):
         print '-- linking --'
         linkMgr = ptNetLinkingMgr()
         linkMgr.linkToAge(als)
-
-
-    def ILinkToDynAge(self, ageName):
-        xLinkMgr.LinkToAge(str(ageName))
 
 
     def IDisableGUIButtons(self):
