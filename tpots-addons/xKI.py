@@ -7398,10 +7398,10 @@ class xKI(ptModifier,):
                                     if (element.getOwnerNodeID() == 0):
                                         contentFrom.setString('Global Msg')
                                     else:
-                                        try: # we have this failing for imagers - maybe, one day it affects the KI as well, and I want to know when that happens
+                                        try: # this fails for imagers, and in the KI when the player got deleted
                                             contentFrom.setString(element.getOwnerNode().playerGetName())
                                         except:
-                                            contentFrom.setString('Error')
+                                            contentFrom.setString('(unknown)')
                                     contentFrom.show()
 ##############################################################################
 # End diafero: fix for new incoming KI messages to be shown as global Admin messages
