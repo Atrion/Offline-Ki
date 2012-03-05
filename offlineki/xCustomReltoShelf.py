@@ -156,6 +156,7 @@ def ParseULMFile():
         return
     try:
         linkBook = None
+        lastUpdatedAges = xLinkMgr.GetRestorationAges(xLinkMgr.kSortByDate) # returns the filenames of the most recently updated ages
         for line in f:
             line = line.replace('\n', '').replace('\r', '')
             if not len(line) or line.startswith('#'): continue # skip
@@ -193,7 +194,7 @@ def ParseULMFile():
                     # OR
                     # link:agefilename,agefullname,spawnpoint,description,imagename,condition
                     if len(data) >= 5: # spawnpoint given
-                        linkBook.addPage(_LinkPage(data[0], data[4]))
+                        linkBook.addPage(_LinkPage(data[0], data[2]))
                     elif len(data) >= 3 and not len(data[0]):
                         # old-style text
                         linkBook.addPage(_DescriptivePage(data[1], data[2]))
@@ -209,6 +210,16 @@ def ParseULMFile():
                     # a text-only page with no link
                     if len(data) == 2:
                         linkBook.addPage(_DescriptivePage(data[0], data[1]))
+                elif type == "auto":
+                    # automatically choose an age, depending on their last update-time
+                    if len(lastUpdatedAges): # there's an age left to choose
+                        age = lastUpdatedAges.pop(0) # choose one, and remove it from the list
+                        if xLinkMgr.GetAgeLastUpdate(age) is None: # no ages with update date left
+                            lastUpdatedAges = []
+                        else:
+                            # use this age
+                            linkBook.cover = age # use this age's cover
+                            linkBook.addPage(_LinkPage(age)) # and link to this age
     finally:
         f.close()
 

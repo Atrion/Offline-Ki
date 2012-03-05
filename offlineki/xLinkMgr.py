@@ -35,8 +35,7 @@ import os, re, time
 import xxConfig, xUserKI
 
 _AvailableLinks = {}
-# these arrays will always be empty, they must be present for the UAM KI plugin not to crash
-_PublicLinks = []
+# this list will always be empty, it must be present for the UAM KI plugin (AgeInfo module) not to crash
 _RestorationLinks = []
 
 # sort constants
@@ -258,7 +257,7 @@ def _FindUnknownAges():
         _Age(ageName, displayName=ageName + " (unknown age)", restorationLink=True)
 
 
-def _GetAgeList(filterFunction, cmpFunction, reverse):
+def _GetAgeList(filterFunction, cmpFunction, reverse = False):
     _LoadAvailableLinks()
     ages = filter(filterFunction, _AvailableLinks.itervalues())
     ages.sort(cmpFunction)
@@ -289,7 +288,7 @@ _SortBy = {
 # Public API
 def ResetAvailableLinks():
     global _AvailableLinks
-    _AvailableLinks = {} # the rest will be reset by _LoadAvailableLinks - but this is necessary to make sure it re-loads the file
+    _AvailableLinks = {} # empty the age list, it will then be re-loaded
     _LoadAvailableLinks()
 
 
