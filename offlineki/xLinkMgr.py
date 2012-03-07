@@ -270,12 +270,15 @@ def _AgeNameCmp(age1, age2):
 
 
 def _AgeDateCmp(age1, age2):
-    if age1.lastUpdate is None and age2.lastUpdate is None: return _AgeNameCmp(age1, age2)
-    if age1.lastUpdate is None: # and age2 is not, so age2 is newer
+    # same date, or both are none - let the filename decide
+    if age1.lastUpdate == age2.lastUpdate:
+        return _AgeNameCmp(age1, age2)
+    # check if either date is unset
+    if age1.lastUpdate is None: # and age2 is set, so age2 is newer
         return 1
     if age2.lastUpdate is None: # age1 is newer
         return -1
-    # both have a date, compare it
+    # both have a date and it is not equal, compare it
     return -cmp(age1.lastUpdate, age2.lastUpdate) # a bigger date goes further up, so reverse the order here
 
 # Map sort-keys to compare functions
