@@ -524,7 +524,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         (valid, height) = xUserKI.GetArg(ki, cmnd, args, 'number of D\'ni feet',
           lambda args: len(args) == 1, lambda args: int(args[0]))
         if not valid: return True
-        if (not xxConfig.hasStoryLevel() and PtGetAgeName() in xxConfig.LockedAges):
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
             ki.IDoErrorChatMessage("You are in a locked age, some KI commands are disabled here")
             return True
         if (height == 0):
@@ -553,7 +553,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             if not silent: ki.IDoStatusChatMessage('%s re-spawns to the starting point' % PtGetClientName())
         return True
     if (cmnd == 'spawn'):
-        if (not xxConfig.hasStoryLevel() and PtGetAgeName() in xxConfig.LockedAges):
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
             ki.IDoErrorChatMessage("You are in a locked age, some KI commands are disabled here")
             return True
         (valid, n) = xUserKI.GetArg(ki, cmnd, args, '[number of spawns]',
@@ -570,7 +570,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         (valid, target) = xUserKI.GetArg(ki, cmnd, args, 'goto place',
           lambda args: len(args) == 1, lambda args: args[0].lower())
         if not valid: return True
-        if (not xxConfig.hasStoryLevel() and PtGetAgeName() in xxConfig.LockedAges):
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
             ki.IDoErrorChatMessage("You are in a locked age, some KI commands are disabled here")
             return True
         # get the place
@@ -594,7 +594,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         if not silent: ki.IDoStatusChatMessage('%s warps to \'%s\'' % (PtGetClientName(), target))
         return True
     if (cmnd in ['float', 'nofloat']):
-        if (not xxConfig.hasStoryLevel()) and (PtGetAgeName() in xxConfig.LockedAges):
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
             ki.IDoErrorChatMessage("You are in a locked age, some KI commands are disabled here")
             return True
         if xxConfig.hasAdminLevel():
@@ -622,7 +622,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         PtAvatarExitLookingAtKI()
         return True
     if (cmnd == 'glow'):
-        if (not xxConfig.hasStoryLevel() and PtGetAgeName() in xxConfig.LockedAges):
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
             ki.IDoErrorChatMessage("You are in a locked age, some KI commands are disabled here")
             return True
         avatar = PtGetLocalAvatar()
@@ -630,7 +630,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         if not silent: ki.IAddRTChat(None, 'You start glowing like fireflies', 0)
         return True
     if (cmnd  == 'noglow'):
-        if (not xxConfig.hasStoryLevel() and PtGetAgeName() in xxConfig.LockedAges):
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
             ki.IDoErrorChatMessage("You are in a locked age, some KI commands are disabled here")
             return True
         avatar = PtGetLocalAvatar()
@@ -641,6 +641,9 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         (valid, color) = xUserKI.GetArg(ki, cmnd, args, 'w|r|g|b',
           lambda args: len(args) == 1 and args[0] in ['w', 'r', 'g', 'b'], lambda args: args[0])
         if not valid: return True
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
+            ki.IDoErrorChatMessage("You are in a locked age, some KI commands are disabled here")
+            return True
         avatar = PtGetLocalAvatar()
         if (color == 'w'): PtSetLightValue(avatar.getKey(), 2, 2, 2, 2)
         elif (color == 'r'): PtSetLightValue(avatar.getKey(), 9, 2, 2, 2)
@@ -649,6 +652,9 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         if not silent: ki.IAddRTChat(None, 'You start glowing like a lantern (visible only for you)', 0)
         return True
     if (cmnd == 'nolite'):
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
+            ki.IDoErrorChatMessage("You are in a locked age, some KI commands are disabled here")
+            return True
         avatar = PtGetLocalAvatar()
         PtSetLightValue(avatar.getKey(), 0, 0, 0, 0)
         if not silent: ki.IAddRTChat(None, 'You stop glowing like a lantern (visible only for you)', 0)
@@ -721,7 +727,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         avatar = PtGetLocalAvatar()
         avatar.netForce(1)
         if cmnd in ['fcol', 'fogcolor']:
-            if (not xxConfig.hasStoryLevel() and PtGetAgeName() in xxConfig.LockedAges):
+            if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
                 PtSendKIMessage(kKILocalChatErrorMsg, "You are in a locked age, some KI commands are disabled here")
                 return True
             PtConsoleNet('Graphics.Renderer.Fog.SetDefColor %f %f %f' % (color.getRed(), color.getGreen(), color.getBlue()), 1)
@@ -758,7 +764,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         (valid, data) = xUserKI.GetArg(ki, cmnd, args, 'start distance> <end distance> <density',
           lambda args: len(args) == 3, lambda args: (float(args[0]), float(args[1]), float(args[2])))
         if not valid: return True
-        if (not xxConfig.hasStoryLevel() and PtGetAgeName() in xxConfig.LockedAges):
+        if not xxConfig.hasStoryLevel() and xLinkMgr.IsAgeCheatingDisabled(PtGetAgeName()):
             PtSendKIMessage(kKILocalChatErrorMsg, "You are in a locked age, some KI commands are disabled here")
             return True
         (start, end, density) = data
@@ -912,7 +918,7 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
         if not silent: ki.IAddRTChat(None, 'Successfully loaded %d scripted commands. You can now use Ctrl+Pause or Ctrl+Num (depending on your keyboard layout) to run them one after the other.' % len(gCommandList), 0)
         return True
 # linking command (restricted!)
-    if (xxConfig.hasStoryLevel() and cmnd in ['link', 'linksp']):
+    if xxConfig.hasStoryLevel() and cmnd in ['link', 'linksp']:
         if cmnd == 'link':
             (valid, data) = xUserKI.GetArg(ki, cmnd, args, 'age filename',
               lambda args: len(args) == 1, lambda args: (args[0], None))
@@ -925,15 +931,15 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
             return True
         # find out where to link
         als = xUserKI.GetAgeLinkStruct(ki, data[0], data[1])
-        if type(als) == type(None): return True
+        if als is None: return True
         # link us
         if not silent: ki.IAddRTChat(None, 'Linking you to %s' % als.getAgeInfo().getAgeInstanceName(), 0)
         linkMgr = ptNetLinkingMgr()
         linkMgr.linkToAge(als)
         return True
 # show/hide player command (restricted!)
-    if (xxConfig.hasStoryLevel() and xxConfig.isOnline() and cmnd == 'toggleoffline'):
-        if type(gOnlineState) == type(None):
+    if xxConfig.hasStoryLevel() and xxConfig.isOnline() and cmnd == 'toggleoffline':
+        if gOnlineState is None:
             ki.IDoErrorChatMessage('Weird, I did not yet get your online state... how could this happen?')
             return True
         gOnlineState = not gOnlineState

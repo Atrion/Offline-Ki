@@ -117,10 +117,10 @@ commands = '''=== Avatar appearance and animation commands ===
 */dance2 <[message]>
 */hug
 */unhug
-*/glow
-*/noglow
-*/lite <w|r|g|b>
-*/nolite
+*/glow - locked in some ages if you don't have at least story access
+*/noglow - locked in some ages if you don't have at least story access
+*/lite <w|r|g|b> - locked in some ages if you don't have at least story access
+*/nolite - locked in some ages if you don't have at least story access
 */suitup
 */removeki
 */removereltobook

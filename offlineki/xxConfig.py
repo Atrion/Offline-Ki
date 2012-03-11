@@ -95,11 +95,3 @@ AgeNameReplace = { # some age names or parts of them (for instancing) that are s
     'Kveer': "K'veer",
     'BahroCave02': "D'ni-Rudenna"
 }
-LockedAges = [
-    'Sonavio', # age writer (boblishman) requested it
-    'Kahntinoy', # age writer (wodan) requested it
-    'Fenabarel', # age writer (Rich, wodan) requested it
-    'oolbahnneea', # age writer (wodan) requested it
-    'Ashream', # age writer (wodan) requested it
-    'Adrael', # age write (D'Lanor) requested it
-]

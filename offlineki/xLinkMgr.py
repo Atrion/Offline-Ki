@@ -45,7 +45,7 @@ kSortByDate = 1
 # Age datastructure and its operations
 class _Age:
     def __init__(self, filename, displayName, detect = 'dataserver', linkrule = 'basic', defaultSpawnpoint = 'LinkInPointDefault',
-            lastUpdate = None, publicLink = False, restorationLink = False):
+            lastUpdate = None, disableCheats = False, publicLink = False, restorationLink = False):
         self.filename = filename
         self.displayName = displayName
         self.detect = detect
@@ -57,6 +57,7 @@ class _Age:
         self.restorationLink = restorationLink
         self.available = self._IsAvailable() # store this information, it is not supposed to change anyway
         self._setLastUpdate(lastUpdate)
+        self.disableCheats = disableCheats
         # print
         print "xLinkMgr: Adding age %s: display=%s, public=%s, restoration=%s, available=%s" % (filename,
             displayName, str(publicLink), str(restorationLink), str(self.available))
@@ -183,9 +184,10 @@ def _LoadPerAgeDescriptors(folder):
         detect = defSection.get('availableVia', 'dataserver')
         link = defSection.get('link', 'basic')
         lastUpdate = defSection.get('lastUpdate')
+        noCheats = defSection.get('noCheats', 'false').lower() in ('true', 'yes', '1')
         # create the age
         age = _Age(age, displayName=displayName, detect=detect, linkrule=link, defaultSpawnpoint=defaultSpawnpoint, lastUpdate=lastUpdate,
-                restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'))
+                disableCheats=noCheats, restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'))
         if description is not None: age.description = description
         # add spawn points (name-to-title mapping)
         age.spawnpoints = descriptor.get('SpawnPoints', {}) # default to no specific spawn points
@@ -320,6 +322,11 @@ def GetAgeLastUpdate(ageName):
     return _AvailableLinks[ageName].lastUpdate
 
 
+def IsAgeCheatingDisabled(ageName):
+    _LoadAvailableLinks()
+    return _AvailableLinks[ageName].disableCheats
+
+
 def LinkToAge(ageName, spawnpoint = None):
     als = GetAgeLinkStruct(ageName, spawnpoint)
     if isinstance(als, str): # an error occured
@@ -404,4 +411,3 @@ def EnableLinking():
     linkMgr = ptNetLinkingMgr()
     linkMgr.setEnabled(1)
     print 'xLinkMgr: Linking enabled...'
-
