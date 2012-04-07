@@ -79,17 +79,8 @@ class Cleft(ptResponder):
             entryTomahna.save()
 
 
-    def DoesPlayerHaveRelto(self):
-        vault = ptVault()
-        entryCleft = vault.findChronicleEntry('CleftSolved')
-        if (type(entryCleft) != type(None)):
-            entryCleftValue = entryCleft.chronicleGetValue()
-            if (entryCleftValue == 'yes'):
-                return true
-        return false
-
-
     def OnFirstUpdate(self):
+        import xUserKI
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
         if (type(entry) != type(None)):
@@ -97,7 +88,7 @@ class Cleft(ptResponder):
         else:
             PtSendKIMessage(kDisableKIandBB, 0)
             PtLoadDialog('IntroMovieGUI')
-        if not self.DoesPlayerHaveRelto():
+        if not xUserKI.DoesPlayerHaveRelto():
             PtAtTimeCallback(self.key, 1, 0)
 
 

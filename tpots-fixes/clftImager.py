@@ -18,6 +18,7 @@ import whrandom
 import time
 import copy
 import PlasmaControlKeys
+import xUserKI
 imagerBtn = ptAttribActivator(1, 'fake imager button')
 imagerBrokenBtn = ptAttribActivator(2, 'broken imager go switch')
 imagerLockN = ptAttribActivator(3, 'imager lock N')
@@ -200,7 +201,8 @@ class clftImager(ptResponder):
         cam.enableFirstPersonOverride()
         PtDisableControlKeyEvents(self.key)
         PtEnableForwardMovement()
-        PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+        if xUserKI.DoesPlayerHaveRelto():
+            PtSendKIMessage(kEnableEntireYeeshaBook, 0)
         PuzzleView = 0
         PtAtTimeCallback(self.key, 1, imagerBtn.id)
 
@@ -286,7 +288,8 @@ class clftImager(ptResponder):
             print 'avatar oneshot callback'
             PuzzleView = 0
             PtEnableForwardMovement()
-            PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+            if xUserKI.DoesPlayerHaveRelto():
+                PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             windmillRunning = self.ageSDL[stringSDLVarRunning.value][0]
             if ((windmillRunning == 1) and (imagerBusted == 0)):
                 PtDebugPrint('clftImager.OnNotify: SDL says windmill is running, so button will do SOMETHING after oneshot...')
@@ -437,7 +440,8 @@ class clftImager(ptResponder):
             imagerBtn.enableActivator()
             ImagerBtnVisible.run(self.key)
             PtEnableForwardMovement()
-            PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+            if xUserKI.DoesPlayerHaveRelto():
+                PtSendKIMessage(kEnableEntireYeeshaBook, 0)
         elif (id == kLostPowerID):
             speechKilled = 1
             self.StopVision()
