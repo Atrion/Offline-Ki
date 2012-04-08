@@ -236,7 +236,7 @@ class grsnWallPython(ptResponder):
             SouthState = state
             NorthState = value
             print 'begin receiving total game state'
-        elif ((type == ptClimbingWallMsgType.kAddBlocker) and (state > 0)):
+        elif ((type == ptClimbingWallMsgType.kAddBlocker) and (state >= 0)):
             self.SetWallIndex(state, true, value)
             if value:
                 self.ChangeNorthBlocker(state)
@@ -889,6 +889,7 @@ class grsnWallPython(ptResponder):
                     #if (occupant == -1):# from CC: should make sure we don't try to sit on an occupied chair. (should not happen anyway as its physics are disabled, but OK)
                     print 'sitting down in south chair'
                     southChair.disable()
+                    PtDisableForwardMovement()
                     #ageSDL.setIndex('sChairOccupant', 0, avID)
                     if ((southState == ptClimbingWallMsgState.kWaiting) or ((southState == ptClimbingWallMsgState.kSouthWin) or (southState == ptClimbingWallMsgState.kSouthQuit))):
                         self.ChangeGameState(ptClimbingWallMsgState.kSouthSit)
@@ -899,6 +900,7 @@ class grsnWallPython(ptResponder):
                     #if (ageSDL['sChairOccupant'][0] != -1): # from CC -> OK
                     print 'standing up from south chair'
                     southChair.enable()
+                    PtEnableForwardMovement()
                     #    ageSDL.setIndex('sChairOccupant', 0, -1)
                     return
         if (id == northChair.id):
@@ -912,6 +914,7 @@ class grsnWallPython(ptResponder):
                 #if (occupant == -1):# from CC
                     print 'sitting down in north chair'
                     northChair.disable()
+                    PtDisableForwardMovement()
                     #ageSDL.setIndex('nChairOccupant', 0, avID)
                     if ((northState == ptClimbingWallMsgState.kWaiting) or ((northState == ptClimbingWallMsgState.kNorthWin) or (northState == ptClimbingWallMsgState.kNorthQuit))):
                         self.ChangeGameState(ptClimbingWallMsgState.kNorthSit)
@@ -922,6 +925,7 @@ class grsnWallPython(ptResponder):
                 #if (ageSDL['nChairOccupant'][0] != -1): # from CC
                     print 'standing up from north chair'
                     northChair.enable()
+                    PtEnableForwardMovement()
                     #ageSDL.setIndex('nChairOccupant', 0, -1)
                 return
         elif (not (state)):
