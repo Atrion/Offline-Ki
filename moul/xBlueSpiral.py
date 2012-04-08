@@ -47,65 +47,75 @@ respTicClear04 = ptAttribResponder(31, 'resp: Tic Clear 04')
 respTicClear05 = ptAttribResponder(32, 'resp: Tic Clear 05')
 respTicClear06 = ptAttribResponder(33, 'resp: Tic Clear 06')
 respTicClear07 = ptAttribResponder(34, 'resp: Tic Clear 07')
-gAgeStartedIn = None
 gPlayCounter = 0
 gIsForward = -1
-gDoorIsOpen = 0
-gClkArray = [clkBSCloth01.id,
- clkBSCloth02.id,
- clkBSCloth03.id,
- clkBSCloth04.id,
- clkBSCloth05.id,
- clkBSCloth06.id,
- clkBSCloth07.id]
+gClkArray = [clkBSCloth01.id, clkBSCloth02.id, clkBSCloth03.id, clkBSCloth04.id, clkBSCloth05.id, clkBSCloth06.id, clkBSCloth07.id]
+gRespBSClothArray = [respBSCloth01, respBSCloth02, respBSCloth03, respBSCloth04, respBSCloth05, respBSCloth06, respBSCloth07]
+gRespTicClearArray = [respTicClear01, respTicClear02, respTicClear03, respTicClear04, respTicClear05, respTicClear06, respTicClear07]
 slowdown = None
 clothwait = None
-st = None
-long = False
+runningvar = 'dlnBlueSpiralRunning'
+olutionvar = 'dlnBlueSpiralSolution'
+st = None # store the cloth which was clicked so the timer later knows what to do
+isPlaying = 0
+solutionList = None
+keyList = None
+consecutive = 0
+
+kTimerShowSolution = 1
+kTimerSpiralForward = 3
+kTimerSpiralBackward = 4
+kTimerCloseDoor = 5
+kTimerGameOver = 43
+kTimerShowSymbol = 44
+
 class xBlueSpiral(ptResponder,):
 
 
     def __init__(self):
+        global clothwait,  slowdown, runningvar, solutionvar
         ptResponder.__init__(self)
         self.id = 8812
         self.version = 2
-        self.isPlaying = 0
-        self.clientId = 0
-        self.joinedToGame = 0
-        self.solutionList = None
-        self.keyList = None
-        self.consecutive = 0
-        self.isOwner = 0
-        self.tableId = 0
-        self.gameId = 0
-        self.runningvar = None
-        self.solutionvar = None
-        self.rotating = False
+        if xxConfig.isOffline():
+            slowdown = 0.25
+            clothwait = 15.0
+        else:
+            slowdown = 1.0
+            clothwait = 0.2
+        if (PtGetAgeName() == 'EderDelin'):
+            runningvar = 'dlnBlueSpiralRunning'
+            solutionvar = 'dlnBlueSpiralSolution'
+        elif (PtGetAgeName() == 'EderTsogal'):
+            runningvar = 'tsoBlueSpiralRunning'
+            solutionvar = 'tsoBlueSpiralSolution'
+        else:
+            raise Exception('Error: Unsupported Age for xBlueSpiral.')
         print ('xBlueSpiral: init  version = %d' % self.version)
 
 
 
     def dustShowSymbols(self):
-        global gPlayCounter
+        global gPlayCounter, consecutive
         print 'dustshowsymbols'
-        self.consecutive = 0
+        consecutive = 0
         gPlayCounter = 0
         ageSDL = PtGetAgeSDL()
-        ageSDL[SDLBSConsecutive.value] = (self.consecutive,)
-        self.rotating = False
-        PtAtTimeCallback(self.key, 0.10000000000000001, 1)
+        ageSDL[SDLBSConsecutive.value] = (consecutive,)
+        PtAtTimeCallback(self.key, 0.1, kTimerShowSolution)
 
 
 
     def dustHitCloth(self, clothid):
-        wanted = int(self.solutionList[self.consecutive])
-        print ((((('dusthitcloth consecutive=' + str(self.consecutive)) + ' clothid=') + str(clothid)) + ' wanted=') + str(wanted))
+        global consecutive
+        wanted = int(solutionList[consecutive])
+        print ((((('dusthitcloth consecutive=' + str(consecutive)) + ' clothid=') + str(clothid)) + ' wanted=') + str(wanted))
         if (wanted == clothid):
             print 'got it!'
-            self.consecutive += 1
+            consecutive += 1
             ageSDL = PtGetAgeSDL()
-            ageSDL[SDLBSConsecutive.value] = (self.consecutive,)
-            print ('dusthitcloth: Consecutive Hits: %d' % self.consecutive)
+            ageSDL[SDLBSConsecutive.value] = (consecutive,)
+            print ('dusthitcloth: Consecutive Hits: %d' % consecutive)
         else:
             print 'wrong one; game over'
             self.dustGameOver()
@@ -113,12 +123,13 @@ class xBlueSpiral(ptResponder,):
 
 
     def dustNewConsecutive(self):
+        global consecutive
         ageSDL = PtGetAgeSDL()
-        newconsecutive = ageSDL[SDLBSConsecutive.value][0]
-        self.consecutive = newconsecutive
-        print ('dustnewconsecutive=' + str(self.consecutive))
-        respBSTicMarks.run(self.key, state=str(self.consecutive))
-        if (self.consecutive == 7):
+        consecutive = ageSDL[SDLBSConsecutive.value][0]
+        print ('dustnewconsecutive=' + str(consecutive))
+        if consecutive == 0: return
+        respBSTicMarks.run(self.key, state=str(consecutive))
+        if (consecutive == 7):
             print 'won!'
             respBSDoorOps.run(self.key, state='open')
             self.dustGameOver()
@@ -126,154 +137,115 @@ class xBlueSpiral(ptResponder,):
 
 
     def dustNewRunning(self):
-        global gPlayCounter
+        global gPlayCounter, isPlaying, solutionList, consecutive
         ageSDL = PtGetAgeSDL()
-        newrunning = ageSDL[self.runningvar][0]
-        self.isPlaying = newrunning
-        print ('dustnewrunning=' + str(newrunning))
+        isPlaying = ageSDL[runningvar][0]
+        print ('dustnewrunning=' + str(isPlaying))
         PtClearTimerCallbacks(self.key)
-        if self.isPlaying:
-            sol = ageSDL[self.solutionvar][0]
-            self.solutionList = sol.split(' ')
+        if isPlaying:
+            sol = ageSDL[solutionvar][0]
+            solutionList = sol.split(' ')
             self.dustShowSymbols()
         else:
-            self.rotating = False
-            PtAtTimeCallback(self.key, 1, 4)
+            PtAtTimeCallback(self.key, 1, kTimerSpiralBackward)
             gPlayCounter = 0
-            self.isPlaying = 0
-            gIsForward = -1
-            if self.consecutive:
-                for i in range(self.consecutive):
+            isPlaying = 0
+            if consecutive:
+                for i in range(consecutive):
                     print ('xBlueSpiral.OnGameCliMsg(): Playing Tic Clear state %d' % (i + 1))
-                    code = (('respTicClear0' + str((i + 1))) + '.run(self.key)')
-                    exec code
-
-            if (self.consecutive == 7):
-                print 'disabled door raise/lower call'
-            else:
-                print 'bkdstop'
-                respBSSymbolSpin.run(self.key, state='fwdstop', fastforward=1)
-            self.consecutive = 0
+                    gRespTicClearArray[i].run(self.key)
+            consecutive = 0
             ageSDL = PtGetAgeSDL()
-            ageSDL[SDLBSConsecutive.value] = (self.consecutive,)
+            ageSDL[SDLBSConsecutive.value] = (0,)
 
 
 
     def dustGameOver(self):
         print 'dustgameover'
         ageSDL = PtGetAgeSDL()
-        ageSDL[self.runningvar] = (0,)
+        ageSDL[runningvar] = (0,)
 
 
 
     def dustNewGame(self):
+        global isPlaying
         print 'dustNewGame: door clicked on'
-        if self.isPlaying:
+        if isPlaying:
             print 'already have a game, stop it'
             self.dustGameOver()
             return 
         ageSDL = PtGetAgeSDL()
-        sol = ['0',
-         '1',
-         '2',
-         '3',
-         '4',
-         '5',
-         '6']
+        sol = ['0', '1', '2', '3', '4', '5', '6']
         random.shuffle(sol)
         sol2 = ''
         for i in sol:
             sol2 += (i + ' ')
 
         sol2 = sol2.strip(' ')
-        ageSDL[self.solutionvar] = (sol2,)
-        if ageSDL[self.runningvar][0]:
+        ageSDL[solutionvar] = (sol2,)
+        print 'solution',sol2,' current runningvar',ageSDL[runningvar][0]
+        if ageSDL[runningvar][0]:
             self.dustNewRunning()
         else:
-            ageSDL[self.runningvar] = (1,)
+            ageSDL[runningvar] = (1,)
         return 
 
 
 
-    def OnFirstUpdate(self):
-        global gAgeStartedIn
-        global clothwait
-        global slowdown
-        gAgeStartedIn = PtGetAgeName()
-        self.clientId = PtGetLocalClientID()
-        if xxConfig.isOffline():
-            slowdown = 0.25
-            clothwait = 15.0
-        else:
-            slowdown = 1.0
-            clothwait = 0.0
-        if (gAgeStartedIn == 'EderDelin'):
-            self.runningvar = 'dlnBlueSpiralRunning'
-            self.solutionvar = 'dlnBlueSpiralSolution'
-        elif (gAgeStartedIn == 'EderTsogal'):
-            self.runningvar = 'tsoBlueSpiralRunning'
-            self.solutionvar = 'tsoBlueSpiralSolution'
-        else:
-            print 'Error: Unsupported Age for xBlueSpiral.'
-
-
-
     def OnServerInitComplete(self):
-        if (gAgeStartedIn == PtGetAgeName()):
-            ageSDL = PtGetAgeSDL()
-            self.GetSDLKey()
-            if len(PtGetPlayerList()):
-                self.consecutive = ageSDL[SDLBSConsecutive.value][0]
-                newrunning = ageSDL[self.runningvar][0]
-                self.isPlaying = newrunning
-                if self.isPlaying:
-                    sol = ageSDL[self.solutionvar][0]
-                    self.solutionList = sol.split(' ')
-                print ('xBlueSpiral.OnServerInitComplete(): People in Age - self.consecutive = %d' % self.consecutive)
-                if self.consecutive:
-                    for i in range(self.consecutive):
-                        respBSTicMarks.run(self.key, state=str((i + 1)), fastforward=1)
-
-            else:
-                print 'No one online, reset everything'
-                self.consecutive = 0
-                ageSDL[SDLBSConsecutive.value] = (self.consecutive,)
-                self.isPlaying = False
-                ageSDL[self.runningvar] = (self.isPlaying,)
-                animBlueSpiral.animation.stop()
-                animBlueSpiral.animation.skipToBegin()
-                respBSDoorOps.run(self.key, state='close', fastforward=1)
-                print ('xBlueSpiral.OnServerInitComplete(): Empty Age - self.consecutive = %d' % self.consecutive)
-            ageSDL.setFlags(SDLBSKey.value, 1, 1)
-            ageSDL.setFlags(SDLBSConsecutive.value, 1, 1)
-            ageSDL.setFlags(self.runningvar, 1, 1)
-            ageSDL.sendToClients(SDLBSKey.value)
-            ageSDL.sendToClients(SDLBSConsecutive.value)
-            ageSDL.sendToClients(self.runningvar)
-            ageSDL.setNotify(self.key, SDLBSKey.value, 0.0)
-            ageSDL.setNotify(self.key, SDLBSConsecutive.value, 0.0)
-            ageSDL.setNotify(self.key, self.runningvar, 0.0)
-            print str(self.runningvar)
+        global isPlaying, solutionList, consecutive
+        ageSDL = PtGetAgeSDL()
+        ageSDL.setFlags(SDLBSKey.value, 1, 1)
+        ageSDL.setFlags(SDLBSConsecutive.value, 1, 1)
+        ageSDL.setFlags(runningvar, 1, 1)
+        ageSDL.setFlags(solutionvar, 1, 1)
+        ageSDL.sendToClients(SDLBSKey.value)
+        ageSDL.sendToClients(SDLBSConsecutive.value)
+        ageSDL.sendToClients(runningvar)
+        ageSDL.sendToClients(solutionvar)
+        ageSDL.setNotify(self.key, SDLBSKey.value, 0.0)
+        ageSDL.setNotify(self.key, SDLBSConsecutive.value, 0.0)
+        ageSDL.setNotify(self.key, runningvar, 0.0)
+        ageSDL.setNotify(self.key, solutionvar, 0.0)
+        self.GetSDLKey()
+        respBSDoorOps.run(self.key, state='close', fastforward=1) # always closed for new players
+        if len(PtGetPlayerList()): # there is already someone in here
+            consecutive = ageSDL[SDLBSConsecutive.value][0]
+            newrunning = ageSDL[runningvar][0]
+            isPlaying = newrunning
+            if isPlaying:
+                sol = ageSDL[solutionvar][0]
+                solutionList = sol.split(' ')
+            print ('xBlueSpiral.OnServerInitComplete(): People in Age - consecutive = %d' % consecutive)
+            if consecutive:
+                for i in range(consecutive):
+                    respBSTicMarks.run(self.key, state=str((i + 1)), fastforward=1)
+        else:
+            print 'No one online, reset everything'
+            consecutive = 0
+            ageSDL[SDLBSConsecutive.value] = (consecutive,)
+            isPlaying = False
+            ageSDL[runningvar] = (isPlaying,)
+            animBlueSpiral.animation.stop()
+            animBlueSpiral.animation.skipToBegin()
+            print ('xBlueSpiral.OnServerInitComplete(): Empty Age - consecutive = %d' % consecutive)
+        print str(runningvar)
 
 
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         print 'dustin onsdlnotify'
-        if (gAgeStartedIn == PtGetAgeName()):
-            ageSDL = PtGetAgeSDL()
-            print ('xBlueSpiral.OnSDLNotify(): VARname:%s, SDLname:%s, tag:%s, value:%s, playerID:%d' % (VARname,
-             SDLname,
-             tag,
-             ageSDL[VARname][0],
-             playerID))
-            if (VARname == SDLBSConsecutive.value):
-                self.dustNewConsecutive()
-            if (VARname == self.runningvar):
-                self.dustNewRunning()
+        ageSDL = PtGetAgeSDL()
+        print ('xBlueSpiral.OnSDLNotify(): VARname:%s, SDLname:%s, tag:%s, value:%s, playerID:%d' % (VARname, SDLname, tag, ageSDL[VARname][0], playerID))
+        if (VARname == SDLBSConsecutive.value):
+            self.dustNewConsecutive()
+        elif (VARname == runningvar):
+            self.dustNewRunning()
 
 
 
     def GetSDLKey(self):
+        global keyList
         try:
             ageSDL = PtGetAgeSDL()
             key = ageSDL[SDLBSKey.value][0]
@@ -281,107 +253,86 @@ class xBlueSpiral(ptResponder,):
                 raise ValueError, 'xBlueSpiral.OnServerInitComplete(): First time here, generating new key'
             if ((key == '') or ((key == ' ') or (key == None))):
                 raise error, 'xBlueSpiral.OnServerInitComplete(): Empty key'
-            self.keyList = key.split(' ')
+            keyList = key.split(' ')
             print ('xBlueSpiral.OnServerInitComplete(): ageSDL[xBlueSpiralKey] = %s' % key)
         except ValueError:
             key = ''
-            self.keyList = ['0',
-             '1',
-             '2',
-             '3',
-             '4',
-             '5',
-             '6']
-            random.shuffle(self.keyList)
-            for i in self.keyList:
+            keyList = ['0', '1', '2', '3', '4', '5', '6']
+            random.shuffle(keyList)
+            for i in keyList:
                 key += (i + ' ')
-
             key = key.strip(' ')
             ageSDL[SDLBSKey.value] = (key,)
-            self.keyList = key.split(' ')
+            keyList = key.split(' ')
             print ('xBlueSpiral.OnServerInitComplete(): First time here, new key = %s.' % key)
         except:
-            print 'Something wrong, try grabbing SDL later'
-            self.keyList = None
-            return 0
+            raise Exception('ERROR: Something wrong, can not grab SDL key')
         return 1
 
 
 
     def OnNotify(self, state, id, events):
-        global gDoorIsOpen
         global gIsForward
-        global st
-        if (self.keyList == None):
-            print 'xBlueSpiral.OnNotify: I had SDL issues earlier'
-            if (not self.GetSDLKey()):
-                print 'xBlueSpiral.OnNotify: And I still do'
-                return 
-            print 'xBlueSpiral.OnNotify: But I got them worked out'
-        print ('xBlueSpiral.OnNotify: state=%s id=%d events=' % (state,
-         id)),
+        global st, isPlaying
+        print ('xBlueSpiral.OnNotify: state=%s id=%d events=' % (state, id)),
         print events
         ageSDL = PtGetAgeSDL()
-        if ((id == evntBSBeginning.id) and (gIsForward == 0)):
+        isFromUs = PtWasLocallyNotified(self.key)
+        if ((id == evntBSBeginning.id) and (gIsForward == 0)): # backwards rotation finished
             print 'xBlueSpiral.OnNotify: Spiral hit beginning'
-            print "bkdstop doesn't occur"
             respBSSymbolSpin.run(self.key, state='bkdstop')
             gIsForward = -1
             return 
         elif ((id in gClkArray) and state):
             range0 = gClkArray.index(id)
-            range1 = (gClkArray.index(id) + 1)
-            code = (('respBSCloth0' + str(range1)) + '.run(self.key, avatar=PtFindAvatar(events))')
-            exec code
-            if ((PtFindAvatar(events) == PtGetLocalAvatar()) and PtWasLocallyNotified(self.key)):
-                if self.isPlaying:
-                    print ('xBlueSpiral.OnNotify: Cloth0%d clicked during game with a value of %d' % (range1,
-                     int(self.keyList[range0])))
-                    self.dustHitCloth(int(self.keyList[range0]))
+            gRespBSClothArray[range0].run(self.key, avatar=PtFindAvatar(events))
+            if isFromUs:
+                if isPlaying:
+                    print ('xBlueSpiral.OnNotify: Cloth0%d clicked during game with a value of %d' % (range0+1,
+                     int(keyList[range0])))
+                    self.dustHitCloth(int(keyList[range0]))
                 else:
-                    print ('xBlueSpiral.OnNotify: Cloth0%d clicked, playing glow for Door part %s' % (range1,
-                     self.keyList[range0]))
-                    st = self.keyList[range0]
-                    PtAtTimeCallback(self.key, clothwait, 44)
+                    print ('xBlueSpiral.OnNotify: Cloth0%d clicked, playing glow for Door part %s' % (range0+1,
+                     keyList[range0]))
+                    st = keyList[range0]
+                    PtAtTimeCallback(self.key, clothwait, kTimerShowSymbol)
             else:
-                print ('xBlueSpiral.OnNotify: Someone else clicked Cloth0%d with a value of %d' % (range1,
-                 int(self.keyList[range0])))
-        elif ((id == clkBSDoor.id) and ((not state) and ((PtFindAvatar(events) == PtGetLocalAvatar()) and PtWasLocallyNotified(self.key)))):
+                print ('xBlueSpiral.OnNotify: Someone else clicked Cloth0%d with a value of %d' % (range0+1,
+                 int(keyList[range0])))
+        elif (id == clkBSDoor.id) and (not state) and isFromUs:
             print 'xBlueSpiral.OnNotify: Door clicked on'
             respBSClothDoor.run(self.key, avatar=PtFindAvatar(events))
         elif (id == respBSDoorOps.id):
             print 'xBlueSpiral.OnNotify: Door is fully open'
-            gDoorIsOpen = 1
-        elif ((id == respBSClothDoor.id) and self.sceneobject.isLocallyOwned()):
+            PtAtTimeCallback(self.key, 10, kTimerCloseDoor)
+        elif ((id == respBSClothDoor.id) and isFromUs):
             print 'xBlueSpiral.OnNotify: Door actually touched'
             self.dustNewGame()
 
 
 
     def OnTimer(self, id):
-        global gDoorIsOpen
         global gPlayCounter
-        global gIsForward
+        global gIsForward, isPlaying, solutionList
         print 'ontimer'
-        if (id == 1):
+        if (id == kTimerShowSolution):
             print ('draw symbol ' + str(gPlayCounter))
             ageSDL = PtGetAgeSDL()
-            if self.isPlaying:
-                respBSFastDoor.run(self.key, state=str(self.solutionList[gPlayCounter]), netPropagate=0)
+            if isPlaying:
+                respBSFastDoor.run(self.key, state=str(solutionList[gPlayCounter]), netPropagate=0)
                 if (gPlayCounter >= 0):
                     gPlayCounter += 1
                 if (gPlayCounter >= 7):
                     gPlayCounter = 0
-                    PtAtTimeCallback(self.key, 3, 1)
-                    if (not self.rotating):
+                    PtAtTimeCallback(self.key, 3, kTimerShowSolution) # wait a bit longer before showing the solution again
+                    if gIsForward != 1:
                         print 'start rotating'
-                        self.rotating = True
-                        PtAtTimeCallback(self.key, 1, 3)
+                        PtAtTimeCallback(self.key, 0.1, kTimerSpiralForward)
                         totaltime = (60 / slowdown)
-                        PtAtTimeCallback(self.key, totaltime, 43)
+                        PtAtTimeCallback(self.key, totaltime, kTimerGameOver)
                     return 
-                PtAtTimeCallback(self.key, 2, 1)
-        elif (id == 3):
+                PtAtTimeCallback(self.key, 2, kTimerShowSolution)
+        elif (id == kTimerSpiralForward):
             print ('xBlueSpiral.OnTimer: id = %d - Playing Spiral Forward' % id)
             print 'fwdstart'
             respBSSymbolSpin.run(self.key, state='fwdstart')
@@ -390,7 +341,7 @@ class xBlueSpiral(ptResponder,):
             animBlueSpiral.animation.speed((1 * slowdown))
             animBlueSpiral.animation.play()
             gIsForward = 1
-        elif ((id == 4) and (gIsForward == 1)):
+        elif ((id == kTimerSpiralBackward)):
             print ('xBlueSpiral.OnTimer: id = %d - Playing Spiral backwards' % id)
             print 'bkdstart'
             respBSSymbolSpin.run(self.key, state='bkdstart')
@@ -398,18 +349,13 @@ class xBlueSpiral(ptResponder,):
             animBlueSpiral.animation.speed(10.0)
             animBlueSpiral.animation.resume()
             gIsForward = 0
-        elif (id == 5):
-            if gDoorIsOpen:
-                print ('xBlueSpiral.OnTimer: id = %d - Closing door' % id)
-                gDoorIsOpen = 0
-                respBSDoorOps.run(self.key, state='close')
-            else:
-                print ('xBlueSpiral.OnTimer: id = %d - Waiting for door to open before closing' % id)
-                PtAtTimeCallback(self.key, 1, 5)
-        elif (id == 43):
+        elif (id == kTimerCloseDoor):
+            print ('xBlueSpiral.OnTimer: id = %d - Closing door' % id)
+            respBSDoorOps.run(self.key, state='close')
+        elif (id == kTimerGameOver):
             print 'time up'
             self.dustGameOver()
-        elif (id == 44):
+        elif (id == kTimerShowSymbol):
             respBSDoor.run(self.key, state=st)
 
 
