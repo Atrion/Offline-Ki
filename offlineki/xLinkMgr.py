@@ -177,14 +177,16 @@ def _LoadPerAgeDescriptors(folder):
         age = file[:-len(".txt")]
         descriptor = xUserKI.LoadConfigFile(os.path.join(folder, file)) # load default section
         defSection = descriptor['']
-        displayName = defSection.get('displayName', age)
+        displayName = defSection.get('displayName', None)
+        if displayName is None:
+            raise Exception("A displayName is mandatory for each age descriptor.")
         showIn = defSection.get('showIn', 'restoration').lower()
         defaultSpawnpoint = defSection.get('defaultSpawnpoint', 'LinkInPointDefault')
         description = defSection.get('description')
         detect = defSection.get('availableVia', 'dataserver')
         link = defSection.get('link', 'basic')
         lastUpdate = defSection.get('lastUpdate')
-        noCheats = defSection.get('noCheats', 'false').lower() in ('true', 'yes', '1')
+        noCheats = defSection.get('noCheats', 'false').lower() in ('true', 'yes', 'on', '1')
         # create the age
         age = _Age(age, displayName=displayName, detect=detect, linkrule=link, defaultSpawnpoint=defaultSpawnpoint, lastUpdate=lastUpdate,
                 disableCheats=noCheats, restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'))
