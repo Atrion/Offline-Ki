@@ -499,9 +499,9 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
           lambda args: len(args) == 2, lambda args: (args[0], int(args[1])))
         if not valid: return True
         try:
-            oldval = int(xUserKI.GetSDL(data[0], 0))
+            oldval = xUserKI.GetSDL(data[0], 0)
             xUserKI.SetSDL(data[0], 0, data[1])
-            if not silent: ki.IAddRTChat(None, 'Set SDL var %s to %d (old value: %d)' % (data[0], data[1], oldval), 0)
+            if not silent: ki.IAddRTChat(None, 'Set SDL var %s to %d (old value: %s)' % (data[0], data[1], oldval), 0)
         except Exception, detail:
             ki.IDoErrorChatMessage('Unable to set SDL var %s: %s' % (data[0], detail))
         return True
@@ -510,8 +510,8 @@ def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
           lambda args: len(args) == 1, lambda args: args[0])
         if not valid: return True
         try:
-            val = int(xUserKI.GetSDL(name, 0))
-            if not silent: ki.IAddRTChat(None, 'SDL var %s has a value of %d' % (name, val), 0)
+            val = xUserKI.GetSDL(name, 0)
+            if not silent: ki.IAddRTChat(None, 'SDL var %s has a value of %s' % (name, val), 0)
         except Exception, detail:
             ki.IDoErrorChatMessage('Unable to get SDL var %s: %s' % (name, detail))
         return True
