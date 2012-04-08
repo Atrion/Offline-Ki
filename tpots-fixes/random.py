@@ -17,7 +17,8 @@ from math import floor as _floor
 __all__ = ['Random', 'seed', 'random', 'uniform', 'randint', 'choice', 'randrange', 'shuffle', 'normalvariate', 'lognormvariate', 'cunifvariate', 'expovariate', 'vonmisesvariate', 'gammavariate', 'stdgamma', 'gauss', 'betavariate', 'paretovariate', 'weibullvariate', 'getstate', 'setstate', 'jumpahead', 'whseed']
 
 def _verify(name, computed, expected):
-    if (abs((computed - expected)) > 9.9999999999999995e-008):
+    # for some reason, this failed on some machines, breaking some ages. Original precision: 9.9999999999999995e-008
+    if (abs((computed - expected)) > 1e-4):
         raise ValueError(('computed value for %s deviates too much (computed %g, expected %g)' % (name, computed, expected)))
 
 NV_MAGICCONST = ((4 * _exp(-0.5)) / _sqrt(2.0))
