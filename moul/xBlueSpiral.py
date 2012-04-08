@@ -97,7 +97,7 @@ class xBlueSpiral(ptResponder,):
 
     def dustShowSymbols(self):
         global gPlayCounter, consecutive
-        print 'dustshowsymbols'
+        print 'dustShowSymbols'
         consecutive = 0
         gPlayCounter = 0
         ageSDL = PtGetAgeSDL()
@@ -122,7 +122,7 @@ class xBlueSpiral(ptResponder,):
 
 
 
-    def dustNewConsecutive(self):
+    def dustNewConsecutive(self): # called on SDL updates to the consecutive state
         global consecutive
         ageSDL = PtGetAgeSDL()
         consecutive = ageSDL[SDLBSConsecutive.value][0]
@@ -136,7 +136,7 @@ class xBlueSpiral(ptResponder,):
 
 
 
-    def dustNewRunning(self):
+    def dustNewRunning(self):  #called on SDL updates to the running state
         global gPlayCounter, isPlaying, solutionList, consecutive
         ageSDL = PtGetAgeSDL()
         isPlaying = ageSDL[runningvar][0]
@@ -161,7 +161,7 @@ class xBlueSpiral(ptResponder,):
 
 
     def dustGameOver(self):
-        print 'dustgameover'
+        print 'dustGameOver'
         ageSDL = PtGetAgeSDL()
         ageSDL[runningvar] = (0,)
 
@@ -169,7 +169,7 @@ class xBlueSpiral(ptResponder,):
 
     def dustNewGame(self):
         global isPlaying
-        print 'dustNewGame: door clicked on'
+        print 'dustNewGame'
         if isPlaying:
             print 'already have a game, stop it'
             self.dustGameOver()
@@ -211,8 +211,7 @@ class xBlueSpiral(ptResponder,):
         respBSDoorOps.run(self.key, state='close', fastforward=1) # always closed for new players
         if len(PtGetPlayerList()): # there is already someone in here
             consecutive = ageSDL[SDLBSConsecutive.value][0]
-            newrunning = ageSDL[runningvar][0]
-            isPlaying = newrunning
+            isPlaying = ageSDL[runningvar][0]
             if isPlaying:
                 sol = ageSDL[solutionvar][0]
                 solutionList = sol.split(' ')
@@ -234,7 +233,6 @@ class xBlueSpiral(ptResponder,):
 
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
-        print 'dustin onsdlnotify'
         ageSDL = PtGetAgeSDL()
         print ('xBlueSpiral.OnSDLNotify(): VARname:%s, SDLname:%s, tag:%s, value:%s, playerID:%d' % (VARname, SDLname, tag, ageSDL[VARname][0], playerID))
         if (VARname == SDLBSConsecutive.value):
@@ -314,7 +312,6 @@ class xBlueSpiral(ptResponder,):
     def OnTimer(self, id):
         global gPlayCounter
         global gIsForward, isPlaying, solutionList
-        print 'ontimer'
         if (id == kTimerShowSolution):
             print ('draw symbol ' + str(gPlayCounter))
             ageSDL = PtGetAgeSDL()
@@ -334,7 +331,6 @@ class xBlueSpiral(ptResponder,):
                 PtAtTimeCallback(self.key, 2, kTimerShowSolution)
         elif (id == kTimerSpiralForward):
             print ('xBlueSpiral.OnTimer: id = %d - Playing Spiral Forward' % id)
-            print 'fwdstart'
             respBSSymbolSpin.run(self.key, state='fwdstart')
             animBlueSpiral.animation.backwards(0)
             print ('speed=' + str(slowdown))
@@ -343,7 +339,6 @@ class xBlueSpiral(ptResponder,):
             gIsForward = 1
         elif ((id == kTimerSpiralBackward)):
             print ('xBlueSpiral.OnTimer: id = %d - Playing Spiral backwards' % id)
-            print 'bkdstart'
             respBSSymbolSpin.run(self.key, state='bkdstart')
             animBlueSpiral.animation.backwards(1)
             animBlueSpiral.animation.speed(10.0)
@@ -353,7 +348,7 @@ class xBlueSpiral(ptResponder,):
             print ('xBlueSpiral.OnTimer: id = %d - Closing door' % id)
             respBSDoorOps.run(self.key, state='close')
         elif (id == kTimerGameOver):
-            print 'time up'
+            print 'time is up'
             self.dustGameOver()
         elif (id == kTimerShowSymbol):
             respBSDoor.run(self.key, state=st)
