@@ -1,5 +1,5 @@
 Offline KI 3.8 (13.04.2012):
-- Fan-age information is now manage in one age descriptor per file, which makes it much easier for age authors to configure their age
+- Fan-age information is now managed in one age descriptor per file, which makes it much easier for age authors to configure their age
 - The list of restoration ages in Nexus can now be sorted by last update
 - The bookshelf can be automatically populated with the most recently updated ages
 - Fixed Eder Delin and Eder Tsogahl
