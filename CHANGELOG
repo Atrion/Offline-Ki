@@ -1,9 +1,10 @@
-Offline KI 3.8:
+Offline KI 3.8 (13.04.2012):
 - Fan-age information is now manage in one age descriptor per file, which makes it much easier for age authors to configure their age
 - The list of restoration ages in Nexus can now be sorted by last update
 - The bookshelf can be automatically populated with the most recently updated ages
-- Fixed Cleft imager enabling the Relto book
 - Fixed Eder Delin and Eder Tsogahl
+- Fixed accidentally leaving the set-up panel of the Gahreesen Wall when clicking the background of the panel (thanks to Sirius)
+- Fixed Cleft imager enabling the Relto book
 
 Offline KI 3.7.1 (27.2.2012):
 - Fixed compatibility problems with the UAM KI plugin
