@@ -55,8 +55,8 @@ gIsForward = -1
 gClkArray = [clkBSCloth01.id, clkBSCloth02.id, clkBSCloth03.id, clkBSCloth04.id, clkBSCloth05.id, clkBSCloth06.id, clkBSCloth07.id]
 gRespBSClothArray = [respBSCloth01, respBSCloth02, respBSCloth03, respBSCloth04, respBSCloth05, respBSCloth06, respBSCloth07]
 gRespTicClearArray = [respTicClear01, respTicClear02, respTicClear03, respTicClear04, respTicClear05, respTicClear06, respTicClear07]
-slowdown = None
-clothwait = None
+slowdown = 1.0
+clothwait = 0.3 # wait a bit, because we start when the mouse is clicked, not when the avatar touches the cloth
 st = None # store the cloth which was clicked so the timer later knows what to do
 isPlaying = 0 # copy of the SDL "running" variable, updated whenever SDL changes
 solutionList = None
@@ -78,12 +78,10 @@ class xBlueSpiral(ptResponder,):
         ptResponder.__init__(self)
         self.id = 8812
         self.version = 2
+        # offline, override some values to make the game playable
         if xxConfig.isOffline():
-            slowdown = 0.25
+            slowdown = 4.0 # give the player four times as much time as usual
             clothwait = 15.0
-        else:
-            slowdown = 1.0
-            clothwait = 0.2
         # Cyan ags do not give us all the SDL names, set them ourselves
         if (PtGetAgeName() == 'EderDelin'):
             SDLBSRunning.value = 'dlnBlueSpiralRunning'
@@ -324,16 +322,16 @@ class xBlueSpiral(ptResponder,):
                     if gIsForward != 1:
                         print 'start rotating'
                         PtAtTimeCallback(self.key, 1.5, kTimerSpiralForward)
-                        totaltime = (60.0 / slowdown)
-                        PtAtTimeCallback(self.key, 1.5+totaltime, kTimerGameOver)
+                        totaltime = 60.0 * slowdown # 60 seconds is the hard-coded "normal" duration of the door rotation
+                        PtAtTimeCallback(self.key, 1.3+totaltime, kTimerGameOver) # slightly earlier than the animation will finish, so it does not touch the end
+                        # (I don't know if the BSBeginning event would be dispatched to OnNotify, but I'd rather avoid it to happen)
                     return 
                 PtAtTimeCallback(self.key, 2, kTimerShowSolution)
         elif (id == kTimerSpiralForward):
             print ('xBlueSpiral.OnTimer: id = %d - Playing Spiral Forward' % id)
             respBSSymbolSpin.run(self.key, state='fwdstart')
             animBlueSpiral.animation.backwards(0)
-            print ('speed=' + str(slowdown))
-            animBlueSpiral.animation.speed((1 * slowdown))
+            animBlueSpiral.animation.speed(1.0 / slowdown)
             animBlueSpiral.animation.play()
             gIsForward = 1
         elif ((id == kTimerSpiralBackward)):
