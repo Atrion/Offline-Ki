@@ -29,15 +29,11 @@
 global isClimbing
 global waiting
 global usingEast
-global action
-global direction
 global AvatarPos
 global lastKey
 global jump
 # script
 global DisplayScript
-# avatar to send notifies to
-global LocalAvatar
 
 # glue
 global glue_cl
@@ -66,9 +62,6 @@ actNexus            = ptAttribActivator      (6, 'Nexus release region')
 soDisplay           = ptAttribSceneobject    (7, 'Display script sceneobject')
 
 ##### VARIABLES #####
-# direction and action
-direction = ClimbDirection()
-action    = ClimbAction()
 # check keys
 lastKey = -1
 # grid size
@@ -84,12 +77,10 @@ usingEast      = False
 AvatarPos      = [0, 0]
 # script for blockers layeranim
 DisplayScript = None
-# test
-LocalAvatar = PtGetLocalAvatar()
 # can jump from Wall
 jump = False
 
-# Will return the probe stage associated to the key.
+# Will return the climb stage associated to the key.
 StageFromDir = {direction.up:     8,
                 direction.down:   9,
                 direction.left:  10,
@@ -191,9 +182,6 @@ restrictedArea = (
 
 ##########################
 ##### Climb  stages ######
-# added 4 stages because #
-# up,down,left and right #
-# didn't send notify     #
 #                        #
 # 0:  mount up           #
 # 1:  mont down          #
@@ -230,117 +218,121 @@ class grsnWallClimb(ptResponder):
         """Prepare for Age exploring:
 Get the script we'll send blocker event to."""
         global DisplayScript
-        global LocalAvatar
         if (PtGetAgeName() != "Garrison"):
             raise NameError, 'This script is supposed to be used only in Garrison !'
         pythonScripts = soDisplay.value.getPythonMods()
         for script in pythonScripts:
             if (script.getName() == "cPythonBigWallDisplay"):
                 DisplayScript = script
-        LocalAvatar.avatar.setReplyKey(self.key)
+
+
+    def BeginAgeUnLoad(self, avatar):
+        try: localavatar = PtGetLocalAvatar()
+        except:
+            print "grsnWallClimb: player quit. I'm not bothering with releasing him"
+            return
+        if avatar == localavatar:
+            if isClimbing:
+                print "grsnWallClimb: avatar seems to have linked out, so stop climbing to prevent errors."
+                self.Climb(action.release, None)
 
 
     def OnNotify(self, state, id, events):
         """Manages input from regions, behaviors, etc."""
         global usingEast
         global AvatarPos
-        global LocalAvatar
         global jump
         avatar = PtFindAvatar(events)
-        if (avatar != LocalAvatar): # every messages must come from the local player.
+        if (avatar != PtGetLocalAvatar()): # every messages must come from the local player.
+            return
+        if (not PtWasLocallyNotified(self.key)): # every message must come from the local client
             return
         if (id == actClimbTriggerW.id):
             if (not (state)):
                 return
-            print "Message from West climb trigger"
-            if PtWasLocallyNotified(self.key): # if it comes from our player
-                if (not isClimbing): # if he is not climbing
-                    for event in events:
-                        if (event[0] == kCollisionEvent):
-                            if event[1]: # if we're entering
-                                usingEast = False
-                                print "Using West"
-                                AvatarPos = [22, 0]
-                                self.Climb(action.mount, direction.up) # then mount up
-                                return
+            print "grsnWallClimb: Local avatar uses West climb trigger"
+            if (not isClimbing): # if we are not climbing
+                for event in events:
+                    if (event[0] == kCollisionEvent):
+                        if event[1]: # if we're entering the region
+                            usingEast = False
+                            AvatarPos = [22, 0]
+                            self.Climb(action.mount, direction.up) # then mount up
+                            return
         elif (id == actClimbTriggerE.id):
             if (not (state)):
                 return
-            print "Message from East climb trigger"
-            if PtWasLocallyNotified(self.key): # if it comes from our player
-                if (not isClimbing): # if he is not climbing
-                    for event in events:
-                        if (event[0] == kCollisionEvent):
-                            if event[1]: # if we're entering
-                                usingEast = True
-                                print "Using East"
-                                AvatarPos = [18, 0]
-                                self.Climb(action.mount, direction.up) # then mount up
-                                return
-        elif (id == actNexus.id):
-            if PtWasLocallyNotified(self.key):
-                if isClimbing:
-                    for event in events:
-                        if (event[0] == kCollisionEvent):
-                            print "Releasing Avatar..."
-                            self.Climb(action.release, None)
+            print "grsnWallClimb: Local avatar uses East climb trigger"
+            if (not isClimbing): # if we are not climbing
+                for event in events:
+                    if (event[0] == kCollisionEvent):
+                        if event[1]: # if we're entering the region
+                            usingEast = True
+                            AvatarPos = [18, 0]
+                            self.Climb(action.mount, direction.up) # then mount up
                             return
-        elif (id == actBlockers.id):
-            if PtWasLocallyNotified(self.key): # if it comes from our player
-                if isClimbing:
-                    for event in events:
-                        if (event[0] == kCollisionEvent):
-                            blocker = event[3].getName() # get the name of the blocker
-                            self.SendBlocker(blocker) # ...and send it to the display script
-                            self.Climb(action.fallOff, None) # fall
-                            return
+        elif (id == actNexus.id): # in case we're in the Nexus: dismount and go back to idle brain
+            if isClimbing:
+                for event in events:
+                    if (event[0] == kCollisionEvent):
+                        print "grsnWallClimb: Releasing Avatar..."
+                        self.Climb(action.release, None)
+                        return
+        elif (id == actBlockers.id): # in case we hit a blocker: send the layer anim to the display script, dismount and go back to idle brain
+            if isClimbing:
+                for event in events:
+                    if (event[0] == kCollisionEvent):
+                        blocker = event[3].getName() # get the name of the blocker
+                        self.SendBlocker(blocker) # ...so we can send it to the display script to run the layer anim
+                        self.Climb(action.fallOff, None) # and then fall
+                        return
         elif ((id == climbBehaviorE.id) or (id == climbBehaviorW.id)):
             for event in events:
                 if ((event[0] == 10) and (event[2] == kAdvanceNextStage)):
                     if (event[1] in (  range(8, 12) + range(15, 19)  )): # if the last stage was a climb stage (added range 15-19: this is the bugfix for the avatar's head)
                         if lastKey != -1:
-                            self.Climb(action.probe, lastKey)
+                            self.Climb(action.climb, lastKey)
                         else:
                             self.Climb(action.idle, None)
                     elif (event[1] in range(0, 4)):
                         jump = True
                         if lastKey != -1:
-                            self.Climb(action.probe, lastKey)
+                            self.Climb(action.climb, lastKey)
                         else:
                             self.Climb(action.idle, None)
 
 
     def OnControlKeyEvent(self, controlKey, activeFlag):
         """Receives control keys and store them.
-If we're waiting, then it will call self.Climb"""
+If the avatar is not actually going anywhere (waiting), then it will call self.Climb"""
         global lastKey
         global jump
         if (controlKey == PlasmaControlKeys.kKeyMoveForward):
             if (activeFlag):
                 lastKey = direction.up
                 if (waiting):
-                    self.Climb(action.probe, lastKey)
+                    self.Climb(action.climb, lastKey)
             elif (lastKey == direction.up):
                 lastKey = -1
         elif (controlKey == PlasmaControlKeys.kKeyMoveBackward):
             if (activeFlag):
                 lastKey = direction.down
                 if (waiting):
-                    self.Climb(action.probe, lastKey)
+                    self.Climb(action.climb, lastKey)
             elif (lastKey == direction.down):
                 lastKey = -1
         elif (controlKey == PlasmaControlKeys.kKeyRotateLeft):
             if (activeFlag):
                 lastKey = direction.left
                 if (waiting):
-                    self.Climb(action.probe, lastKey)
+                    self.Climb(action.climb, lastKey)
             elif (lastKey == direction.left):
                 lastKey = -1
         elif (controlKey == PlasmaControlKeys.kKeyRotateRight):
             if (activeFlag):
                 lastKey = direction.right
                 if (waiting):
-                    self.Climb(action.probe, lastKey)
+                    self.Climb(action.climb, lastKey)
             elif (lastKey == direction.right):
                 lastKey = -1
         elif ((controlKey == PlasmaControlKeys.kKeyExitMode) or (controlKey == PlasmaControlKeys.kKeyJump)):
@@ -356,7 +348,10 @@ If we're waiting, then it will call self.Climb"""
         global AvatarPos
         global lastKey
         global jump
-        if (cbAction == action.probe):
+        print "grsnWallClimb: Climbing action %s in direction %s" % (cbAction,cbDirection)
+        LocalAvatar = PtGetLocalAvatar()
+        LocalAvatar.avatar.setReplyKey(self.key) # make sure the behavior information go to us
+        if (cbAction == action.climb):
             if ((cbDirection == direction.down) and (AvatarPos[1] == 0)):
                 # we're at the lower part of the Wall, we must dismount
                 self.Climb(action.dismount, cbDirection)
@@ -371,7 +366,7 @@ If we're waiting, then it will call self.Climb"""
             else:
                 waiting = True
         elif (cbAction == action.mount):
-            print "Entering climbing brain."
+            print "grsnWallClimb: Entering climbing brain."
             waiting = False
             isClimbing = True
             if usingEast:
@@ -380,7 +375,7 @@ If we're waiting, then it will call self.Climb"""
                 climbBehaviorW.run(LocalAvatar)
             PtEnableControlKeyEvents(self.key)
         elif (cbAction == action.dismount):
-            print "Exiting climbing brain."
+            print "grsnWallClimb: Exiting climbing brain."
             PtDisableControlKeyEvents(self.key)
             waiting = False
             isClimbing = False
@@ -393,7 +388,7 @@ If we're waiting, then it will call self.Climb"""
             lastKey = -1
             jump = False
         elif ((cbAction == action.fallOff) or (cbAction == action.release)):
-            print "Falling from Wall."
+            print "grsnWallClimb: Falling from Wall."
             PtDisableControlKeyEvents(self.key)
             waiting = False
             isClimbing = False
@@ -414,9 +409,7 @@ If we're waiting, then it will call self.Climb"""
 
 
     def canIGoFarther(self, fDirection):
-        """Checks if the avatar can go in the specified direction.
-If true, then return true.
-Else return false."""
+        """Checks if the avatar can go in the specified direction"""
         global AvatarPos
         tmpPos = [0, 0]
         tmpPos[0], tmpPos[1] = AvatarPos[0], AvatarPos[1]
@@ -440,6 +433,7 @@ Else return false."""
             if (tmpPos[0] >= 0):
                 if (not (tuple(tmpPos) in restrictedArea)):
                     return True
+        print "grsnWallClimb: Can't go in direction %s" % (fDirection)
         return False
 
 
@@ -454,13 +448,14 @@ Else return false."""
             AvatarPos[0] += 1
         if (fDirection == direction.left):
             AvatarPos[0] -= 1
+        print "grsnWallClimb: Now avatar pos =", AvatarPos
 
 
     def SendBlocker(self, name):
         """Will send a blocker event to display script"""
         global DisplayScript
         if (DisplayScript):
-            print "Sending blocker named ", name
+            print "Sending blocker named", name
             note = ptNotify(self.key)
             note.clearReceivers()
             note.addReceiver(DisplayScript)

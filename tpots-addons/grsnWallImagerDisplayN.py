@@ -48,7 +48,7 @@ class grsnWallImagerDisplayN(ptResponder):
         global ReceiveInit
         PtDebugPrint('grsnWallImagerDisplayN::OnServerInitComplete')
         solo = true
-        if len(PtGetPlayerList()):# might sound strange, but this /should/ be only if we are linking and a game is already running
+        if len(PtGetPlayerList()):
             solo = false
             ReceiveInit = true
             return
@@ -86,7 +86,8 @@ class grsnWallImagerDisplayN(ptResponder):
             print 'Imager display N clearing n wall index',
             print state
         elif (type == ptClimbingWallMsgType.kNewState):
-            if ((state == ptClimbingWallMsgState.kSouthSit) or (state == ptClimbingWallMsgState.kNorthSit)):
+            #if ((state == ptClimbingWallMsgState.kSouthSit) or (state == ptClimbingWallMsgState.kNorthSit)):
+            if ((state == ptClimbingWallMsgState.kSouthSelect) or (state == ptClimbingWallMsgState.kNorthSelect)): # this makes sure the imager is resetted when we click the panel and not when we sit on the chair.
                 i = 0
                 while ((i < 171)):
                     northWall.value[i].runAttachedResponder(kTeamLightsOff)

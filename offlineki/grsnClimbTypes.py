@@ -25,27 +25,26 @@
 #    (non-GPL) code within the context of Uru.                                 #
 #                                                                              #
 #==============================================================================#
-class ClimbAction:
-    """Possible actions when climbing
-This does not mean only climbing, but might also be used by regions, that's why they can all be added (except climb)."""
+class action:
+    """Possible actions when climbing"""
     def __init__(self):
         pass
 
-    probe    = 0
+    climb    = 0
     mount    = 1
     dismount = 2
-    fallOff  = 4
-    release  = 8
-    idle     = 16
+    fallOff  = 3
+    release  = 4
+    idle     = 5
 
 
-class ClimbDirection:
-    """Possible directions when climbing (x, y, -x, -y)
-Also used by regions, that's why it can be added again."""
+class direction:
+    """Possible directions when climbing (x, y, -x, -y)"""
     def __init__(self):
         pass
 
     up		= 1
     down	= 2
-    left	= 4
-    right   = 8
+    left	= 3
+    right   = 4
+
