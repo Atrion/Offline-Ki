@@ -21,7 +21,7 @@
 #    <http://www.gnu.org/licenses/>                                            #
 #                                                                              #
 #==============================================================================#
-import os, glob, subprocess
+import os, glob
 from createpak_config import python22_bin, python22_modules, pypack, paths
 
 def getfile(name):
@@ -34,6 +34,13 @@ def clean_folder(folder):
     for file in glob.iglob(os.path.join(folder, "*.pyc")):
         os.remove(file)
 
+def call(cmd, cwd=None):
+    import subprocess
+    p = subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE) # we ignore the output
+    p.communicate()
+    if p.returncode != 0:
+        raise Exception("Error executing %s: Non-zero return-code %d" % (str(cmd), p.returncode))
+
 def compile_folder(folder):
     global python22
     # check if the python installation was properly patched
@@ -43,7 +50,7 @@ def compile_folder(folder):
         raise Exception("You have to patch %s to return False in case of a compilation error" % filename)
     # let's go!
     #print "Compiling everything in",folder
-    subprocess.check_call([python22_bin, os.path.join(python22_modules, "compileall.py"), '-lf', '.'], cwd=folder, stdout=subprocess.PIPE) # we ignore the pipe and the output alltogether
+    call([python22_bin, os.path.join(python22_modules, "compileall.py"), '-lf', '.'], cwd=folder)
 
 def pak_folder(folder, pakfile):
     global pypack
@@ -53,7 +60,7 @@ def pak_folder(folder, pakfile):
     if not len(files): raise Exception("No pyc files found in %s" % folder)
     command.extend(files)
     command.append(pakfile)
-    subprocess.check_call(command, stdout=subprocess.PIPE)
+    call(command)
 
 def create_pak(folder, pakfile):
     clean_folder(folder) # make sure we don't pack old leftovers
@@ -69,7 +76,7 @@ def auto_create_pak(folder, name, start = False):
     pakfile = os.path.join(path, pakfile)+".pak"
     create_pak(folder, pakfile)
     print "Created pak file",pakfile
-    if start: subprocess.call(startApp)
+    if start: call(startApp)
 
 if __name__ == '__main__':
     import sys
