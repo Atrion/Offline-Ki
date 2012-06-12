@@ -54,7 +54,9 @@ A "color" is either specified by a simple name like "white" or by three values f
 
 Commands requiring story or admin access only work for some players online - the Shard administrator has to grant these additional privileges. Offline, everyone is an admin. Admin access always includes story access.'''
 
-commands = '''=== Avatar appearance and animation commands ===
+commands = r"""=== Avatar appearance and animation commands ===
+
+You can use all emotes from Uru:CC and MO:UL. The complete list is below.
 
 */afk <[afk-message]>
 */sit <[message]>
@@ -117,24 +119,24 @@ commands = '''=== Avatar appearance and animation commands ===
 */dance2 <[message]>
 */hug
 */unhug
-*/glow - locked in some ages if you don't have at least story access
-*/noglow - locked in some ages if you don't have at least story access
-*/lite <w|r|g|b> - locked in some ages if you don't have at least story access
-*/nolite - locked in some ages if you don't have at least story access
+*/glow (locked in some ages if you don't have at least story access)
+*/noglow (locked in some ages if you don't have at least story access)
+*/lite <w|r|g|b> (locked in some ages if you don't have at least story access)
+*/nolite (locked in some ages if you don't have at least story access)
 */suitup
-*/removeki
-*/removereltobook
-*/haircolor <color>
-*/skincolor <color
-*/eyecolor <color>
+*/removeki: Remove the KI from your avatar (but keep it enabled in the GU). You can get it back using the dispenser in Gahreesen.
+*/removereltobook: Remove the Relto book from your avatar (but keep it enabled in the GU). You can get it back using the dispenser in Gahreesen.
+*/haircolor <color>: Change the color of your hair
+*/skincolor <color: Change the color of - guess what?
+*/eyecolor <color>: Does what you think it does.
 
 === Chat commands ===
 
-*/p <nickname> <message>
+*/p <nickname> <message>: Directly send a private message to someone.
 */shout <message>
 */neighbors <message>
 */buddies <message>
-*/reply
+*/reply: Send a private message to the person who sent you the last message.
 */startlog
 */stoplog
 */clearchat
@@ -142,63 +144,65 @@ commands = '''=== Avatar appearance and animation commands ===
 */removebuddy
 */ignore
 */unignore
+*/me
+*/my
 
 === Avatar warp and cheat commands ===
 
-*/respawn or /sav or /a
-*/goto <place> (type "/goto list" or "/goto listall" to see where you can go) - locked in some ages if you don't have at least story access
-*/spawn - locked in some ages if you don't have at least story access
-*/jump <height> - locked in some ages if you don't have at least story access
-*/float <[list of objects]> - locked in some ages if you don't have at least story access, the list of objects can only be used by admins
-*/nofloat <[list of objects]> - locked in some ages if you don't have at least story access, the list of objects can only be used by admins
-*/call <[Urwin|Monkey]> (works only in Negilahn and Payiferen)
-*/rotsphere (works only in the MOUL version of Ahnonay)
-*/reltostars (works only in Relto)
-*/noreltostars (works only in Relto)
-*/getfissure <fissure stage (1-4)> (works only in Relto)
-*/bahro <name> (possible names in the city: 1-6, ferry, palace, library; in the hood: shouter) - requires admin access
-*/getzandoni - requires admin access
-*/getgzmarker - requires admin access
-*/getjourneys - requires admin access
-*/growtree - requires admin access
-*/shrinktree - requires admin access
-*/getyeeshapages - requires admin access
-*/getsparklies - requires admin access
-*/getfirstweek - requires admin access
+*/respawn or /sav or /a: Immediately move to the point you arrived at in the current age - useful if you want to avoid leaving to Relto.
+*/goto <place> (locked in some ages if you don't have at least story access): Warp yourself to a predefined location in the current age. Type "/goto list" or "/goto listall" to see where you can go.
+*/spawn (locked in some ages if you don't have at least story access): Warp yourself to the next spawn-point.
+*/jump <height> (locked in some ages if you don't have at least story access)
+*/float <[list of objects]> (locked in some ages if you don't have at least story access, the list of objects can only be used by admins): Turn off gravitation for you/the given objects. Also prevents avatars from moving!
+*/nofloat <[list of objects]> (locked in some ages if you don't have at least story access, the list of objects can only be used by admins): Undo the effect of /float.
+*/call <[Urwin|Monkey]> (works only in Negilahn and Payiferen): Make him appear right now!
+*/rotsphere (works only in the MOUL version of Ahnonay): Rotate the spheres by one step.
+*'''/reltostars''' (works only in Relto): Change the way your Relto looks in an amazing way. Looks especially great in combination with "/struct trees"!
+*/noreltostars (works only in Relto): Undo the changes of "/reltostars".
+*/getfissure <fissure stage (1-4)> (works only in Relto): Enable the given fissure state in your Relto.
+*/bahro <name> (requires admin access): Call a Bahro. Possible names in the city: 1-6, ferry, palace, library; in the hood: shouter.
+*/getzandoni (requires admin access): Enable the Zandoni in the Cleft.
+*/getgzmarker (requires admin access): Collect all GZ markers (works only for callibration missions).
+*/getjourneys (requires admin access): Collect all journey cloths.
+*/growtree (requires admin access): Grow your Relto tree.
+*/shrinktree (requires admin access): Srhink your Relto tree.
+*/getyeeshapages (requires admin access): Collect all Yeesha pages.
+*/getsparklies (requires admin access): Collect all Sparklies.
+*/getfirstweek (requires admin access): Enable the first-week clothing in the closet.
 
 === Admin, age developer and control commands ===
 
-*/fogcolor <color> or /fcol <color> - locked in some ages if you don't have at least story access
-*/fogdensity <start> <end> <density> or /fdens <start> <end> <density> - locked in some ages if you don't have at least story access
-*/link <age filename> [<list of players>] - requires story access (admin access if other players should be linked)
-*/linksp <age filename> <spawn point name> [<list of players>] - requires story access (admin access if other players should be linked)
-*/linkto <player> - requires admin access
-*/linkhere [<list of players>] - requires admin access
-*/autolink <age filename|disable> - requires admin access
-*/set <option name> <new value> (type "/set list" or "/set listall" to see possible options) - requires admin access
-*/listsdl <[filter]> - requires admin access
-*/setsdl <varname> <value> (integer SDL values only!) - requires admin access
-*/getsdl <varname> (integer SDL values only!) - requires admin access
-*/setpsnlsdl <varname> <value> (integer SDL values only!) - requires admin access
-*/getpsnlsdl <varname> (integer SDL values only!) - requires admin access
-*/console <uru console command> - requires admin access
-*/consolenet <uru console command> - requires admin access and works only online
-*/loadpage <page name> - requires admin access
-*/anim <name of animation> <[list of players]> (type "/anim list" to see the pre-defined animations, but you can also directly call an animation by its name, for example "MaleBow") - requires admin access
-*/avatar <new avatar type> - requires admin access
-*/name <new avatar name> - requires admin access
-*/exec <python-command> - requires admin access
-*/getchron <chronicle ename> - requires admin access
-*/getversion <player name> - requires admin access
-*/about <object name> - requires admin access
-*/struct <name of a struct> <[struct mode]> - requires admin access
-*/printstruct <list of objects> - requires admin access
-*/tour <tour name> <[camera name]> <[interval]> - requires admin access
-*/tourstop - requires admin access
-*/observe <[object]> <[camera name]> <[offset for camera behind avatar]> <[camera height offset]> <[target height offset]> - requires admin access
-*/entercam <camera name> <[list of players]> - requires admin access
-*/leavecam <camera name> <[list of players]> - requires admin access
-*/printcam <[camera name]> - requires admin access
+*'''/fogcolor''' <color> or /fcol <color> (locked in some ages if you don't have at least story access): Change the color of the fog in this age (you may have to enable fog first, using /fogdensity).
+*'''/fogdensity''' <start> <end> <density> or /fdens <start> <end> <density> (locked in some ages if you don't have at least story access): Specify the fog density gradient. The fog density will grow linear from 0 at the start distance to the full density at the end distance.
+*/link <age filename> [<list of players>]: Link you or someone else directly to the given age (requires story access, admin access if other players should be linked)
+*/linksp <age filename> <spawn point name> [<list of players>] (requires story access, admin access if other players should be linked): Like /link, but uses a specific spawn-point instead of the default one.
+*/linkto <player> (requires admin access): Link yourself to the given player.
+*/linkhere [<list of players>] (requires admin access): Link the given players to yourself.
+*'''/autolink''' <age filename|disable> (requires admin access): Immediately link you to the given age when Uru starts - useful for age development and testing.
+*/set <option name> <new value> (type "/set list" or "/set listall" to see possible options, requires admin access)
+*/listsdl <[filter]> (requires admin access)
+*/setsdl <varname> <value> (requires admin access): Change the given SDL value (works only for integers).
+*/getsdl <varname> (requires admin access): Print the current value of the given SDL variable.
+*/setpsnlsdl <varname> <value> (integer SDL values only! Requires admin access)
+*/getpsnlsdl <varname> (integer SDL values only! Requires admin access)
+*/console <uru console command> (requires admin access): Run Uru console commands, like those possible in fni files.
+*/consolenet <uru console command> (requires admin access and works only online): Run Uru console commands for everyone in the current age.
+*/loadpage <page name> (requires admin access): Load the given PRP page. Behaviour is undefined if several ages contain a page with that name.
+*'''/anim''' <name of animation> <[list of players]> (requires admin access): Runs an animation on you or the given avatars. Type "/anim list" to see the pre-defined animations, but you can also directly call an animation by its name, for example "MaleBow".
+*/avatar <new avatar type> (requires admin access): Change your avatar to, for example, "Yeesha" or "DrWatson" ("/avatar list" gives you a list of possible avatars).
+*/name <new avatar name> (requires admin access)
+*/exec <python-command> (requires admin access): Run the given python command.
+*/getchron <chronicle ename> (requires admin access)
+*/getversion <player name> (requires admin access)
+*/about <object name> (requires admin access)
+*/struct <name of a struct> <[struct mode]> (requires admin access): Build something awesome in the current age, also see "/list struct".
+*/printstruct <list of objects> (requires admin access)
+*/tour <tour name> <[camera name]> <[interval]> (requires admin access): Start a camera tour (see "/list tours" for a list).
+*/tourstop (requires admin access): Stop the current camera tour.
+*/observe <[object]> <[camera name]> <[offset for camera behind avatar]> <[camera height offset]> <[target height offset]> (requires admin access): Set up the camera behind the given object.
+*/entercam <camera name> <[list of players]> (requires admin access): Let the given players view through the camera.
+*/leavecam <camera name> <[list of players]> (requires admin access): The players stop viewing through the camera.
+*/printcam <[camera name]> (requires admin access)
 
 === Flymode (requires admin access) ===
 
@@ -218,86 +222,84 @@ commands = '''=== Avatar appearance and animation commands ===
 */warp <x coordinate> <y coordinate> <z coordinate> <[list of objects]>|<warp location> <[list of objects]>|<target object> <[list of objects]>
 */scale <scale factor> <[list of objects]>|<scale x> <scale y> <scale z> <[list of objects]>
 */rot <angle> <[axis (x|y|z)]> <[list of objects]>
-*/attach <parent object> <list of child objects> - works only offline
-*/detach <parent object> <list of child objects> - works only offline
-*Esc key - Toggles flymode for the avatar
-*Up arrow - Move forward
-*Back arrow - Move backward
-*Left arrow - Rotate left
-*Right arrow - Rotate right
-*Comma - Move left / Rotate counter-clockwise / Rotate backward (depending on strafe key mode, set by F9)
-*Period - Move right / Rotate clockwise / Rotate forward (depending on strafe key mode, set by F9)
-*Num-pad "-" - Move up
-*Num-pad "+" - Move down
-*Space - Move up/down alternatively
-*Shift - Move/rotate faster
-*Caps lock - Accelerate move/rotation when key is hold
-*Insert - Reduce linear speed
-*Scroll lock - Reduce rotational speed
-*F9 - Toggle between Strafe, X rotation, and Y Rotation modes for strafing keys
-*F10 - Reset avatar's X, Y and Z axes
-*F11 - Reset linear and rotational speed and position recalculation rate
-*F12 - Increase position recalculation rate
+*/attach <parent object> <list of child objects> (works only offline)
+*/detach <parent object> <list of child objects> (works only offline)
+*Esc key: Toggles flymode for the avatar
+*Up arrow: Move forward
+*Back arrow: Move backward
+*Left arrow: Rotate left
+*Right arrow: Rotate right
+*Comma: Move left / Rotate counter-clockwise / Rotate backward (depending on strafe key mode which is set by F9)
+*Period: Move right / Rotate clockwise / Rotate forward (depending on strafe key mode which is set by F9)
+*Num-pad "-": Move up
+*Num-pad "+": Move down
+*Space: Move up/down alternatingly
+*Shift: Move/rotate faster
+*Caps lock: Accelerate move/rotation when key is hold
+*Insert: Reduce linear speed
+*Scroll lock: Reduce rotational speed
+*F9: Toggle between Strafe, X rotation, and Y Rotation modes for strafing keys
+*F10: Reset avatar's X, Y and Z axes
+*F11: Reset linear and rotational speed and position recalculation rate
+*F12: Increase position recalculation rate
 
 === Other commands ===
 
-*/me
-*/my
 */hood
 */nexus
-*/stopcam
-*/gocam
-*/loadcolumns <filename> - works only in Jalak
-*/savecolumns <filename> - works only in Jalak
+*'''/stopcam''': Fix the camera in the current position. You can still move the avatar. This makes for some interesting pictures!
+*/gocam: Let the camera move like normal again.
+*/loadcolumns <filename> (works only in Jalak)
+*/savecolumns <filename> (works only in Jalak)
 */export
-*/import <filename> - works only offline
-*/kiusage
+*/import <filename> (works only offline)
+*/kiusage: Show how many images, marker missions etc. are available, and how many you used up.
 */info
 */savecolumns <[filename]>
 */loadcolumns <[filename]>
-*/loadscript <filename>
-*/loopstart <interval> <command>|<interval> <count> <command> - requires admin access
-*/loopstop - requires admin access
-*/m <command 1> & <command 2> & ... & <command n> - requires admin access
-*/checkaccess
-*/enablefp
-*/clearcam
-*/copy
+*/loadscript <filename>: Load a command script.
+*/loopstart <interval> <command>|<interval> <count> <command> (requires admin access): Run the command every <interval> seconds.
+*/loopstop (requires admin access): Stop th currently running loop.
+*/m <command 1> & <command 2> & ... & <command n> (requires admin access): Run all commands sequentially (useful to have several commands in a loop, for example).
+*/checkaccess: Print your current access level.
+*/enablefp: Re-enable the first-person camera (which is disabled, for example, if you improperly leave a swim region).
+*/clearcam: Clear the camera stack to repair a messed-up camera (the result will be less messed-up... hopefully).
+*/copy: Copy the content of the chat area to the clipboard.
 */quit
-*/hideki <hide time>
+*/hideki <hide time>: Entirely hide the KI for some seconds.
 */textcolor <color>
-*/ping <[player name]> - works only online
+*/ping <[player name]> (works only online)
 */createmarkerfolder
-*/toggleoffline - requires story access and works only online
-*/help
+*/toggleoffline (requires story access and works only online)
+*/help: Shot a book explaining all commands.
 */list <list to show>
 
 === Global shortcuts ===
 
-*F1 - 1st/3rd person
-*F2 - Open KI
-*F3 - Relto book
-*F4 - Settings
-*F5 - Take picture
-*F6 - Create text note
-*F7 - Add marker
-*F8 - Create new marker mission
-*Ctrl+1 - /wave
-*Ctrl+2 - /laugh
-*Ctrl+3 - /clap
-*Ctrl+4 - /dance
-*Ctrl+5 - Chat gesture
-*Ctrl+6 - /sneeze
-*Ctrl+7 - /sit
-*Shift+Ctrl - paste from clipboard (focus must be in chat line)
-*Ctrl+Pause or Ctrl+Num - Run next command of file loaded using /loadscript (key may depend on keyboard layout)
+*F1: 1st/3rd person
+*F2: Open KI
+*F3: Relto book
+*F4:  Settings
+*F5:  Take picture
+*F6: Create text note
+*F7: Add marker
+*F8: Create new marker mission
+*Ctrl+1: /wave
+*Ctrl+2: /laugh
+*Ctrl+3: /clap
+*Ctrl+4: /dance
+*Ctrl+5: Chat/talk gesture
+*Ctrl+6: /sneeze
+*Ctrl+7: /sit
+*Shift+Ctrl: paste from clipboard (focus must be in chat line)
+*Ctrl+Pause or Ctrl+Num: Run next command of file loaded using /loadscript (key may depend on keyboard layout)
 
 === Server-side commands (work only online) ===
 
 (you can also use /% as prefix if you can not enter the ! character)
 
 * /!ping
-* /!resetage'''
+* /!resetage"""
 
 # Helper function
 def breakLine(line, firstBreak = True):
@@ -319,7 +321,11 @@ def formatCommands(commands):
     # format lines
     commands = re.sub("\\n\\*([^\\n]+)", formatLine, commands)
     # format captions
-    return re.sub("=== ([^\\n]+) ===", "<pb><%s>\\1<%s>" % (fontCaption, fontCommandText), commands)
+    commands = re.sub("=== ([^\\n]+) ===", "<pb><%s>\\1<%s>" % (fontCaption, fontCommandText), commands)
+    # format bold text (we can't make it bold, so just remove the boldness markers)
+    commands = re.sub("'''([^\\n]+)'''", "\\1", commands)
+    # done formatting
+    return commands
 
 # Main function
 def OnCommand(ki, arg, cmnd, args, playerList, KIContent, silent):
