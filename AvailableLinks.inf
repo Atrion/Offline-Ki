@@ -111,7 +111,8 @@ spawnpoint:Cleft,LinkInPointDefault,Default
 
 link:Personal02,Phil's Relto,file,basic
 
-link:city,D'ni-Ae'gura,file,original,LinkInPointGreatTree
+link:city,D'ni-Ae'gura,file,original
+spawnpoint:city,LinkInPointDefault,Default
 spawnpoint:city,LinkInPointGreatTree,Great Tree
 spawnpoint:city,LinkInPointLibrary,islmLibraryCourtyard
 
