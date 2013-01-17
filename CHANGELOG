@@ -1,5 +1,6 @@
 Offline KI 3.8.1:
 - Fixed issue of panic-linking in the fissure if the internet connection is slow
+- Fixed hiding objects when enabling a fan-made Relto page
 
 Offline KI 3.8 (13.04.2012):
 - Fan-age information is now managed in one age descriptor per file, which makes it much easier for age authors to configure their age

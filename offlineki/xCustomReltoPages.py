@@ -97,7 +97,7 @@ def AmInMyRelto():
 def HideObject(objectname):
     #Hides and disables a sceneobject
     #print "hide:"+objectname
-    agename = GetAgeName()
+    agename = Plasma.PtGetAgeName()
     try:
         av = Plasma.PtFindSceneobject(objectname, agename)
     except:
