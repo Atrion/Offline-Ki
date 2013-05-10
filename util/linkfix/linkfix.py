@@ -55,6 +55,7 @@ def mayOverwrite(pakfile1, pakfile2):
 def decompile(pakfile, wdir):
     global drizzle
     call([java, '-DDrizzle.IsLauncher=false', '-Djava.awt.headless=true', '-splash:', '-jar', drizzle, '-decompilepak', pakfile, wdir, 'pots'])
+    time.sleep(0.2)
 
 ### file processing function (returns True if the file should be recompiled and repacked, throws an exception if a link was left unfixed)
 def checkForLink(pyfile, fixIt):
