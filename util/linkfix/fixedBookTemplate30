@@ -1,2 +1,0 @@
-        import xLinkMgr
-        xLinkMgr.LinkToAge(ageName, spawnPoint)

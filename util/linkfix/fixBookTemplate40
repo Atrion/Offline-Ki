@@ -1,23 +1,2 @@
-        als = ptAgeLinkStruct()
-        ainfo = ptAgeInfoStruct()
-        ainfo.setAgeFilename(ageName)
-        ainfo.setAgeInstanceName(self.IConvertAgeInstanceName(ageName))
-        als.setAgeInfo(ainfo)
-        if ((type(spTitle) == type(None)) or (len(spTitle) == 0)):
-            if ((linkRule == PtLinkingRules.kOriginalBook) or PtIsSinglePlayerMode()):
-                if (spawnPoint == 'LinkInPointDefault'):
-                    spTitle = 'Default'
-                else:
-                    print 'Warning: Empty spawnpoint title not allowed, check your link destinations!'
-                    return
-            else:
-                print 'Empty spawnpoint title allowed, continue linking'
-                spTitle = ''
-        als.setLinkingRules(linkRule)
-        if (linkRule == PtLinkingRules.kChildAgeBook):
-            als.setParentAgeFilename(parentAge)
-        spPoint = ptSpawnPointInfo(spTitle, spawnPoint)
-        als.setSpawnPoint(spPoint)
         linkMgr = ptNetLinkingMgr()
         linkMgr.linkToAge(als)
-        print ('Linking to age %s, spawnpoint %s with title %s, using linkingrule %d' % (ageName, spawnPoint, spTitle, linkRule))

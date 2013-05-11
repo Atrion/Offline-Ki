@@ -1,2 +1,2 @@
         import xLinkMgr
-        xLinkMgr.LinkToAge(ageName, spawnPoint)
+        xLinkMgr.LinkToAge(als.getAgeInfo().getAgeFilename(), als.getSpawnPoint().getName())
