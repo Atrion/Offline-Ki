@@ -91,6 +91,8 @@ BookMapLeft = ptAttribDynamicMap(91, 'The Dynamic Texture Map l')
 BookMapRight = ptAttribDynamicMap(92, 'The Dynamic Texture Map r')
 BookMapBack = ptAttribDynamicMap(93, 'The Dynamic Texture Map b')
 BookMapFront = ptAttribDynamicMap(94, 'The Dynamic Texture Map f')
+bhrLinkPanelMap = ptAttribDynamicMap(95, 'The Dynamic Texture Map b')
+bhrShareButtonMap = ptAttribDynamicMap(96, 'The Dynamic Texture Map f')
 #/Dustin
 KIGUIInitialized = 0
 #Jalak
@@ -1082,6 +1084,8 @@ class xKI(ptModifier,):
         booksDustGlobal.BookMapRight = BookMapRight
         booksDustGlobal.BookMapBack = BookMapBack
         booksDustGlobal.BookMapFront = BookMapFront
+        booksDustGlobal.bhrLinkPanelMap = bhrLinkPanelMap
+        booksDustGlobal.bhrShareButtonMap = bhrShareButtonMap
         #/Dustin
 
 

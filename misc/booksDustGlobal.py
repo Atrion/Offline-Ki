@@ -19,5 +19,7 @@ BookMapLeft = None
 BookMapRight = None
 BookMapBack = None
 BookMapFront = None
+bhrLinkPanelMap = None
+bhrShareButtonMap = None
 #/Dustin
 DynCoverLoaded = False # used to detect whether the POTS patches are applied
