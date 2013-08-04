@@ -1,7 +1,8 @@
 Offline KI 3.8.1:
-- Fixed issue of panic-linking in the fissure if the internet connection is slow
-- Fixed hiding objects when enabling a fan-made Relto page
-- Fixed texture on the city linking books (thanks to Chloe!)
+- Add Python scripts by Sirius to create journals, linking books and Bahro stones
+- Fix issue of panic-linking in the fissure if the internet connection is slow
+- Fix hiding objects when enabling a fan-made Relto page
+- Fix texture on the city linking books (thanks to Chloe!)
 
 Offline KI 3.8 (13.04.2012):
 - Fan-age information is now managed in one age descriptor per file, which makes it much easier for age authors to configure their age
