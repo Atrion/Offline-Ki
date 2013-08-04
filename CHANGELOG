@@ -1,5 +1,7 @@
-Offline KI 3.8.1:
+Offline KI 3.9 (04.08.2013):
 - Add Python scripts by Sirius to create journals, linking books and Bahro stones
+- Fix issues in the garden ages
+- Fix Gahreesen Wall issues (thanks to Sirius)
 - Fix issue of panic-linking in the fissure if the internet connection is slow
 - Fix hiding objects when enabling a fan-made Relto page
 - Fix texture on the city linking books (thanks to Chloe!)
