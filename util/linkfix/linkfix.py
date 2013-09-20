@@ -21,7 +21,7 @@
 #    <http://www.gnu.org/licenses/>                                            #
 #                                                                              #
 #==============================================================================#
-import sys, os
+import sys, os, time
 from linkfix_config import java, drizzle, lists, wdir
 from createpak import getfile, create_pak, call
 allowed = []
@@ -54,8 +54,9 @@ def mayOverwrite(pakfile1, pakfile2):
 
 def decompile(pakfile, wdir):
     global drizzle
+    time.sleep(0.1)
     call([java, '-DDrizzle.IsLauncher=false', '-Djava.awt.headless=true', '-splash:', '-jar', drizzle, '-decompilepak', pakfile, wdir, 'pots'])
-    time.sleep(0.2)
+    time.sleep(0.1)
 
 ### file processing function (returns True if the file should be recompiled and repacked, throws an exception if a link was left unfixed)
 def checkForLink(pyfile, fixIt):
