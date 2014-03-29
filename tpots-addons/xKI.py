@@ -5391,7 +5391,7 @@ class xKI(ptModifier,):
 #/Jalak
         # special behaviour for server-side commands
         if xxConfig.isOnline() and (chatmessage.startswith('/!') or chatmessage.startswith('/%')): # french keyboards have problems with the !, so % is also possible
-            chatmessage = '/!'+chatmessage[2:] # the server only understands the /% prefix
+            chatmessage = '/!'+chatmessage[2:] # the server only understands the /! prefix
             PtSendRTChat(PtGetLocalPlayer(), [], chatmessage, ChatFlags(0).flags)
             if not silent: self.IDoStatusChatMessage("Sending command to server: "+chatmessage[2:], netPropagate=0)
             return None
