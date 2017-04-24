@@ -67,13 +67,15 @@ class Dataserver:
 
     # Adds the files to the given manifest.
     # manifest may be None, then files will be added to the age the age they belong to
-    # uruStarterOptions may contain "checked" for prp files to be only checked, not copied to the dataserver, and "required" for that check to
+    # options may contain "checked" for prp files to be only checked, not copied to the dataserver, and "required" for that check to, and "ignore-sfx-orphan" to ignore orphaned sfx files
     #   only succeed if the file actually exists (por default, such a file is optional)
     # if patternsMustMatch is True, an exception will be thrown when a pattern/filename does not match any file
-    def addToManifest(self, files, manifest, uruStarterOptions = [], patternsMustMatch = True):
+    def addToManifest(self, files, manifest, options = [], patternsMustMatch = True):
         duplicateFiles = []
-        prpFilesOnlyChecked = "checked" in uruStarterOptions
-        agesRequired = "required" in uruStarterOptions
+        prpFilesOnlyChecked = "checked" in options
+        agesRequired = "required" in options
+        ignoreSfxOrphan = "ignore-sfx-orphan" in options
+        ignoreSfxOrphanFlag = Flags.IgnoreOrphan if ignoreSfxOrphan else 0
         # add all the files
         for pattern in files:
             globbed = filter(os.path.isfile, glob.glob(pattern)) # get all files matching the pattern
@@ -96,9 +98,9 @@ class Dataserver:
                     if prpFilesOnlyChecked and type == 'prp':
                         file = File(filename, cache, Flags.Checked) # treat these checked prp files as fils we don't know anything about - we don't even want to check their consistency
                     elif type in config.kUncompressed:
-                        file = loadFile(filename, cache, Flags.Uncompressed) # get correct file depending on the type
+                        file = loadFile(filename, cache, Flags.Uncompressed | ignoreSfxOrphanFlag) # get correct file depending on the type
                     elif type in config.kCompressed:
-                        file = loadFile(filename, cache, Flags.Compressed) # get correct file depending on the type
+                        file = loadFile(filename, cache, Flags.Compressed | ignoreSfxOrphanFlag) # get correct file depending on the type
                     else: # unknown
                         raise Exception('Unknown file type: {0}'.format(filename))
                     self.allFiles[filename.lower()] = file
@@ -145,7 +147,7 @@ class Dataserver:
         # Add global files to client (including subfolders of img, for Relto pages and age information)
         self.addToManifest(('Python/*', 'SDL/*', 'ageresources/*', 'readme/*', 'avi/*', 'img/*', 'img/*/*'), self.clientManifest, patternsMustMatch = False)
         # Add age files to data part
-        self.addToManifest(('dat/*', 'sfx/*'), manifest = None, uruStarterOptions = options, patternsMustMatch = False)
+        self.addToManifest(('dat/*', 'sfx/*'), manifest = None, options = options, patternsMustMatch = False)
         # restore working directory
         os.chdir(oldCwd)
 
@@ -196,14 +198,14 @@ class Dataserver:
                 # this sound file is orphaned
                 assert f.name.startswith('sfx/')
                 name = f.name[len('sfx/'):]
-                if name not in config.kSoundOrphaned:
+                if name not in config.kSoundOrphaned and not f.flags & Flags.IgnoreOrphan:
                     orphanedFiles.add(name)
                 #assert not (f.flags & Flags.Sound) # no sound-related flag can be set
                 f.flags |= Flags.NoWav
                 GUIManifest.addFile(f) # add it to the GUI
         # check if files are orphaned
         if orphanedFiles:
-            print "WARNING: Orphaned sound files: " + str(sorted(orphanedFiles, key=str.lower))
+            print "WARNING: Orphaned sound files: \"" + '" "'.join(sorted(orphanedFiles, key=str.lower)) + '"'
 
 
     # Check if we found all Python files, and none twice

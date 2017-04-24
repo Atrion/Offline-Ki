@@ -47,12 +47,12 @@ class Flags:
     # some more flags for internal tracking
     Uncompressed = 1 << 4
     Checked = 1 << 5
-
+    IgnoreOrphan = 1 << 6
 
 # A file with no special properties whatsoever
 class File:
     def __init__(self, file, cacheData, flag):
-        if flag not in (Flags.Compressed, Flags.Uncompressed, Flags.Checked):
+        if flag not in (Flags.Compressed, Flags.Compressed | Flags.IgnoreOrphan, Flags.Uncompressed, Flags.Uncompressed | Flags.IgnoreOrphan, Flags.Checked):
             raise Exception("Invalid flag {0} for file {1}".format(flag, file))
         self.flags = flag
         self.manifests = []
@@ -177,6 +177,10 @@ class PrpFile(File):
         cache['python'] = self.pythonFiles
         return cache
     
+    def whitelistedPrpFiles(self, age, page):
+        '''Some PRP files can't be loaded for... reasons. Let's just skip them.'''
+        return (age, page) in [("Elodea", "mainRoom"), ("ElodeasTunnelgang", "mainRoom"), ("ElodeasSchatzkammern", "mainRoom"), ("ElodeasUnterwelt", "mainRoom"), ("Alabaster", "mainRoom")]
+    
     def loadPrpInfo(self):
         page = plResMgr.ReadPage(self.name)
         self.soundFiles = {} # a map of sound filenames to the flags used by the age
@@ -187,7 +191,7 @@ class PrpFile(File):
         # verify the filename
         if self.name != "dat/{0}_District_{1}.prp".format(page.age, page.page):
             raise Exception("{0} contains age {1}, page {2}".format(self.name, page.age, page.page))
-        # check for sound files: Code here is based on sounddecompres script script from libHSPlasma
+        # check for sound files: Code here is based on sounddecompres script from libHSPlasma
         for key in plResMgr.getKeys(page.location, PyHSPlasma.plFactory.kSoundBuffer):
             soundBuffer = key.object
             flags = self.soundFiles.get(soundBuffer.fileName, 0) # default to 0
@@ -200,7 +204,7 @@ class PrpFile(File):
                     flags |= Flags.SingleWav
             # store the flags
             self.soundFiles[soundBuffer.fileName] = flags
-        if isFanAge: # perform some checks for fan-ages only
+        if isFanAge and not self.whitelistedPrpFiles(page.age, page.page): # perform some checks for fan-ages only
             # linking responder check
             for key in plResMgr.getKeys(page.location, PyHSPlasma.plFactory.kResponderModifier):
                 obj = key.object
@@ -213,6 +217,7 @@ class PrpFile(File):
                             linkIsGood = (als.linkingRules == 0)
                             if not linkIsGood: 
                                 raise Exception("%s contains an invalid link to %s in object %s" % (file, als.ageInfo.ageFilename, key))
+        if isFanAge:
             # Python file check
             for key in plResMgr.getKeys(page.location, PyHSPlasma.plFactory.kPythonFileMod):
                 obj = key.object
@@ -239,7 +244,7 @@ class PrpFile(File):
 class OggFile(File):
     def __init__(self, file, cacheData, flag):
         File.__init__(self, file, cacheData, flag)
-        assert flag == Flags.Uncompressed # compressing these with gzip or just checking them is invalid
+        assert flag in (Flags.Uncompressed, Flags.Uncompressed | Flags.IgnoreOrphan) # compressing these with gzip or just checking them is invalid
 
 
 # An age configuration file
