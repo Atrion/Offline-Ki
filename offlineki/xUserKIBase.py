@@ -434,6 +434,14 @@ def OnServerCommand(ki, cmnd, args):
         xLinkMgr.ResetAvailableLinks() # changing the shard identifer might make some ages (un)available
         return True
     elif (cmnd == 'relink'):
+        # Sent only after an age reset. For some ages, do extra cleanup.
+        if PtGetAgeName() == "DRA_Office":
+            ageSDL = ptAgeVault().getAgeSDL()
+            var = ageSDL.findVar('adrlBookMarks')
+            var.setString("")
+            ptAgeVault().updateAgeSDL(ageSDL)
+            print "xUserKIBase: Reset Adrael bookmark"
+        # Now relink.
         linkMgr = ptNetLinkingMgr()
         linkMgr.linkToPlayersAge(PtGetLocalClientID())
         return True
