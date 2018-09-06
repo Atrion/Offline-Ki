@@ -156,7 +156,7 @@ def ParseULMFile():
         return
     try:
         linkBook = None
-        lastUpdatedAges = xLinkMgr.GetRestorationAges(xLinkMgr.kSortByDate) # returns the filenames of the most recently updated ages
+        lastUpdatedAges = xLinkMgr.GetAutoShelfAges(xLinkMgr.kSortByDate) # returns the filenames of the most recently updated ages
         for line in f:
             line = line.replace('\n', '').replace('\r', '')
             if not len(line) or line.startswith('#'): continue # skip

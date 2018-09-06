@@ -45,7 +45,7 @@ kSortByDate = 1
 # Age datastructure and its operations
 class _Age:
     def __init__(self, filename, displayName, detect = 'dataserver', linkrule = 'basic', defaultSpawnpoint = 'LinkInPointDefault',
-            lastUpdate = None, disableCheats = False, publicLink = False, restorationLink = False):
+            lastUpdate = None, disableCheats = False, publicLink = False, restorationLink = False, fillAutoShelf = False):
         self.filename = filename
         self.displayName = displayName
         self.detect = detect
@@ -55,12 +55,13 @@ class _Age:
         self.description = ''
         self.publicLink = publicLink
         self.restorationLink = restorationLink
+        self.fillAutoShelf = fillAutoShelf
         self.available = self._IsAvailable() # store this information, it is not supposed to change anyway
         self._setLastUpdate(lastUpdate)
         self.disableCheats = disableCheats
         # print
-        print "xLinkMgr: Adding age %s: display=%s, public=%s, restoration=%s, available=%s" % (filename,
-            displayName, str(publicLink), str(restorationLink), str(self.available))
+        print "xLinkMgr: Adding age %s: display=%s, public=%s, restoration=%s, auto_shelf=%s, available=%s" % (filename,
+            displayName, str(publicLink), str(restorationLink), str(self.fillAutoShelf), str(self.available))
         # warn about adding the same age twice
         if filename in _AvailableLinks:
             print "xLinkMgr: WARNING: %s was already in the age list." % self.filename
@@ -187,9 +188,15 @@ def _LoadPerAgeDescriptors(folder):
         link = defSection.get('link', 'basic')
         lastUpdate = defSection.get('lastUpdate')
         noCheats = defSection.get('noCheats', 'false').lower() in ('true', 'yes', 'on', '1')
+        # fillAutoShelf default is true only for restoration ages
+        if showIn == 'restoration':
+            fillAutoShelfDefault = 'true'
+        else:
+            fillAutoShelfDefault = 'false'
+        fillAutoShelf = defSection.get('fillAutoShelf', fillAutoShelfDefault).lower() in ('true', 'yes', 'on', '1')
         # create the age
         age = _Age(age, displayName=displayName, detect=detect, linkrule=link, defaultSpawnpoint=defaultSpawnpoint, lastUpdate=lastUpdate,
-                disableCheats=noCheats, restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'))
+                disableCheats=noCheats, restorationLink=(showIn == 'restoration'), publicLink=(showIn == 'public'), fillAutoShelf=fillAutoShelf)
         if description is not None: age.description = description
         # add spawn points (name-to-title mapping)
         age.spawnpoints = descriptor.get('SpawnPoints', {}) # default to no specific spawn points
@@ -218,13 +225,13 @@ def _LoadAvailableLinksFile(filename):
                 restorationLink = (type == 'restorationlink')
                 publicLink = (type == 'publiclink')
                 if len(data) == 5:
-                    _Age(data[0], data[1], data[2], data[3], data[4], publicLink=publicLink, restorationLink=restorationLink)
+                    _Age(data[0], data[1], data[2], data[3], data[4], publicLink=publicLink, restorationLink=restorationLink, fillAutoShelf=restorationLink)
                 elif len(data) == 4:
-                    _Age(data[0], data[1], data[2], data[3], publicLink=publicLink, restorationLink=restorationLink)
+                    _Age(data[0], data[1], data[2], data[3], publicLink=publicLink, restorationLink=restorationLink, fillAutoShelf=restorationLink)
                 elif len(data) == 3:
-                   _Age(data[0], data[1], data[2], publicLink=publicLink, restorationLink=restorationLink)
+                   _Age(data[0], data[1], data[2], publicLink=publicLink, restorationLink=restorationLink, fillAutoShelf=restorationLink)
                 elif len(data) == 2:
-                    _Age(data[0], data[1], publicLink=publicLink, restorationLink=restorationLink)
+                    _Age(data[0], data[1], publicLink=publicLink, restorationLink=restorationLink, fillAutoShelf=restorationLink)
             # read spawnpoint
             elif type == 'spawnpoint':
                 if len(data) == 3:
@@ -383,6 +390,8 @@ def GetPublicAges(sortBy = kSortByName, reverse = False):
 def GetPublicLinks():
     return map(lambda name: (name, GetInstanceName(name)), GetPublicAges())
 
+def GetAutoShelfAges(sortBy = kSortByName, reverse = False):
+    return _GetAgeList(lambda age: age.available and age.fillAutoShelf, _SortBy[sortBy], reverse)
 
 def GetCorrectFilenameCase(age1): # takes a non-case-sensitive filename and returns the correct case, if existing
     _LoadAvailableLinks()
